@@ -11,9 +11,10 @@ The library core types and several machine intelligence algorithms, such as HTM,
 Dependencies
 ------------
 MIToolchain - core library of MIC.
+
 Additionally it depends on the following external libraries:
-Boost - library of free (open source) peer-reviewed portable C++ source libraries.
-OpenBlas - an optimized BLAS library based on GotoBLAS2 1.13 BSD version.
+   * Boost - library of free (open source) peer-reviewed portable C++ source libraries.
+   * OpenBlas - an optimized BLAS library based on GotoBLAS2 1.13 BSD version.
 
 
 Maintainer
