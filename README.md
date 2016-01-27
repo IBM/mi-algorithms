@@ -6,7 +6,7 @@ Description
 
 A subproject of Machine Intelligence Core framework.
 
-The library core types and several machine intelligence algorithms, such as HTM, RBM accompanied by some useful modules and functions.
+The library contains core types and several machine intelligence algorithms, such as HTM, RBM accompanied by some useful modules and functions.
 
 MIC dependencies
 ------------
@@ -20,7 +20,7 @@ Additionally it depends on the following external libraries:
 
 Main modules
 ------------
-   * core_types - core types and classes (image, tensor, matrix, vector etc.)
+   * types - core types and classes (image, tensor, matrix, vector etc.)
    * data_io - data i/o classes and functions (e.g. data importers)
    * data_utils - data utils (e.g. functions for interpolations, generation of series, random generator etc.)
    * auto_encoders - auto (as well as some simple) encoders
@@ -28,6 +28,9 @@ Main modules
    * htm - Hierarchical Temporal Memory 
    * rbm - Restricted Boltzmann Machine
 
+Applications
+------------
+   * char_encoder_test examplary 1-of-k Char Encoder test application
 
 Maintainer
 ----------

@@ -22,26 +22,25 @@ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -Wall")
 set(DEFAULT_SDR_LENGTH 1024 CACHE STRING "Default length of SDR")
 add_definitions(-DDEFAULT_SDR_LENGTH=${DEFAULT_SDR_LENGTH})
 
-# Default length of SDR.
+# Debug (DEPRICATED - TO BE REMOVED!
 set(DEBUG_RUN ON CACHE BOOL "Debug run - set DEBUG_RUN variable")
 if (${DEBUG_RUN})
 	add_definitions(-DDEBUG_RUN=1)
 endif(${DEBUG_RUN})
 
+# =======================================================================
+# Find packages
+# =======================================================================
 
 # Add path to cmake dir.
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-# =======================================================================
 # Find Boost package
-# =======================================================================
 find_package(Boost 1.58 REQUIRED COMPONENTS system thread random program_options regex date_time)
 # Try to include Boost as system directory to suppress it's warnings
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 
-# =======================================================================
 # Find OpenBLAS package
-# =======================================================================
 find_package( OpenBLAS REQUIRED )
 include_directories(${OpenBLAS_INCLUDE_DIR})
 
@@ -49,6 +48,23 @@ include_directories(${OpenBLAS_INCLUDE_DIR})
 find_package(MIToolchain REQUIRED)
 
 message("Found MI Toolchain libs: ${MIToolchain_LIBRARIES} ")
+
+# =======================================================================
+# RPATH settings.
+# =======================================================================
+# use, i.e. don't skip the full RPATH for the build tree
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+# when building, use the install RPATH already
+# (but later on when installing)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE) 
+
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 
 add_subdirectory(src)
 

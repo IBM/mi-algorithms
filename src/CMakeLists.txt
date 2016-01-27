@@ -5,7 +5,7 @@ include(CheckCXXCompilerFlag)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # =======================================================================
-# Set compiler flags.
+# Set compiler/linker flags.
 # =======================================================================
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -14,29 +14,35 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl") 
 
 # =======================================================================
+# Add CMAKE variables.
+# =======================================================================
+
+set(BUILD_TEST_CHAR_ENCODER ON CACHE BOOL "Build the 1-of-k Char Encoder test application")
+
+# =======================================================================
 # Build MI Algorithms.
 # =======================================================================
 
 # =======================================================================
-# Install includes related to CORE TYPES UTILS used by other libraries.
-FILE(GLOB files core_types/*.hpp core_types/*.h)
-install(FILES ${files} DESTINATION include/core_types)
+# Install includes related to CORE TYPES used by other libraries.
+FILE(GLOB files types/*.hpp types/*.h)
+install(FILES ${files} DESTINATION include/types)
 
 # Create shared library containing CORE TYPES and related functions.
-file(GLOB core_types_src types/*.cpp)
-add_library(core_types SHARED ${core_types_src})
-target_link_libraries(core_types ${Boost_LIBRARIES} logger)
+file(GLOB types_src types/*.cpp)
+add_library(types SHARED ${types_src})
+target_link_libraries(types ${Boost_LIBRARIES} logger)
 
 
 # =======================================================================
 # Install includes related to DATA UTILS used by other libraries.
-FILE(GLOB files data_utils/*.hpp)
+FILE(GLOB files data_utils/*.hpp data_utils/*.h)
 install(FILES ${files} DESTINATION include/data_utils)
 
 # Create shared library containing DATA UTILS.
 file(GLOB data_utils_src data_utils/*.cpp)
 add_library(data_utils SHARED ${data_utils_src})
-target_link_libraries(data_utils core_types )
+target_link_libraries(data_utils types )
 
 # =======================================================================
 # Install includes related to DATA IO used by other libraries.
@@ -46,7 +52,7 @@ install(FILES ${files} DESTINATION include/data_io)
 # Create shared library containing DATA IO.
 file(GLOB data_io_src data_io/*.cpp)
 add_library(data_io SHARED ${data_io_src})
-target_link_libraries(data_io system_utils core_types data_utils configuration)
+target_link_libraries(data_io system_utils types data_utils configuration)
 
 # =======================================================================
 # Install includes related to AUTO ENCODERS used by other libraries.
@@ -56,7 +62,7 @@ install(FILES ${files} DESTINATION include/auto_encoders)
 # Create shared library containing AUTO ENCODERS.
 file(GLOB auto_encoders_src auto_encoders/*.cpp)
 add_library(auto_encoders SHARED ${auto_encoders_src})
-target_link_libraries(auto_encoders core_types )
+target_link_libraries(auto_encoders types )
 
 # =======================================================================
 # Install includes related to CLASSIFIERS used by other libraries.
@@ -66,7 +72,7 @@ install(FILES ${files} DESTINATION include/classifiers)
 # Create shared library containing CLASSIFIERS.
 file(GLOB classifiers_src classifiers/*.cpp)
 add_library(classifiers SHARED ${classifiers_src})
-target_link_libraries(classifiers system_utils core_types data_utils )
+target_link_libraries(classifiers system_utils types data_utils )
 
 # =======================================================================
 # Install includes related to HTM used by other libraries.
@@ -76,7 +82,7 @@ install(FILES ${files} DESTINATION include/htm)
 # Create HTM shared library.
 file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
 add_library(htm SHARED ${htm_src})
-target_link_libraries(htm core_types data_utils system_utils)
+target_link_libraries(htm types data_utils system_utils)
 
 # =======================================================================
 # Install includes related to RBM used by other libraries.
@@ -86,11 +92,34 @@ install(FILES ${files} DESTINATION include/rbm)
 # Create RBM shared library.
 file(GLOB rbm_src rbm/*.cpp )
 add_library(rbm SHARED ${rbm_src})
-target_link_libraries(rbm core_types data_utils ${OpenBLAS_LIB})
+target_link_libraries(rbm types data_utils ${OpenBLAS_LIB})
 
 
 # =======================================================================
 # Install target libraries.
 # =======================================================================
 
-install(TARGETS core_types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib)
+install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib)
+
+# =======================================================================
+# Build and install - char encoder test application.
+# =======================================================================
+
+if(${BUILD_TEST_CHAR_ENCODER})
+	# Create exeutable.
+	add_executable(char_encoder_test tests/char_encoder_test.cpp)
+	# Link it with shared libraries.
+	target_link_libraries(char_encoder_test 
+		logger
+		application
+		types
+		data_io
+		auto_encoders
+		configuration
+		${Boost_LIBRARIES}
+		)
+
+	# install test to bin directory
+	install(TARGETS char_encoder_test RUNTIME DESTINATION bin)
+
+endif(${BUILD_TEST_CHAR_ENCODER})
