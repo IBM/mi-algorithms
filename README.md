@@ -1,17 +1,19 @@
-Machine Intelligence Algorithms
+Machine Intelligence Core: Algorithms
 =========================================
 
 Description
 -----------
 
-Subproject of Machine Intelligence Core.
+A subproject of Machine Intelligence Core framework.
 
 The library core types and several machine intelligence algorithms, such as HTM, RBM accompanied by some useful modules and functions.
 
-Dependencies
+MIC dependencies
 ------------
    * MIToolchain - core library of MIC.
 
+External dependencies
+------------
 Additionally it depends on the following external libraries:
    * Boost - library of free (open source) peer-reviewed portable C++ source libraries.
    * OpenBlas - an optimized BLAS library based on GotoBLAS2 1.13 BSD version.
