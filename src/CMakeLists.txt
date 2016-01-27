@@ -25,7 +25,7 @@ install(FILES ${files} DESTINATION include/core_types)
 # Create shared library containing CORE TYPES and related functions.
 file(GLOB core_types_src types/*.cpp)
 add_library(core_types SHARED ${core_types_src})
-target_link_libraries(core_types ${Boost_LIBRARIES} ${MIToolchain_LIBRARIES} )
+target_link_libraries(core_types ${Boost_LIBRARIES} logger)
 
 
 # =======================================================================
@@ -36,7 +36,7 @@ install(FILES ${files} DESTINATION include/data_utils)
 # Create shared library containing DATA UTILS.
 file(GLOB data_utils_src data_utils/*.cpp)
 add_library(data_utils SHARED ${data_utils_src})
-target_link_libraries(data_utils core_types configuration)
+target_link_libraries(data_utils core_types )
 
 # =======================================================================
 # Install includes related to DATA IO used by other libraries.
@@ -56,7 +56,7 @@ install(FILES ${files} DESTINATION include/auto_encoders)
 # Create shared library containing AUTO ENCODERS.
 file(GLOB auto_encoders_src auto_encoders/*.cpp)
 add_library(auto_encoders SHARED ${auto_encoders_src})
-target_link_libraries(auto_encoders core_types configuration)
+target_link_libraries(auto_encoders core_types )
 
 # =======================================================================
 # Install includes related to CLASSIFIERS used by other libraries.
@@ -66,7 +66,7 @@ install(FILES ${files} DESTINATION include/classifiers)
 # Create shared library containing CLASSIFIERS.
 file(GLOB classifiers_src classifiers/*.cpp)
 add_library(classifiers SHARED ${classifiers_src})
-target_link_libraries(classifiers system_utils core_types data_utils configuration)
+target_link_libraries(classifiers system_utils core_types data_utils )
 
 # =======================================================================
 # Install includes related to HTM used by other libraries.
@@ -76,7 +76,7 @@ install(FILES ${files} DESTINATION include/htm)
 # Create HTM shared library.
 file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
 add_library(htm SHARED ${htm_src})
-target_link_libraries(htm core_types data_utils)
+target_link_libraries(htm core_types data_utils system_utils)
 
 # =======================================================================
 # Install includes related to RBM used by other libraries.
@@ -93,4 +93,4 @@ target_link_libraries(rbm core_types data_utils ${OpenBLAS_LIB})
 # Install target libraries.
 # =======================================================================
 
-install(TARGETS  LIBRARY DESTINATION lib)
+install(TARGETS core_types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib)
