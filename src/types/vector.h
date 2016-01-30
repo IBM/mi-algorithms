@@ -22,25 +22,53 @@ namespace types {
  * \tparam T template parameter denoting data type stored in matrix.
  */
 template <typename T>
-class Vector : public Matrix<T> {
+class Vector : public mic::types::Tensor<T> {
 
 	public:
 
 		Vector() = default;
 
-		Vector(const Vector& v) : Matrix<T>(v) { } //copy everything from Matrix
+		Vector(const Vector& v) : Tensor<T>(v) { } //copy everything from Matrix
 
-		Vector(size_t N) : Matrix<T>({N, 1}) {
+		Vector(size_t N) : Tensor<T>({N}) {
 
 		}
 
 		~Vector() = default;
 
+		/*!
+		 * Serializes vector into ostream.
+		 * \author tkornuta
+		 * @param os
+		 */
         virtual void serialize(std::ostream& os) const {
 
-            Matrix<T>::serialize(os);
+            Tensor<T>::serialize(os);
+
+            os << std::endl;
+
+            for (size_t i = 0; i < Tensor<T>::dim[0]; i++) {
+
+		            if (typeid(T) == typeid(bool)) {
+		            	os << Tensor<T>::data[i ];
+		            } else {
+	            		os << "[" << std::setw( 3 ) << std::setfill( '-' ) << i << "] " <<
+	            		std::fixed << std::setw( 6 ) << std::setprecision( 3 ) <<
+	            		std::setfill( ' ' ) << Tensor<T>::data[i] << " ";
+            		}
+            	if (i < Tensor<T>::dim[0] - 1) os << std::endl;
+            }
             
         }
+
+        /*!
+         * Returns reference to value stored at i-th position.
+         * \author tkornuta
+         */
+		T& operator()(const size_t i) {
+
+		    return Tensor<T>::data[i];
+		}
 
 };
 

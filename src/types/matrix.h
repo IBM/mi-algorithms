@@ -44,8 +44,21 @@ class Matrix : public Tensor<T> {
 
 		Matrix() = default;
 
-		Matrix(const Matrix& m)  { //copy contents from Tensor
-					
+		/*!
+		 * Copying constructor.
+		 * \author tkornuta
+		 * @param m
+		 */
+		Matrix(const Matrix& m)  {
+			//if (Tensor<T>::data != nullptr) delete(Tensor<T>::data);
+
+			// Copy dimesions and number of elements.
+			Tensor<T>::dim = m.dim;
+			Tensor<T>::elements = m.elements;
+
+			// Allocate memory and copy data!
+			Tensor<T>::data = new T[Tensor<T>::elements];
+			memcpy(Tensor<T>::data, m.data, sizeof(T) * Tensor<T>::elements);
 		}
 
 		Matrix(size_t M, size_t N) : Tensor<T>({M, N}) {
@@ -91,6 +104,8 @@ class Matrix : public Tensor<T> {
 		}
 
 		Matrix<T>& operator=(Matrix<T>& m) {
+
+			std::cout << "dupa12\n";
 
 			Tensor<T>::operator=(m);
 			transposed = m.transposed;
@@ -340,10 +355,26 @@ typedef Matrix<float> matrix_float_t;
 
 
 /*!
- * \brief Shared pointer to matrix of floats type.
+ * \brief Shared pointer to matrix of short type.
  * \author tkornuta
  */
 typedef std::shared_ptr< mic::types::Matrix<float> > matrix_float_ptr_t;
+
+
+/*!
+ * \brief matrix of floats type.
+ * \author tkornuta
+ */
+typedef Matrix<short> matrix_short_t;
+
+
+/*!
+ * \brief Shared pointer to matrix of short type.
+ * \author tkornuta
+ */
+typedef std::shared_ptr< mic::types::Matrix<short> > matrix_short_ptr_t;
+
+
 
 }//: namespace types
 }//: namespace mic
