@@ -41,8 +41,12 @@ find_package(Boost 1.58 REQUIRED COMPONENTS system thread random program_options
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 
 # Find OpenBLAS package
-find_package( OpenBLAS REQUIRED )
-include_directories(${OpenBLAS_INCLUDE_DIR})
+#find_package( OpenBLAS REQUIRED )
+#include_directories(${OpenBLAS_INCLUDE_DIR})
+
+# Find Eigen package
+find_package( Eigen3 REQUIRED )
+include_directories( ${EIGEN3_INCLUDE_DIR} )
 
 # Find MIC Toolchain
 find_package(MIToolchain REQUIRED)

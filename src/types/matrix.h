@@ -8,6 +8,8 @@
 * @Last Modified time: 2015-05-18 15:50:57
 */
 
+#ifdef 0
+
 #ifndef __CXXMATRIX_H__
 #define __CXXMATRIX_H__
 
@@ -380,3 +382,5 @@ typedef std::shared_ptr< mic::types::Matrix<short> > matrix_short_ptr_t;
 }//: namespace mic
 
 #endif /*__MATRIX_H__*/
+
+#endif

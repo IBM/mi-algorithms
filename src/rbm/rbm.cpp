@@ -7,69 +7,112 @@
 
 #include <rbm/rbm.hpp>
 
+#include <cmath>
+#include <data_utils/RandomGenerator.hpp>
+
+#include <logger/Log.hpp>
+using namespace mic::logger;
+
 namespace mic {
 namespace rbm {
 
-RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size, DISPLAY_MODE dm) {
+RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size)
+{
 
 	num_input = n_visible;
 	num_output = n_hidden;
 	batch_size = b_size;
 
 	// parameters
-	W = new Matrix<float>(num_output, num_input);
-	W_delta = new Matrix<float>(num_output, num_input);
-	sigma = new Matrix<float>(num_input, 1);
-	b = new Matrix<float>(1, num_input);
-	b_delta = new Matrix<float>(1, num_input);
-	c = new Matrix<float>(num_output, 1);
-	c_delta = new Matrix<float>(num_output, 1);
+	// W - weights between input and output units.
+	W.resize(num_output, num_input);
+	W_delta.resize(num_output, num_input);
+	sigma.resize(num_input, 1); // => Eigen::VectorXd
+	b.resize(1, num_input); // => Eigen::VectorXd
+	b_delta.resize(1, num_input); // => Eigen::VectorXd
+	c.resize(num_output, 1); // => Eigen::VectorXd
+	c_delta.resize(num_output, 1); // => Eigen::VectorXd
 
 	//temp storage
-	h = new Matrix<float>(num_output, batch_size);
-	H2 = new Matrix<float>(num_output, batch_size);
-	hn = new Matrix<float>(num_output, batch_size);
-	H = new Matrix<float>(num_output, batch_size);
-	rv = new Matrix<float>(batch_size, num_input);
-	rh = new Matrix<float>(num_output, batch_size);
+	h.resize(num_output, batch_size);
+	//H2.resize(num_output, batch_size);
+	hn.resize(num_output, batch_size);
+	H.resize(num_output, batch_size);
+	rv.resize(batch_size, num_input);
+	rh.resize(num_output, batch_size);
 
-	hidmeans = new Matrix<float>(num_output, 1);
-	hidmeans_inc = new Matrix<float>(num_output, 1);
-	hidmeans_inc_rep = new Matrix<float>(num_output, batch_size);
-	sparsegrads = new Matrix<float>(num_output, num_input);
+	hidmeans.resize(num_output, 1); // => Eigen::VectorXd
+	hidmeans_inc.resize(num_output, 1); // => Eigen::VectorXd
+	hidmeans_inc_rep.resize(num_output, batch_size);
+	sparsegrads.resize(num_output, num_input);
 
-	v = new Matrix<float>(batch_size, num_input);
-	vn = new Matrix<float>(batch_size, num_input);
-	pc = new Matrix<float>(batch_size, num_input);
+	v.resize(batch_size, num_input);
+	vn.resize(batch_size, num_input);
+	pc.resize(batch_size, num_input);
 
-	ve = new Matrix<float>(batch_size, num_input);
+	ve.resize(batch_size, num_input);
 
-	posprods = new Matrix<float>(num_output, num_input);
-	negprods = new Matrix<float>(num_output, num_input);
+	posprods.resize(num_output, num_input);
+	negprods.resize(num_output, num_input);
+
+	// Reset matrices/vectors.
+	W.setZero();
+	W_delta.setZero();
+	sigma.setZero();
+	b.setZero();
+	b_delta.setZero();
+	c.setZero();
+	c_delta.setZero();
+	h.setZero();
+	hn.setZero();
+	H.setZero();
+	rv.setZero();
+	rh.setZero();
+	hidmeans.setZero();
+	hidmeans_inc.setZero();
+	hidmeans_inc_rep.setZero();
+	sparsegrads.setZero();
+	v.setZero();
+	vn.setZero();
+	pc.setZero();
+	ve.setZero();
+	posprods.setZero();
+	negprods.setZero();
 
 	//params init
-	W->elementwise_function(&_randn);
-	W->elementwise_function_scalar(&_mult, 0.001f);
+	//W->elementwise_function(&_randn);
+	//W->elementwise_function_scalar(&_mult, 0.001f);
+	// Initialize W with random variables from 0.0f to 0.001f (normal distribution mi=0, variance=1).
+	for (size_t x=0; x < W.cols(); x++)
+		for (size_t y=0; y < W.rows(); y++)
+			W(y,x) = 0.001*RAN_GEN->normRandReal();
 
-	W->display_mode = DISPLAY_MODE::ROWS_ARE_WEIGHTS;
+
+/*	W->display_mode = DISPLAY_MODE::ROWS_ARE_WEIGHTS;
 	H->display_mode = DISPLAY_MODE::ROWS_ARE_IMAGES;
 	v->display_mode = dm;
 	vn->display_mode = dm;
 	pc->display_mode = dm;
 	h->display_mode = DISPLAY_MODE::ROWS_ARE_IMAGES;
-	hn->display_mode = DISPLAY_MODE::ROWS_ARE_IMAGES;
+	hn->display_mode = DISPLAY_MODE::ROWS_ARE_IMAGES;*/
 
-	mflops = (num_output * num_input * batch_size * 2 * 4 +  //SGEMMs
+/*	mflops = (num_output * num_input * batch_size * 2 * 4 +  //SGEMMs
 	          num_output * batch_size * 8	//OPs on hidden
-	         ) / (1024 * 1024);
+	         ) / (1024 * 1024);*/
 
-	if (learning_type == LTYPE::PCD)
-		hn->elementwise_function(&_rand);
+	if (learning_type == LTYPE::PCD) {
+		//hn->elementwise_function(&_rand);
+		// Initialize hn with random variables from 0.0f to 1.0f (uniform distribution).
+		for (size_t x=0; x < hn.cols(); x++)
+			for (size_t y=0; y < hn.rows(); y++)
+				hn(y,x) = RAN_GEN->uniRandReal();
+
+	}
 
 }
 
-RBM::RBM(size_t n_visible, size_t n_hidden, NTYPE v_type, NTYPE h_type, LTYPE l_type, DISPLAY_MODE dm, size_t b_size) :
-		RBM(n_visible, n_hidden, b_size, dm)
+RBM::RBM(size_t n_visible, size_t n_hidden, NTYPE v_type, NTYPE h_type, LTYPE l_type, size_t b_size) :
+		RBM(n_visible, n_hidden, b_size)
 {
 	visible_type = v_type;
 	hidden_type = h_type;
@@ -78,7 +121,7 @@ RBM::RBM(size_t n_visible, size_t n_hidden, NTYPE v_type, NTYPE h_type, LTYPE l_
 
 RBM::~RBM() {
 
-	if (W != nullptr) delete(W);
+/*	if (W != nullptr) delete(W);
 	if (W_delta != nullptr) delete(W_delta);
 	if (sigma != nullptr) delete(sigma);
 	if (b != nullptr) delete(b);
@@ -100,134 +143,289 @@ RBM::~RBM() {
 	if (rv != nullptr) delete(rv);
 	if (rh != nullptr) delete(rh);
 	if (posprods != nullptr) delete(posprods);
-	if (negprods != nullptr) delete(negprods);
+	if (negprods != nullptr) delete(negprods);*/
 
 }
 
-void RBM::up(Matrix<float>* in) { // h given v
+void RBM::up(mic::types::matrixd_ptr_t in) { // h given v
+	LOG(LTRACE)<<"RBM::up";
 
-	MATRIX_MEMCPY(v, in);
+	//MATRIX_MEMCPY(v, in);
+	// Copy input matrix to "RBM visible units".
+//	LOG(LINFO)<<" -- v = (*in.get())";
+	v = (*in.get());
+//	LOG(LINFO)<<" input v:";
+//	LOG(LINFO)<<"\n" << v;
 
+	// Flatten!
+	v.resize(1,W.cols());
+//	LOG(LINFO)<<" resized v:";
+//	LOG(LINFO)<<"\n" << v;
+
+	// That was commented earlier.
 	//v->flatten();
 	// rv->elementwise_function(&_rand);
 	// v->elementwise_function_matrix(&_compare, *rv);
 
-	v->transpose();
-	Matrix<float>::sgemm(*h, *W, *v);
-	v->transpose();
+	//v->transpose();
+	//Matrix<float>::sgemm(*h, *W, *v);
+	//v->transpose();
+	// Compute hidden units h by multiplication of visible units v and weight matrix W.
+//	LOG(LINFO)<<" -- h = W * (v.transpose())";
+//	LOG(LINFO)<<" h.rows" << h.rows() << " h.cols" << h.cols() ;
+//	LOG(LINFO)<<" W.rows" << W.rows() << " W.cols" << W.cols() ;
+//	LOG(LINFO)<<" v.rows" << v.rows() << " v.cols" << v.cols() ;
+//	LOG(LINFO)<<" v'.rows" << v.transpose().rows() << " v'.cols" << v.transpose().cols() ;
+//	mic::types::matrixd_t aa = W * (v.transpose());
+//	LOG(LINFO)<<" aa.rows" << aa.rows() << " aa.cols" << aa.cols() ;
+	h = W * (v.transpose());
 
-	h->matrix_row_vector_function(&_add, *c);
-	h->elementwise_function(&_sigmoid);
 
-	Matrix<float>::sgemm(*posprods, *h, *v);
+	//h->matrix_row_vector_function(&_add, *c);
+	// Add c to h?
+//	LOG(LINFO)<<" -- h += c";
+	for (size_t x=0; x < h.cols(); x++)
+		for (size_t y=0; y < h.rows(); y++){
+			// Add c??
+			h(y,x) += c(x,0);
+		}//: for
+
+	// h->elementwise_function(&_sigmoid);
+	// Sigmoid
+//	LOG(LINFO)<<" -- Sigmoid";
+	for (size_t x=0; x < h.cols(); x++)
+		for (size_t y=0; y < h.rows(); y++)
+			h(y,x) = (double)1.0 / ((double)1.0 + expf(-h(y,x)));
+
+	// Matrix<float>::sgemm(*posprods, *h, *v);
+	// Multiply hidden units by visible - why?
+//	LOG(LINFO)<<" -- posprods = h * v";
+	posprods = h * v;
 
 }
 
-void RBM::down(Matrix<float>* in) { // v given h
+void RBM::down() { // v given h
+	LOG(LTRACE)<<"RBM::down";
 
-	memcpy(H->data, h->data, sizeof(float) * h->elements);
-	rh->elementwise_function(&_rand);
-	H->elementwise_function_matrix(&_compare, *rh);
-	H->transpose();
+	//memcpy(H->data, h->data, sizeof(float) * h->elements);
+	// rh->elementwise_function(&_rand);
+	//H->elementwise_function_matrix(&_compare, *rh);
+	// T _compare(T x, T y) { return (T)(x > y); }
+	for (size_t x=0; x < H.cols(); x++)
+		for (size_t y=0; y < H.rows(); y++)
+			H(y,x) = h(y,x) > RAN_GEN->uniRandReal();
+
+
+	/*H->transpose();
 	Matrix<float>::sgemm(*vn, *H, *W);
-	H->transpose();
-	vn->matrix_column_vector_function(&_add, *b);
-	vn->elementwise_function(&_sigmoid);
+	H->transpose();*/
+	vn = (H.transpose()) * W;
+
+	/*vn->matrix_column_vector_function(&_add, *b);
+	vn->elementwise_function(&_sigmoid);*/
+	for (size_t x=0; x < vn.cols(); x++)
+		for (size_t y=0; y < vn.rows(); y++){
+			// Add bias?
+			vn(y,x) += b(0,x);
+			// Sigmoid
+			vn(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
+		}
+
 
 	if (learning_type == LTYPE::CD) {
 
-		vn->transpose();
-		Matrix<float>::sgemm(*hn, *W, *vn);
-		vn->transpose();
-		hn->matrix_row_vector_function(&_add, *c);
-		hn->elementwise_function(&_sigmoid);
+		//vn->transpose();
+		//Matrix<float>::sgemm(*hn, *W, *vn);
+		//vn->transpose();
+		hn = W * (vn.transpose());
 
-		Matrix<float>::sgemm(*negprods, *hn, *vn);
-		MATRIX_MEMCPY(pc, vn);
+
+		//hn->matrix_row_vector_function(&_add, *c);
+		//hn->elementwise_function(&_sigmoid);
+		for (size_t x=0; x < hn.cols(); x++)
+			for (size_t y=0; y < hn.rows(); y++){
+				// Add c??
+				hn(y,x) += c(x,0);
+				// Sigmoid
+				hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
+			}//: for
+
+		//Matrix<float>::sgemm(*negprods, *hn, *vn);
+		negprods = hn * vn;
+
+		// MATRIX_MEMCPY(pc, vn);
+		pc = vn;
 
 	} else {
+		// TO JUZ BYLO przed if!!
+		//memcpy(H->data, hn->data, sizeof(float) * h->elements);
+		//rh->elementwise_function(&_rand);
+		//H->elementwise_function_matrix(&_compare, *rh);
 
-		memcpy(H->data, hn->data, sizeof(float) * h->elements);
-		rh->elementwise_function(&_rand);
-		H->elementwise_function_matrix(&_compare, *rh);
-		H->transpose();
-		Matrix<float>::sgemm(*pc, *H, *W);
-		H->transpose();
-		pc->matrix_column_vector_function(&_add, *b);
-		pc->elementwise_function(&_sigmoid);
-		pc->transpose();
-		Matrix<float>::sgemm(*hn, *W, *pc);
-		pc->transpose();
-		hn->matrix_row_vector_function(&_add, *c);
-		hn->elementwise_function(&_sigmoid);
 
-		Matrix<float>::sgemm(*negprods, *hn, *pc);
+		//H->transpose();
+		//Matrix<float>::sgemm(*pc, *H, *W);
+		//H->transpose();
+		pc = (H.transpose()) * W;
 
+
+		//pc->matrix_column_vector_function(&_add, *b);
+		//pc->elementwise_function(&_sigmoid);
+		for (size_t x=0; x < pc.cols(); x++)
+			for (size_t y=0; y < pc.rows(); y++){
+				// Add bias?
+				pc(y,x) += b(0,x);
+				// Sigmoid
+				pc(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
+			}
+
+
+		//pc->transpose();
+		//Matrix<float>::sgemm(*hn, *W, *pc);
+		//pc->transpose();
+		hn = W * (pc.transpose());
+
+
+		//hn->matrix_row_vector_function(&_add, *c);
+		//hn->elementwise_function(&_sigmoid);
+		for (size_t x=0; x < hn.cols(); x++)
+			for (size_t y=0; y < hn.rows(); y++){
+				// Add c??
+				hn(y,x) += c(x,0);
+				// Sigmoid
+				hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
+			}//: for
+
+
+		//Matrix<float>::sgemm(*negprods, *hn, *pc);
+		negprods = hn * pc;
 	}
 
 }
 
 void RBM::compute_statistics() {
+	LOG(LTRACE)<<"RBM::compute_statistics";
 
-	MATRIX_MEMCPY(ve, vn);
-	ve->elementwise_function_matrix(&_sub, *v);
+	//MATRIX_MEMCPY(ve, vn);
+	//ve = vn;
+	//ve->elementwise_function_matrix(&_sub, *v);
+	// Bylo zakomentowane
 	// ve->elementwise_function(&_square);
 	// err = ve->sum();
-	hsum = h->sum() / (batch_size * num_output);
-	err = ve->norm();
+
+	// Compute error as difference between vn and v.
+	for (size_t x=0; x < ve.cols(); x++)
+		for (size_t y=0; y < ve.rows(); y++)
+			ve(y,x) = vn(y,x) - v(y,x);
+	err = ve.norm();
 	err *= err / batch_size;
 
-	MATRIX_MEMCPY(H2, h);
+
+	// Compute sum and normalize it by batch size and number of outputs.
+	hsum = h.sum() / (batch_size * num_output);
+
+// Commented as not used later!
+/*	MATRIX_MEMCPY(H2, h);
 	H2->elementwise_function(&_H2);
-	I = H2->sum() / (batch_size * num_output);
+	I = H2->sum() / (batch_size * num_output);*/
 
 }
 
 void RBM::adapt(float alpha, float decay, float sparsecost, float sparsetarget, float sparsedamping) {
+	LOG(LTRACE)<<"RBM::adapt";
 
 	// reset
-	W_delta->elementwise_function(&_zero);
+	/*W_delta->elementwise_function(&_zero);
 	b_delta->elementwise_function(&_zero);
-	c_delta->elementwise_function(&_zero);
+	c_delta->elementwise_function(&_zero);*/
+	// Reset deltas.
+	W_delta.setZero();
+	b_delta.setZero();
+	c_delta.setZero();
 
+	// *************
 	// hidmeans = sparsedamping*hidmeans + (1-sparsedamping)*poshidact/numcases;
-	hidmeans->elementwise_function_scalar(&_mult, sparsedamping);
-	hidmeans_inc->sum_rows(*h);
-	hidmeans_inc->elementwise_function_scalar(&_mult, (1.0f - sparsedamping) / batch_size);
-	hidmeans->elementwise_function_matrix(&_add, *hidmeans_inc);
+	//hidmeans->elementwise_function_scalar(&_mult, sparsedamping);
+	hidmeans *= (double)sparsedamping;
 
+	//hidmeans_inc->sum_rows(*h);
+	hidmeans_inc = h.rowwise().sum();
+
+	//hidmeans_inc->elementwise_function_scalar(&_mult, (1.0f - sparsedamping) / batch_size);
+	hidmeans_inc *= (double)((1.0f - sparsedamping) / batch_size);
+
+	//hidmeans->elementwise_function_matrix(&_add, *hidmeans_inc);
+	hidmeans += hidmeans_inc;
+
+	// *************
 	// sparsegrads = sparsecost*(repmat(hidmeans,numcases,1)-sparsetarget);
-	MATRIX_MEMCPY(hidmeans_inc, hidmeans);
-	hidmeans_inc->elementwise_function_scalar(&_sub, sparsetarget);
-	hidmeans_inc->elementwise_function_scalar(&_mult, sparsecost);
-	Matrix<float>::repmat(*hidmeans_inc_rep, *hidmeans_inc, batch_size);
-	Matrix<float>::sgemm(*sparsegrads, *hidmeans_inc_rep, *v);
-	hidmeans_inc->sum_rows(*sparsegrads);
+	//MATRIX_MEMCPY(hidmeans_inc, hidmeans);
+	hidmeans_inc = hidmeans;
+
+
+	// hidmeans_inc->elementwise_function_scalar(&_sub, sparsetarget);
+	// hidmeans_inc -= (double)sparsetarget; !!!!! EIGEN PROBLEM!
+	for (size_t x=0; x < hidmeans_inc.cols(); x++)
+		for (size_t y=0; y < hidmeans_inc.rows(); y++)
+			hidmeans_inc(y,x) -= (double)sparsetarget;
+
+	//hidmeans_inc->elementwise_function_scalar(&_mult, sparsecost);
+	hidmeans_inc *= (double)sparsecost;
+
+	//Matrix<float>::repmat(*hidmeans_inc_rep, *hidmeans_inc, batch_size);
+	for (size_t y = 0; y < hidmeans_inc_rep.cols(); y++) {  // cols = batchsize
+		hidmeans_inc_rep.col(y) = hidmeans_inc.col(0);
+	}
+
+	// Matrix<float>::sgemm(*sparsegrads, *hidmeans_inc_rep, *v);
+	sparsegrads = hidmeans_inc_rep * v;
+
+	//hidmeans_inc->sum_rows(*sparsegrads);
+	hidmeans_inc = sparsegrads.rowwise().sum();
+
+	// *************
 	// compute
-	MATRIX_MEMCPY(W_delta, posprods);
-	W_delta->elementwise_function_matrix(&_sub, *negprods);
-	W_delta->elementwise_function_matrix(&_sub, *sparsegrads);
-	W_delta->elementwise_function_scalar(&_mult, alpha / batch_size);
+	//MATRIX_MEMCPY(W_delta, posprods);
+	//W_delta->elementwise_function_matrix(&_sub, *negprods);
+	//W_delta->elementwise_function_matrix(&_sub, *sparsegrads);
+	W_delta = posprods - negprods - sparsegrads;
 
-	b_delta->diff_cols(*v, *pc);
-	b_delta->elementwise_function_scalar(&_mult, alpha / batch_size);
+	//W_delta->elementwise_function_scalar(&_mult, alpha / batch_size);
+	W_delta *= (alpha / batch_size);
 
-	c_delta->diff_rows(*h, *hn);
-	c_delta->elementwise_function_matrix(&_sub, *hidmeans_inc);
-	c_delta->elementwise_function_scalar(&_mult, alpha / batch_size);
+	//b_delta->diff_cols(*v, *pc);
+	b_delta = (v-pc).colwise().sum();
 
+	// b_delta->elementwise_function_scalar(&_mult, alpha / batch_size);
+	b_delta *= (alpha / batch_size);
+
+	//c_delta->diff_rows(*h, *hn);
+	c_delta = (h-hn).rowwise().sum();
+
+	//c_delta->elementwise_function_matrix(&_sub, *hidmeans_inc);
+	c_delta -= hidmeans_inc;
+
+	//c_delta->elementwise_function_scalar(&_mult, alpha / batch_size);
+	c_delta *= (alpha / batch_size);
+
+	// *************
 	// apply
-	W->elementwise_function_matrix(&_add, *W_delta);
-	W->elementwise_function_scalar(&_mult, 1.0f - decay);
-	b->elementwise_function_matrix(&_add, *b_delta);
-	c->elementwise_function_matrix(&_add, *c_delta);
+	//W->elementwise_function_matrix(&_add, *W_delta);
+	W += W_delta;
+	//W->elementwise_function_scalar(&_mult, 1.0f - decay);
+	W *= (1.0f - decay);
+
+	//b->elementwise_function_matrix(&_add, *b_delta);
+	//c->elementwise_function_matrix(&_add, *c_delta);
+	b += b_delta;
+	c += c_delta;
 }
 
 
 void RBM::serialize(std::ostream& os) const {
 
 	os << "[" << num_input << " x " << num_output << " Encoder]" << std::endl;
-	os << *W << std::endl;
+	os << W << std::endl;
 }
 
 

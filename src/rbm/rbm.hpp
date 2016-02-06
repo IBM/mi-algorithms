@@ -11,11 +11,7 @@
 #ifndef __CXXRBM_H__
 #define __CXXRBM_H__
 
-#include <types/matrix.h>
-
-enum class NTYPE {BINARY, GAUSSIAN, RELU};
-enum class LTYPE {CD, PCD};
-
+#include <types/MatrixTypes.hpp>
 
 using namespace mic::types;
 
@@ -27,6 +23,10 @@ namespace mic {
  * \author tkornuta
  */
 namespace rbm {
+
+enum class NTYPE {BINARY, GAUSSIAN, RELU};
+enum class LTYPE {CD, PCD};
+
 
 /**
  * \brief Class representing Restricted Boltzmann Machine (RBM).
@@ -43,9 +43,8 @@ class RBM {
 	 * @param n_visible Number of units in the visible (input) layer.
 	 * @param n_hidden Number of units in the hidden layer.
 	 * @param b_size Batch size.
-	 * @param dm Display mode (to be removed).
 	 */
-	RBM(size_t n_visible, size_t n_hidden, size_t b_size, DISPLAY_MODE dm);
+	RBM(size_t n_visible, size_t n_hidden, size_t b_size);
 
 	/*!
 	 * Constructor.
@@ -54,11 +53,10 @@ class RBM {
 	 * @param v_type
 	 * @param h_type
 	 * @param l_type
-	 * @param dm
 	 * @param b_size
 	 */
 	RBM(size_t n_visible, size_t n_hidden, NTYPE v_type, NTYPE h_type, LTYPE l_type = LTYPE::PCD,
-	    DISPLAY_MODE dm = DISPLAY_MODE::DEFAULT_MODE, size_t b_size = 1);
+	    size_t b_size = 1);
 
 	/*!
 	 * Destructor. Deallocates all matrices.
@@ -69,13 +67,12 @@ class RBM {
 	 * ?
 	 * @param in
 	 */
-	void up(Matrix<float>* in);
+	void up(mic::types::matrixd_ptr_t in);
+
 	/*!
 	 * ?
-	 * @param in
 	 */
-	void down(Matrix<float>* in);
-
+	void down();
 
 	/*!
 	 * Computes the statistics. TODO: remove.
@@ -115,38 +112,38 @@ class RBM {
 	size_t batch_size;
 
 
-	Matrix<float>* W;
-	Matrix<float>* sigma;
-	Matrix<float>* b;
-	Matrix<float>* c;
+	mic::types::matrixd_t W;
+	mic::types::matrixd_t sigma;
+	mic::types::matrixd_t b;
+	mic::types::matrixd_t c;
 
-	Matrix<float>* W_delta;
-	Matrix<float>* b_delta;
-	Matrix<float>* c_delta;
+	mic::types::matrixd_t W_delta;
+	mic::types::matrixd_t b_delta;
+	mic::types::matrixd_t c_delta;
 
-	Matrix<float>* h;
-	Matrix<float>* hidmeans;
-	Matrix<float>* hidmeans_inc;
-	Matrix<float>* hidmeans_inc_rep;
-	Matrix<float>* sparsegrads;
-	Matrix<float>* H2;
-	Matrix<float>* hn;
-	Matrix<float>* H;
-	Matrix<float>* rv;
-	Matrix<float>* rh;
+	mic::types::matrixd_t h;
+	mic::types::matrixd_t hidmeans;
+	mic::types::matrixd_t hidmeans_inc;
+	mic::types::matrixd_t hidmeans_inc_rep;
+	mic::types::matrixd_t sparsegrads;
+	//mic::types::matrixd_t H2;
+	mic::types::matrixd_t hn;
+	mic::types::matrixd_t H;
+	mic::types::matrixd_t rv;
+	mic::types::matrixd_t rh;
 
-	Matrix<float>* v;
-	Matrix<float>* vn;
-	Matrix<float>* ve;
-	Matrix<float>* pc;
+	mic::types::matrixd_t v;
+	mic::types::matrixd_t vn;
+	mic::types::matrixd_t ve;
+	mic::types::matrixd_t pc;
 
-	Matrix<float>* posprods;
-	Matrix<float>* negprods;
+	mic::types::matrixd_t posprods;
+	mic::types::matrixd_t negprods;
 
 	float err;
 	float hsum;
-	float I;
-	double mflops;
+	// float I; -- commented as not used!
+	//double mflops;
 
 	NTYPE visible_type;
 	NTYPE hidden_type;

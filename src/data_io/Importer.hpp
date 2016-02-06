@@ -16,6 +16,8 @@
 #include <logger/Log.hpp>
 #include <configuration/PropertyTree.hpp>
 
+#include <types/MatrixTypes.hpp>
+
 namespace mic {
 
 /**

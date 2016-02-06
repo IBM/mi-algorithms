@@ -57,11 +57,5 @@ private:
 } /* namespace data_io */
 } /* namespace mic */
 
-/*!
- * \brief The type returned by char getRandomSample method.
- * \author tkornuta
- */
-typedef std::pair< std::shared_ptr<char>, std::shared_ptr<char> > char_pair_t;
-
 
 #endif /* SRC_DATA_IO_RAWTEXTIMPORTER_HPP_ */

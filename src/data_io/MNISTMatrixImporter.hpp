@@ -11,12 +11,10 @@
 
 #include <data_io/Importer.hpp>
 
-#include <types/matrix.h>
-
 namespace mic {
 namespace data_io {
 
-class MNISTMatrixImporter: public mic::data_io::Importer< mic::types::Matrix<float> , unsigned int> {
+class MNISTMatrixImporter: public mic::data_io::Importer< mic::types::matrixd_t, unsigned int> {
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.
@@ -63,12 +61,6 @@ private:
 
 };
 
-
-/*!
- * \brief The type returned by MNIST Matrix importer getRandomSample method.
- * \author tkornuta
- */
-typedef std::pair< std::shared_ptr< mic::types::Matrix<float> >, std::shared_ptr<unsigned int> > mnist_matrix_pair_t;
 
 
 } /* namespace data_io */

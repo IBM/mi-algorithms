@@ -95,7 +95,7 @@ install(FILES ${files} DESTINATION include/rbm)
 # Create RBM shared library.
 file(GLOB rbm_src rbm/*.cpp )
 add_library(rbm SHARED ${rbm_src})
-target_link_libraries(rbm types data_utils ${OpenBLAS_LIB})
+target_link_libraries(rbm types data_utils)
 
 
 # =======================================================================

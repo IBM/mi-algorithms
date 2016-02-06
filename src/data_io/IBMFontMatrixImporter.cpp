@@ -32,7 +32,7 @@ bool IBMFontMatrixImporter::importData(){
 	for(size_t i=1; i < 94; i++ ) {
 
 		// Create new matrix of size font_type x font_type (8x8 v 16x16).
-		mic::types::matrix_float_ptr_t m (new mic::types::matrix_float_t(font_type, font_type));
+		mic::types::matrixd_ptr_t mat (new mic::types::matrixd_t((int)font_type, (int)font_type));
 
 		if (font_type == font8x8_type) {
 			// Generate 8x8 characters - font_type = 8.
@@ -42,7 +42,7 @@ bool IBMFontMatrixImporter::importData(){
 				uint8_t line = font8x8_table[8*i+r];
 				// Iterate through characters in given line.
 				for (size_t c = 0; c < 8; c++) {
-					(*m)(r, c) = ((line & mask8x8[8-c]) != 0);
+					(*mat)(r, c) = ((line & mask8x8[8-c]) != 0);
 				}//: for
 			}//: for
 		} else {
@@ -51,14 +51,14 @@ bool IBMFontMatrixImporter::importData(){
 			for (size_t r = 0; r < 16; r++) {
 		        uint16_t line = ((uint16_t*)font16x16_table)[16 *i+r];
 		        for (size_t c = 0; c < 16; c++) {
-		            (*m)(r, c) = ((line & mask16x16[c]) != 0);
+		            (*mat)(r, c) = ((line & mask16x16[c]) != 0);
 		        }//: for
 		    }//: for
 
 	    }//: else
 
 		// Add character and label to vectors.
-		data.push_back(m);
+		data.push_back(mat);
 		labels.push_back(std::make_shared <char> (font_labels_table[i]) );
 
 	}//: for

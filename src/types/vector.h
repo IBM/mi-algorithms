@@ -7,6 +7,8 @@
 * @Last Modified time: 2015-05-02 15:09:40
 */
 
+#ifdef 0
+
 #ifndef __VECTOR_H__
 #define __VECTOR_H__
 
@@ -76,3 +78,5 @@ class Vector : public mic::types::Tensor<T> {
 }//: namespace mic
 
 #endif /*__VECTOR_H__*/
+
+#endif

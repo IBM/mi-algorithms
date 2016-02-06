@@ -149,7 +149,7 @@ bool MNISTMatrixImporter::importData(){
 			if (!data_file.eof()) {
 
 				// Create new matrix of MNIST image size.
-				mic::types::matrix_float_ptr_t mat (new mic::types::matrix_float_t(image_height, image_width));
+				mic::types::matrixd_ptr_t mat (new mic::types::matrixd_t(image_height, image_width));
 
 				// Parse and set image data.
 				for (size_t i = 0; i < image_width*image_height; i++) {

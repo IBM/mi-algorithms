@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 				APP_STATE->pressPause();
 
 			// Random select image.
-			char_pair_t sample = importer.getRandomSample();
+			char_char_pair_t sample = importer.getRandomSample();
 			//LOG(LINFO)<<" Orig = '" << *(sample.first) << "' label = '" << *(sample.second) << "'";
 
 			// Encode the selected image into SDR.

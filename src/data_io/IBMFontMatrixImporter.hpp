@@ -10,8 +10,6 @@
 
 #include <data_io/Importer.hpp>
 
-#include <types/matrix.h>
-
 namespace mic {
 namespace data_io {
 
@@ -70,7 +68,7 @@ namespace data_io {
  * \brief Importer responsible for importing/loading characters from IBM VGA font dataset.
  * \author tkornuta
  */
-class IBMFontMatrixImporter: public mic::data_io::Importer< mic::types::Matrix<float> , char> {
+class IBMFontMatrixImporter: public mic::data_io::Importer< mic::types::matrixd_t, char> {
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.
@@ -100,12 +98,6 @@ private:
 	 */
 	mic::configuration::Property<IBMfont_t> font_type;
 };
-
-/*!
- * \brief The type returned by IBMFontMatrixImporter getRandomSample method.
- * \author tkornuta
- */
-typedef std::pair< std::shared_ptr< mic::types::Matrix<float> >, std::shared_ptr<char> > ibmfont_matrix_pair_t;
 
 } /* namespace data_io */
 } /* namespace mic */
