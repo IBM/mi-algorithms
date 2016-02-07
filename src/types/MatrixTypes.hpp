@@ -14,27 +14,41 @@ namespace mic {
 namespace types {
 
 /*!
- * \brief Matrix with integers.
+ * \brief Vector with integers (of dynamic size).
+ * \author tkornuta
+ */
+typedef Eigen::VectorXi vectori_t;
+
+
+/*!
+ * \brief Matrix with integers (of dynamic size).
  * \author tkornuta
  */
 typedef Eigen::MatrixXi matrixi_t;
 
 /*!
- * \brief Shared pointer to matrix with integers.
+ * \brief Shared pointer to matrix with integers (of dynamic size).
  * \author tkornuta
  */
 typedef std::shared_ptr< Eigen::MatrixXi > matrixi_ptr_t;
 
 
 /*!
- * \brief Matrix with double precision floats.
+ * \brief Vector with double precision floats (of dynamic size).
+ * \author tkornuta
+ */
+typedef Eigen::VectorXd vectord_t;
+
+
+/*!
+ * \brief Matrix with double precision floats (of dynamic size).
  * \author tkornuta
  */
 typedef Eigen::MatrixXd matrixd_t;
 
 
 /*!
- * \brief Shared pointer to matrix with double precision floats.
+ * \brief Shared pointer to matrix with double precision floats (of dynamic size).
  * \author tkornuta
  */
 typedef std::shared_ptr< Eigen::MatrixXd > matrixd_ptr_t;

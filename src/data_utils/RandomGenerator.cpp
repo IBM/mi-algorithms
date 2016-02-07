@@ -51,9 +51,11 @@ RandomGenerator::RandomGenerator() :
 }
 
 
-uint64_t RandomGenerator::uniRandInt() {
+uint64_t RandomGenerator::uniRandInt(int min, int max) {
 	LOG(LTRACE)<<"uniRandInt";
-    return uniform_int_dist(rng_mt19937_64);
+	std::uniform_int_distribution<> dist(min, max);
+	return dist(rng_mt19937_64);
+    //return uniform_int_dist(rng_mt19937_64);
 }
 
 double RandomGenerator::uniRandReal(double min, double max) {

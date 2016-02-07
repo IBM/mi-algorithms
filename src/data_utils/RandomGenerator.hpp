@@ -34,7 +34,7 @@ public:
 	 * Return a random integer from range <0, RAND_MAX> - uniform distribution.
 	 * @return Random integer.
 	 */
-	uint64_t uniRandInt();
+	uint64_t uniRandInt(int min = 0, int max = RAND_MAX);
 
 	/*!
 	 * Return a random real number from range <min, max> - uniform distribution.

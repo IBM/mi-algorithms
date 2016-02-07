@@ -178,7 +178,7 @@ void RBM::up(mic::types::matrixd_ptr_t in) { // h given v
 //	LOG(LINFO)<<" v'.rows" << v.transpose().rows() << " v'.cols" << v.transpose().cols() ;
 //	mic::types::matrixd_t aa = W * (v.transpose());
 //	LOG(LINFO)<<" aa.rows" << aa.rows() << " aa.cols" << aa.cols() ;
-	h = W * (v.transpose());
+	h.noalias() = W * (v.transpose());
 
 
 	//h->matrix_row_vector_function(&_add, *c);
@@ -200,7 +200,7 @@ void RBM::up(mic::types::matrixd_ptr_t in) { // h given v
 	// Matrix<float>::sgemm(*posprods, *h, *v);
 	// Multiply hidden units by visible - why?
 //	LOG(LINFO)<<" -- posprods = h * v";
-	posprods = h * v;
+	posprods.noalias() = h * v;
 
 }
 
@@ -219,7 +219,7 @@ void RBM::down() { // v given h
 	/*H->transpose();
 	Matrix<float>::sgemm(*vn, *H, *W);
 	H->transpose();*/
-	vn = (H.transpose()) * W;
+	vn.noalias() = (H.transpose()) * W;
 
 	/*vn->matrix_column_vector_function(&_add, *b);
 	vn->elementwise_function(&_sigmoid);*/
@@ -237,7 +237,7 @@ void RBM::down() { // v given h
 		//vn->transpose();
 		//Matrix<float>::sgemm(*hn, *W, *vn);
 		//vn->transpose();
-		hn = W * (vn.transpose());
+		hn.noalias() = W * (vn.transpose());
 
 
 		//hn->matrix_row_vector_function(&_add, *c);
@@ -251,10 +251,11 @@ void RBM::down() { // v given h
 			}//: for
 
 		//Matrix<float>::sgemm(*negprods, *hn, *vn);
-		negprods = hn * vn;
+		negprods.noalias() = hn * vn;
 
 		// MATRIX_MEMCPY(pc, vn);
-		pc = vn;
+		// pc not used anymore!!
+		//pc = vn;
 
 	} else {
 		// TO JUZ BYLO przed if!!
@@ -266,7 +267,7 @@ void RBM::down() { // v given h
 		//H->transpose();
 		//Matrix<float>::sgemm(*pc, *H, *W);
 		//H->transpose();
-		pc = (H.transpose()) * W;
+		pc.noalias() = (H.transpose()) * W;
 
 
 		//pc->matrix_column_vector_function(&_add, *b);
@@ -283,7 +284,7 @@ void RBM::down() { // v given h
 		//pc->transpose();
 		//Matrix<float>::sgemm(*hn, *W, *pc);
 		//pc->transpose();
-		hn = W * (pc.transpose());
+		hn.noalias() = W * (pc.transpose());
 
 
 		//hn->matrix_row_vector_function(&_add, *c);
@@ -298,7 +299,7 @@ void RBM::down() { // v given h
 
 
 		//Matrix<float>::sgemm(*negprods, *hn, *pc);
-		negprods = hn * pc;
+		negprods.noalias() = hn * pc;
 	}
 
 }
@@ -388,7 +389,7 @@ void RBM::adapt(float alpha, float decay, float sparsecost, float sparsetarget, 
 	//MATRIX_MEMCPY(W_delta, posprods);
 	//W_delta->elementwise_function_matrix(&_sub, *negprods);
 	//W_delta->elementwise_function_matrix(&_sub, *sparsegrads);
-	W_delta = posprods - negprods - sparsegrads;
+	W_delta.noalias() = posprods - negprods - sparsegrads;
 
 	//W_delta->elementwise_function_scalar(&_mult, alpha / batch_size);
 	W_delta *= (alpha / batch_size);
