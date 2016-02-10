@@ -44,7 +44,7 @@ class RBM {
 	 * @param n_hidden Number of units in the hidden layer.
 	 * @param b_size Batch size.
 	 */
-	RBM(size_t n_visible, size_t n_hidden, size_t b_size);
+	RBM(const size_t n_visible, const size_t n_hidden, const size_t b_size);
 
 	/*!
 	 * Constructor.
@@ -55,8 +55,8 @@ class RBM {
 	 * @param l_type
 	 * @param b_size
 	 */
-	RBM(size_t n_visible, size_t n_hidden, NTYPE v_type, NTYPE h_type, LTYPE l_type = LTYPE::PCD,
-	    size_t b_size = 1);
+	RBM(const size_t n_visible, const size_t n_hidden, NTYPE v_type, NTYPE h_type, LTYPE l_type = LTYPE::CD,
+			const size_t b_size = 1);
 
 	/*!
 	 * Destructor. Deallocates all matrices.
