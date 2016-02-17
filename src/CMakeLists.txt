@@ -19,6 +19,10 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl")
 
 set(BUILD_TEST_CHAR_ENCODER ON CACHE BOOL "Build the 1-of-k Char Encoder test application")
 
+set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
+
+
+
 # =======================================================================
 # Build MI Algorithms.
 # =======================================================================
@@ -126,3 +130,24 @@ if(${BUILD_TEST_CHAR_ENCODER})
 	install(TARGETS char_encoder_test RUNTIME DESTINATION bin)
 
 endif(${BUILD_TEST_CHAR_ENCODER})
+
+
+# =======================================================================
+# Build and install - matrix test application.
+# =======================================================================
+
+if(${BUILD_TEST_MATRIX})
+	# Create exeutable.
+	ADD_EXECUTABLE(matrix_test tests/matrix_test.cpp)
+	# Link it with shared libraries.
+	target_link_libraries(matrix_test 
+		configuration
+		${Boost_LIBRARIES}
+		${EIGEN_LIBRARIES} 
+		${OpenBLAS_LIB}
+		)
+
+	# install test to bin directory
+	install(TARGETS matrix_test RUNTIME DESTINATION bin)
+
+endif(${BUILD_TEST_MATRIX})
