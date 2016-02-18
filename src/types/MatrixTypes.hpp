@@ -30,22 +30,6 @@ typedef std::shared_ptr< Eigen::VectorXi >VectorXiPtr;
 
 
 /*!
- * \brief Vector of floats with single precision (of dynamic size).
- * \author tkornuta
- */
-typedef Eigen::VectorXf VectorXf;
-
-
-/*!
- * \brief Shared pointer to vector of floats with single precision (of dynamic size).
- * \author tkornuta
- */
-typedef std::shared_ptr< Eigen::VectorXf >VectorXfPtr;
-
-
-
-
-/*!
  * \brief Matrix of integers (of dynamic size).
  * \author tkornuta
  */

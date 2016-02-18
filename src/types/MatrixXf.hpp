@@ -14,6 +14,22 @@
 namespace mic {
 namespace types {
 
+
+/*!
+ * \brief Vector of floats with single precision (of dynamic size).
+ * \author tkornuta
+ */
+typedef Eigen::VectorXf VectorXf;
+
+
+/*!
+ * \brief Shared pointer to vector of floats with single precision (of dynamic size).
+ * \author tkornuta
+ */
+typedef std::shared_ptr< Eigen::VectorXf >VectorXfPtr;
+
+
+
 /*!
  * \brief Matrix with single precision floats (of dynamic size).
  * Uses OpenBLAS if found by CMAKE.
@@ -46,7 +62,6 @@ public:
     	return Base::operator=(mat_);
 	}
 
-
     /*!
      * Overloaded matrix multiplication operator. Uses OpenBLAS if found by CMAKE.
      */
@@ -67,21 +82,30 @@ public:
 	 */
 	void uniRandReal(float min = 0, float max = 1);
 
+    /*!
+     * Applies elementwise function to all matrix elements.
+     * @param func Function to be applied.
+     */
+	void elementwiseFunction(float (*func)(float));
 
+	/*!
+     * Applies elementwise function to all matrix elements passing scalar as function argument.
+     * @param func Function to be applied.
+	 * @param scalar_ Scalar passed to function as argument.
+	 */
+	void elementwiseFunctionScalar(float (*func)(float, float), float scalar_);
 
     /*!
      * Applies elementwise function to all matrix element and uses additional Matrix mat_ data as function paramter.
-     * @param func
-     * @param mat_
+     * @param func Function to be applied.
+     * @param mat_ Matrix passed to function as argument.
      */
 	void elementwiseFunctionMatrix(float (*func)(float, float), Eigen::MatrixXf & mat_);
 
 
-    /*!
-     * Applies elementwise function to all matrix elements.
-     * @param func
-     */
-	void elementwiseFunction(float (*func)(float));
+	void matrixColumnVectorFunction( float(*func)(float, float), mic::types::VectorXf& v_);
+
+	void matrixRowVectorFunction( float(*func)(float, float), mic::types::VectorXf& v_);
 
 };
 

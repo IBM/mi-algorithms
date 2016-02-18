@@ -239,6 +239,7 @@ void RBM::down() { // v given h
 			// Sigmoid
 			//vn(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
 		}
+	//vn.matrixColumnVectorFunction(&_add, b);
 	vn.elementwiseFunction(&_sigmoid);
 
 
@@ -259,6 +260,7 @@ void RBM::down() { // v given h
 				// Sigmoid
 				//hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
 			}//: for
+		//hn.matrixRowVectorFunction(&_add, c);
 		hn.elementwiseFunction(&_sigmoid);
 
 		//Matrix<float>::sgemm(*negprods, *hn, *vn);
@@ -289,6 +291,7 @@ void RBM::down() { // v given h
 				// Sigmoid
 				//pc(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
 			}
+		//pc.matrixColumnVectorFunction(&_add, b);
 		pc.elementwiseFunction(&_sigmoid);
 
 
@@ -307,6 +310,7 @@ void RBM::down() { // v given h
 				// Sigmoid
 				//hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
 			}//: for
+		//hn.matrixRowVectorFunction(&_add, c);
 		hn.elementwiseFunction(&_sigmoid);
 
 		//Matrix<float>::sgemm(*negprods, *hn, *pc);
