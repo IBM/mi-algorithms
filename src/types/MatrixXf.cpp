@@ -125,22 +125,22 @@ void MatrixXf::elementwiseFunctionMatrix(float (*func)(float, float), Eigen::Mat
 
 void MatrixXf::matrixColumnVectorFunction( float(*func)(float, float), mic::types::VectorXf& v_) {
 
-	if (this->cols() != v_.rows())
+	if (this->rows() != v_.cols())
 		printf("matrixColumnVectorFunction: dimensions mismatch\n");
 
 	// Get access to data.
-	float* data_ptr = data();
-	int rows = this->rows();
-	int cols = this->cols();
-	float* vector_data_ptr = v_.data();
+	//float* data_ptr = data();
+	//int rows = this->rows();
+	//int cols = this->cols();
+	//float* vector_data_ptr = v_.data();
 
 	#pragma omp parallel for
-	for (size_t y = 0; y < this->rows(); y++) {
-		for (size_t x = 0; x < this->cols(); x++) {
+	for (size_t x = 0; x < this->cols(); x++) {
+		for (size_t y = 0; y < this->rows(); y++) {
 			//data_ptr[x + y*cols] = (*func)(data_ptr[x + y*cols], vector_data_ptr[x]);
-			(*this)(y,x) += v_(x);
-		}//: for x
-	}//: for y
+			(*this)(y,x) = (*func)((*this)(y,x), v_(y));
+		}//: for y
+	}//: for x
 
 }
 /*
@@ -160,22 +160,24 @@ void matrix_column_vector_function(T(*func)(T, T), Matrix<T>& v) {
 
 void MatrixXf::matrixRowVectorFunction( float(*func)(float, float), mic::types::VectorXf& v_) {
 
-	if (this->rows() != v_.rows())
+	if (this->cols() != v_.cols())
 		printf("matrixRowVectorFunction: dimensions mismatch\n");
 
 	// Get access to data.
-	float* data_ptr = data();
+	/*float* data_ptr = data();
 	int rows = this->rows();
 	int cols = this->cols();
-	float* vector_data_ptr = v_.data();
+	float* vector_data_ptr = v_.data();*/
 
 	#pragma omp parallel for
-	for (size_t y = 0; y < this->rows(); y++) {
-		for (size_t x = 0; x < this->cols(); x++) {
+	for (size_t x = 0; x < this->cols(); x++) {
+		for (size_t y = 0; y < this->rows(); y++) {
+			//h(y,x) += c(x);
+			//(*this)(y,x) += v_(x);
+			(*this)(y,x) = (*func)((*this)(y,x), v_(x));
 			//data_ptr[x + y*cols] = (*func)(data_ptr[x + y*cols], vector_data_ptr[y]);
-			(*this)(y,x) += v_(x);
-		}//: for x
-	}//: for y
+		}//: for y
+	}//: for x
 
 }
 /*

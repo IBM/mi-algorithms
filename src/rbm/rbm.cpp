@@ -188,11 +188,12 @@ void RBM::up(mic::types::MatrixXfPtr in) { // h given v
 	//h->matrix_row_vector_function(&_add, *c);
 	// Add c to h?
 //	LOG(LINFO)<<" -- h += c";
-	for (size_t x=0; x < h.cols(); x++)
+	/*for (size_t x=0; x < h.cols(); x++)
 		for (size_t y=0; y < h.rows(); y++){
 			// Add c??
 			h(y,x) += c(x);
-		}//: for
+		}//: for*/
+	h.matrixRowVectorFunction(&_add, c);
 
 	// h->elementwise_function(&_sigmoid);
 	// Sigmoid
@@ -232,14 +233,14 @@ void RBM::down() { // v given h
 
 	/*vn->matrix_column_vector_function(&_add, *b);
 	vn->elementwise_function(&_sigmoid);*/
-	for (size_t x=0; x < vn.cols(); x++)
+	/*for (size_t x=0; x < vn.cols(); x++)
 		for (size_t y=0; y < vn.rows(); y++){
 			// Add bias?
 			vn(y,x) += b(x);
 			// Sigmoid
 			//vn(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
-		}
-	//vn.matrixColumnVectorFunction(&_add, b);
+		}*/
+	vn.matrixColumnVectorFunction(&_add, b);
 	vn.elementwiseFunction(&_sigmoid);
 
 
@@ -253,14 +254,14 @@ void RBM::down() { // v given h
 
 		//hn->matrix_row_vector_function(&_add, *c);
 		//hn->elementwise_function(&_sigmoid);
-		for (size_t x=0; x < hn.cols(); x++)
+		/*for (size_t x=0; x < hn.cols(); x++)
 			for (size_t y=0; y < hn.rows(); y++){
 				// Add c??
 				hn(y,x) += c(x);
 				// Sigmoid
 				//hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
-			}//: for
-		//hn.matrixRowVectorFunction(&_add, c);
+			}//: for*/
+		hn.matrixRowVectorFunction(&_add, c);
 		hn.elementwiseFunction(&_sigmoid);
 
 		//Matrix<float>::sgemm(*negprods, *hn, *vn);
@@ -284,14 +285,14 @@ void RBM::down() { // v given h
 
 		//pc->matrix_column_vector_function(&_add, *b);
 		//pc->elementwise_function(&_sigmoid);
-		for (size_t x=0; x < pc.cols(); x++)
+		/*for (size_t x=0; x < pc.cols(); x++)
 			for (size_t y=0; y < pc.rows(); y++){
 				// Add bias?
 				pc(y,x) += b(x);
 				// Sigmoid
 				//pc(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
-			}
-		//pc.matrixColumnVectorFunction(&_add, b);
+			}*/
+		pc.matrixColumnVectorFunction(&_add, b);
 		pc.elementwiseFunction(&_sigmoid);
 
 
@@ -303,14 +304,14 @@ void RBM::down() { // v given h
 
 		//hn->matrix_row_vector_function(&_add, *c);
 		//hn->elementwise_function(&_sigmoid);
-		for (size_t x=0; x < hn.cols(); x++)
+		/*for (size_t x=0; x < hn.cols(); x++)
 			for (size_t y=0; y < hn.rows(); y++){
 				// Add c??
 				hn(y,x) += c(x);
 				// Sigmoid
 				//hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
-			}//: for
-		//hn.matrixRowVectorFunction(&_add, c);
+			}//: for*/
+		hn.matrixRowVectorFunction(&_add, c);
 		hn.elementwiseFunction(&_sigmoid);
 
 		//Matrix<float>::sgemm(*negprods, *hn, *pc);
@@ -382,9 +383,10 @@ void RBM::adapt(float alpha, float decay, float sparsecost, float sparsetarget, 
 
 	// hidmeans_inc->elementwise_function_scalar(&_sub, sparsetarget);
 	// hidmeans_inc -= (double)sparsetarget; !!!!! EIGEN PROBLEM!
-	for (size_t x=0; x < hidmeans_inc.cols(); x++)
+	/*for (size_t x=0; x < hidmeans_inc.cols(); x++)
 		for (size_t y=0; y < hidmeans_inc.rows(); y++)
-			hidmeans_inc(y,x) -= (double)sparsetarget;
+			hidmeans_inc(y,x) -= (double)sparsetarget;*/
+	hidmeans_inc.array() -= sparsetarget;
 
 	//hidmeans_inc->elementwise_function_scalar(&_mult, sparsecost);
 	hidmeans_inc *= (double)sparsecost;
