@@ -10,6 +10,8 @@
 #include <cmath>
 #include <data_utils/RandomGenerator.hpp>
 
+#include <data_utils/functions.h>
+
 #include <logger/Log.hpp>
 using namespace mic::logger;
 
@@ -27,11 +29,11 @@ RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size)
 	// W - weights between input and output units.
 	W.resize(num_output, num_input);
 	W_delta.resize(num_output, num_input);
-	sigma.resize(num_input, 1); // => Eigen::VectorXd
-	b.resize(1, num_input); // => Eigen::VectorXd
-	b_delta.resize(1, num_input); // => Eigen::VectorXd
-	c.resize(num_output, 1); // => Eigen::VectorXd
-	c_delta.resize(num_output, 1); // => Eigen::VectorXd
+	//sigma.resize(num_input, 1); // => Eigen::VectorXd
+	b.resize(num_input); // => Eigen::VectorXd
+	b_delta.resize(num_input); // => Eigen::VectorXd
+	c.resize(num_output); // => Eigen::VectorXd
+	c_delta.resize(num_output); // => Eigen::VectorXd
 
 	//temp storage
 	h.resize(num_output, batch_size);
@@ -58,7 +60,7 @@ RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size)
 	// Reset matrices/vectors.
 	W.setZero();
 	W_delta.setZero();
-	sigma.setZero();
+	//sigma.setZero();
 	b.setZero();
 	b_delta.setZero();
 	c.setZero();
@@ -83,10 +85,10 @@ RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size)
 	//W->elementwise_function(&_randn);
 	//W->elementwise_function_scalar(&_mult, 0.001f);
 	// Initialize W with random variables from 0.0f to 0.001f (normal distribution mi=0, variance=1).
-	for (size_t x=0; x < W.cols(); x++)
+	/*for (size_t x=0; x < W.cols(); x++)
 		for (size_t y=0; y < W.rows(); y++)
-			W(y,x) = 0.001*RAN_GEN->normRandReal();
-
+			W(y,x) = 0.001*RAN_GEN->normRandReal();*/
+	W.normRandReal(0.0, 0.001);
 
 /*	W->display_mode = DISPLAY_MODE::ROWS_ARE_WEIGHTS;
 	H->display_mode = DISPLAY_MODE::ROWS_ARE_IMAGES;
@@ -103,9 +105,11 @@ RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size)
 	if (learning_type == LTYPE::PCD) {
 		//hn->elementwise_function(&_rand);
 		// Initialize hn with random variables from 0.0f to 1.0f (uniform distribution).
-		for (size_t x=0; x < hn.cols(); x++)
+		/*for (size_t x=0; x < hn.cols(); x++)
 			for (size_t y=0; y < hn.rows(); y++)
-				hn(y,x) = RAN_GEN->uniRandReal();
+				hn(y,x) = RAN_GEN->uniRandReal();*/
+		hn.uniRandReal(0.0, 1.0);
+
 
 	}
 
@@ -187,15 +191,16 @@ void RBM::up(mic::types::MatrixXfPtr in) { // h given v
 	for (size_t x=0; x < h.cols(); x++)
 		for (size_t y=0; y < h.rows(); y++){
 			// Add c??
-			h(y,x) += c(x,0);
+			h(y,x) += c(x);
 		}//: for
 
 	// h->elementwise_function(&_sigmoid);
 	// Sigmoid
 //	LOG(LINFO)<<" -- Sigmoid";
-	for (size_t x=0; x < h.cols(); x++)
+	/*for (size_t x=0; x < h.cols(); x++)
 		for (size_t y=0; y < h.rows(); y++)
-			h(y,x) = (double)1.0 / ((double)1.0 + expf(-h(y,x)));
+			h(y,x) = (double)1.0 / ((double)1.0 + expf(-h(y,x)));*/
+	h.elementwiseFunction(&_sigmoid);
 
 	// Matrix<float>::sgemm(*posprods, *h, *v);
 	// Multiply hidden units by visible - why?
@@ -211,9 +216,13 @@ void RBM::down() { // v given h
 	// rh->elementwise_function(&_rand);
 	//H->elementwise_function_matrix(&_compare, *rh);
 	// T _compare(T x, T y) { return (T)(x > y); }
-	for (size_t x=0; x < H.cols(); x++)
+	/*for (size_t x=0; x < H.cols(); x++)
 		for (size_t y=0; y < H.rows(); y++)
-			H(y,x) = h(y,x) > RAN_GEN->uniRandReal();
+			H(y,x) = h(y,x) > RAN_GEN->uniRandReal();*/
+	H = h;
+	rh.uniRandReal(0.0, 1.0);
+	H.elementwiseFunctionMatrix(&_compare, rh);
+
 
 
 	/*H->transpose();
@@ -226,10 +235,11 @@ void RBM::down() { // v given h
 	for (size_t x=0; x < vn.cols(); x++)
 		for (size_t y=0; y < vn.rows(); y++){
 			// Add bias?
-			vn(y,x) += b(0,x);
+			vn(y,x) += b(x);
 			// Sigmoid
-			vn(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
+			//vn(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
 		}
+	vn.elementwiseFunction(&_sigmoid);
 
 
 	if (learning_type == LTYPE::CD) {
@@ -245,10 +255,11 @@ void RBM::down() { // v given h
 		for (size_t x=0; x < hn.cols(); x++)
 			for (size_t y=0; y < hn.rows(); y++){
 				// Add c??
-				hn(y,x) += c(x,0);
+				hn(y,x) += c(x);
 				// Sigmoid
-				hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
+				//hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
 			}//: for
+		hn.elementwiseFunction(&_sigmoid);
 
 		//Matrix<float>::sgemm(*negprods, *hn, *vn);
 		negprods = hn * vn;
@@ -274,10 +285,11 @@ void RBM::down() { // v given h
 		for (size_t x=0; x < pc.cols(); x++)
 			for (size_t y=0; y < pc.rows(); y++){
 				// Add bias?
-				pc(y,x) += b(0,x);
+				pc(y,x) += b(x);
 				// Sigmoid
-				pc(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
+				//pc(y,x) = (double)1.0 / ((double)1.0 + expf(-vn(y,x)));
 			}
+		pc.elementwiseFunction(&_sigmoid);
 
 
 		//pc->transpose();
@@ -291,11 +303,11 @@ void RBM::down() { // v given h
 		for (size_t x=0; x < hn.cols(); x++)
 			for (size_t y=0; y < hn.rows(); y++){
 				// Add c??
-				hn(y,x) += c(x,0);
+				hn(y,x) += c(x);
 				// Sigmoid
-				hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
+				//hn(y,x) = (double)1.0 / ((double)1.0 + expf(-hn(y,x)));
 			}//: for
-
+		hn.elementwiseFunction(&_sigmoid);
 
 		//Matrix<float>::sgemm(*negprods, *hn, *pc);
 		negprods = hn * pc;
@@ -314,9 +326,10 @@ void RBM::compute_statistics() {
 	// err = ve->sum();
 
 	// Compute error as difference between vn and v.
-	for (size_t x=0; x < ve.cols(); x++)
+	/*for (size_t x=0; x < ve.cols(); x++)
 		for (size_t y=0; y < ve.rows(); y++)
-			ve(y,x) = vn(y,x) - v(y,x);
+			ve(y,x) = vn(y,x) - v(y,x);*/
+	ve = vn - v;
 	err = ve.norm();
 	err *= err / batch_size;
 

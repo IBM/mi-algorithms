@@ -113,13 +113,13 @@ class RBM {
 
 
 	mic::types::MatrixXf W;
-	mic::types::MatrixXf sigma;
-	mic::types::MatrixXf b;
-	mic::types::MatrixXf c;
+	//mic::types::VectorXf sigma;
+	mic::types::VectorXf b;
+	mic::types::VectorXf c;
 
 	mic::types::MatrixXf W_delta;
-	mic::types::MatrixXf b_delta;
-	mic::types::MatrixXf c_delta;
+	mic::types::VectorXf b_delta;
+	mic::types::VectorXf c_delta;
 
 	mic::types::MatrixXf h;
 	mic::types::MatrixXf hidmeans;
@@ -130,6 +130,8 @@ class RBM {
 	mic::types::MatrixXf hn;
 	mic::types::MatrixXf H;
 	mic::types::MatrixXf rv;
+
+	/// Matrix (of size BxI) - all elements contain random variables (uniform 0,1), used for thresholding h.
 	mic::types::MatrixXf rh;
 
 	mic::types::MatrixXf v;

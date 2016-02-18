@@ -5,6 +5,9 @@
  * \date Feb 17, 2016
  */
 
+
+//#ifdef FALSE
+
 #include <types/MatrixXf.hpp>
 
 #include <random>
@@ -22,7 +25,7 @@ Eigen::MatrixXf MatrixXf::operator *(const Eigen::MatrixXf& mat_)
 
 	#ifdef OpenBLAS_FOUND
 	// Using openBLAS boost!
-		printf("Using BLAS boost!\n");
+		//printf("Using BLAS boost!\n");
 		// Get dimensions.
 		size_t M = this->rows();
 		size_t K =  this->cols();
@@ -35,8 +38,8 @@ Eigen::MatrixXf MatrixXf::operator *(const Eigen::MatrixXf& mat_)
 				mat_.data(), K, 0.0, c.data(), M );
 		return c;
 	#else
-		printf("Calling base EIGEN operator *\n");
-		// Calling base EIGEN operator *
+	// Calling base EIGEN operator *
+		//printf("Calling base EIGEN operator *\n");
 		return Base::operator*(mat_);
 	#endif
 }
@@ -92,5 +95,20 @@ void MatrixXf::elementwiseFunctionMatrix(float (*func)(float, float), Eigen::Mat
 
 }
 
+void MatrixXf::elementwiseFunction(float (*func)(float)) {
+
+	// Get access to data.
+	float* data_ptr = this->data();
+
+	// Apply function to all elements.
+	#pragma omp parallel for
+	for (size_t i = 0; i < rows()*cols(); i++) {
+		data_ptr[i] = (*func)(data_ptr[i]);
+	}
+
+}
+
 } /* namespace types */
 } /* namespace mic */
+
+//#endif

@@ -8,6 +8,7 @@
 #ifndef SRC_TYPES_MATRIXXF_HPP_
 #define SRC_TYPES_MATRIXXF_HPP_
 
+//#ifdef FALSE
 #include <Eigen/Dense>
 
 namespace mic {
@@ -69,11 +70,18 @@ public:
 
 
     /*!
-     * Applies elementwise function to all matrix element and uses mat_ as function paramter.
+     * Applies elementwise function to all matrix element and uses additional Matrix mat_ data as function paramter.
      * @param func
      * @param mat_
      */
 	void elementwiseFunctionMatrix(float (*func)(float, float), Eigen::MatrixXf & mat_);
+
+
+    /*!
+     * Applies elementwise function to all matrix elements.
+     * @param func
+     */
+	void elementwiseFunction(float (*func)(float));
 
 };
 
@@ -100,5 +108,7 @@ typedef std::pair< MatrixXfPtr, std::shared_ptr<unsigned int> > MatrixXfUintPair
 
 } /* namespace types */
 } /* namespace mic */
+
+//#endif
 
 #endif /* SRC_TYPES_MATRIXXF_HPP_ */

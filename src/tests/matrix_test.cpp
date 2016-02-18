@@ -12,6 +12,7 @@
 #include <sys/time.h>
 
 #include <types/MatrixTypes.hpp>
+
 #include <data_utils/functions.h>
 #include <data_utils/Timer.hpp>
 

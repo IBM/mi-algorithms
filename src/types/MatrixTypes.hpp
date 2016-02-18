@@ -16,64 +16,88 @@ namespace mic {
 namespace types {
 
 /*!
- * \brief Vector with integers (of dynamic size).
+ * \brief Vector of integers (of dynamic size).
  * \author tkornuta
  */
-typedef Eigen::VectorXi vectori_t;
+typedef Eigen::VectorXi VectorXi;
 
 
 /*!
- * \brief Matrix with integers (of dynamic size).
+ * \brief Shared pointer of vector with integers (of dynamic size).
  * \author tkornuta
  */
-typedef Eigen::MatrixXi matrixi_t;
-
-/*!
- * \brief Shared pointer to matrix with integers (of dynamic size).
- * \author tkornuta
- */
-typedef std::shared_ptr< Eigen::MatrixXi > matrixi_ptr_t;
+typedef std::shared_ptr< Eigen::VectorXi >VectorXiPtr;
 
 
 /*!
- * \brief Vector with double precision floats (of dynamic size).
+ * \brief Vector of floats with single precision (of dynamic size).
  * \author tkornuta
  */
-//typedef Eigen::VectorXd vectord_t;
+typedef Eigen::VectorXf VectorXf;
 
 
 /*!
- * \brief Matrix with double precision floats (of dynamic size).
+ * \brief Shared pointer to vector of floats with single precision (of dynamic size).
  * \author tkornuta
  */
-//typedef Eigen::MatrixXd matrixd_t;
+typedef std::shared_ptr< Eigen::VectorXf >VectorXfPtr;
+
+
 
 
 /*!
- * \brief Shared pointer to matrix with double precision floats (of dynamic size).
+ * \brief Matrix of integers (of dynamic size).
  * \author tkornuta
  */
-//typedef std::shared_ptr< Eigen::MatrixXd > matrixd_ptr_t;
-
+typedef Eigen::MatrixXi MatrixXi;
 
 /*!
- * \brief The <matrix-char> pair type used by e.g. IBMFontMatrixImporter.
+ * \brief Shared pointer to matrix of integers (of dynamic size).
  * \author tkornuta
  */
-//typedef std::pair< matrixd_ptr_t, std::shared_ptr<char> > matrixd_char_pair_t;
-
-/*!
- * \brief The <matrix-unsigned int> pair type used by e.g. MNISTMatrixImporter.
- * \author tkornuta
- */
-//typedef std::pair< matrixd_ptr_t, std::shared_ptr<unsigned int> > matrixd_uint_pair_t;
-
+typedef std::shared_ptr< Eigen::MatrixXi > MatrixXiPtr;
 
 /*!
  * \brief The <char-char> pair type used by e.g. RawTextImporter.
  * \author tkornuta
  */
 typedef std::pair< std::shared_ptr<char>, std::shared_ptr<char> > char_char_pair_t;
+
+
+
+/*!
+ * \brief Vector of double precision floats (of dynamic size).
+ * \author tkornuta
+ */
+typedef Eigen::VectorXd VectorXd;
+
+
+/*!
+ * \brief Matrix of double precision floats (of dynamic size).
+ * \author tkornuta
+ */
+typedef Eigen::MatrixXd MatrixXd;
+
+
+/*!
+ * \brief Shared pointer to matrix of double precision floats (of dynamic size).
+ * \author tkornuta
+ */
+typedef std::shared_ptr< MatrixXd > MatrixXdPtr;
+
+
+/*!
+ * \brief The <matrix-char> pair type used by e.g. IBMFontMatrixImporter.
+ * \author tkornuta
+ */
+typedef std::pair< MatrixXdPtr, std::shared_ptr<char> > MatrixXdCharPair;
+
+/*!
+ * \brief The <matrix-unsigned int> pair type used by e.g. MNISTMatrixImporter.
+ * \author tkornuta
+ */
+typedef std::pair< MatrixXdPtr, std::shared_ptr<unsigned int> > MatrixXdUintPair;
+
 
 
 
