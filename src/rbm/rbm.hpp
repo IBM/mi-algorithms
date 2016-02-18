@@ -67,7 +67,7 @@ class RBM {
 	 * ?
 	 * @param in
 	 */
-	void up(mic::types::matrixd_ptr_t in);
+	void up(mic::types::MatrixXfPtr in);
 
 	/*!
 	 * ?
@@ -112,33 +112,33 @@ class RBM {
 	size_t batch_size;
 
 
-	mic::types::matrixd_t W;
-	mic::types::matrixd_t sigma;
-	mic::types::matrixd_t b;
-	mic::types::matrixd_t c;
+	mic::types::MatrixXf W;
+	mic::types::MatrixXf sigma;
+	mic::types::MatrixXf b;
+	mic::types::MatrixXf c;
 
-	mic::types::matrixd_t W_delta;
-	mic::types::matrixd_t b_delta;
-	mic::types::matrixd_t c_delta;
+	mic::types::MatrixXf W_delta;
+	mic::types::MatrixXf b_delta;
+	mic::types::MatrixXf c_delta;
 
-	mic::types::matrixd_t h;
-	mic::types::matrixd_t hidmeans;
-	mic::types::matrixd_t hidmeans_inc;
-	mic::types::matrixd_t hidmeans_inc_rep;
-	mic::types::matrixd_t sparsegrads;
-	//mic::types::matrixd_t H2;
-	mic::types::matrixd_t hn;
-	mic::types::matrixd_t H;
-	mic::types::matrixd_t rv;
-	mic::types::matrixd_t rh;
+	mic::types::MatrixXf h;
+	mic::types::MatrixXf hidmeans;
+	mic::types::MatrixXf hidmeans_inc;
+	mic::types::MatrixXf hidmeans_inc_rep;
+	mic::types::MatrixXf sparsegrads;
+	//mic::types::MatrixXf H2;
+	mic::types::MatrixXf hn;
+	mic::types::MatrixXf H;
+	mic::types::MatrixXf rv;
+	mic::types::MatrixXf rh;
 
-	mic::types::matrixd_t v;
-	mic::types::matrixd_t vn;
-	mic::types::matrixd_t ve;
-	mic::types::matrixd_t pc;
+	mic::types::MatrixXf v;
+	mic::types::MatrixXf vn;
+	mic::types::MatrixXf ve;
+	mic::types::MatrixXf pc;
 
-	mic::types::matrixd_t posprods;
-	mic::types::matrixd_t negprods;
+	mic::types::MatrixXf posprods;
+	mic::types::MatrixXf negprods;
 
 	float err;
 	float hsum;

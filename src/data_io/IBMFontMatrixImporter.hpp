@@ -68,7 +68,7 @@ namespace data_io {
  * \brief Importer responsible for importing/loading characters from IBM VGA font dataset.
  * \author tkornuta
  */
-class IBMFontMatrixImporter: public mic::data_io::Importer< mic::types::matrixd_t, char> {
+class IBMFontMatrixImporter: public mic::data_io::Importer< mic::types::MatrixXf, char> {
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.

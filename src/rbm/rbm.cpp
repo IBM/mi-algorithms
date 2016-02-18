@@ -147,7 +147,7 @@ RBM::~RBM() {
 
 }
 
-void RBM::up(mic::types::matrixd_ptr_t in) { // h given v
+void RBM::up(mic::types::MatrixXfPtr in) { // h given v
 	LOG(LTRACE)<<"RBM::up";
 
 	//MATRIX_MEMCPY(v, in);

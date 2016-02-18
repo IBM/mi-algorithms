@@ -14,7 +14,7 @@
 namespace mic {
 namespace data_io {
 
-class MNISTMatrixImporter: public mic::data_io::Importer< mic::types::matrixd_t, unsigned int> {
+class MNISTMatrixImporter: public mic::data_io::Importer< mic::types::MatrixXf, unsigned int> {
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.

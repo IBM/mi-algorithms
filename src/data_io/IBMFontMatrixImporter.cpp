@@ -32,7 +32,7 @@ bool IBMFontMatrixImporter::importData(){
 	for(size_t i=1; i < 94; i++ ) {
 
 		// Create new matrix of size font_type x font_type (8x8 v 16x16).
-		mic::types::matrixd_ptr_t mat (new mic::types::matrixd_t((int)font_type, (int)font_type));
+		mic::types::MatrixXfPtr mat (new mic::types::MatrixXf((int)font_type, (int)font_type));
 
 		if (font_type == font8x8_type) {
 			// Generate 8x8 characters - font_type = 8.
