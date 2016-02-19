@@ -18,11 +18,11 @@ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -Wall")
 # Create CMAKE variables storing preprocessor commands
 # =======================================================================
 
-# Default length of SDR.
+# Default length of SDR !!DEPRICATED - TO BE REMOVED!!
 set(DEFAULT_SDR_LENGTH 1024 CACHE STRING "Default length of SDR")
 add_definitions(-DDEFAULT_SDR_LENGTH=${DEFAULT_SDR_LENGTH})
 
-# Debug (DEPRICATED - TO BE REMOVED!
+# Debug !!DEPRICATED - TO BE REMOVED!!
 set(DEBUG_RUN ON CACHE BOOL "Debug run - set DEBUG_RUN variable")
 if (${DEBUG_RUN})
 	add_definitions(-DDEBUG_RUN=1)
