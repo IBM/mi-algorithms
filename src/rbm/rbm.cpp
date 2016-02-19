@@ -105,13 +105,13 @@ RBM::~RBM() {
 void RBM::up(mic::types::MatrixXfPtr in) { // h given v
 	LOG(LTRACE)<<"RBM::up";
 
-/*	// Copy input matrix to "RBM visible units".
+	// Copy input matrix to "RBM visible units".
 	v = (*in.get());
 
 	// Flatten!
 	v.resize(batch_size, num_input);
 
-	// Compute hidden units h by multiplication of visible units v and weight matrix W.
+	// Compute hidden units activation h by multiplication of visible units v and weight matrix W.
 	h = W * (v.transpose());
 
 	h.matrixRowVectorFunction(&_add, c);
@@ -119,82 +119,32 @@ void RBM::up(mic::types::MatrixXfPtr in) { // h given v
 	// Sigmoid
 	h.elementwiseFunction(&_sigmoid);
 
-	// Multiply hidden units by visible - why?
-	posprods = h * v;*/
-
-	// TMP TMP TMP
-	//MATRIX_MEMCPY(v, in);
-	v = (*in.get());
-
-	//v->flatten();
-	v.resize(batch_size, num_input);
-	// rv->elementwise_function(&_rand);
-	// v->elementwise_function_matrix(&_compare, *rv);
-
-/*	v->transpose();
-	Matrix<float>::sgemm(*h, *W, *v);
-	v->transpose();*/
-	h = W * (v.transpose());
-
-	h.matrix_row_vector_function(&_add, c);
-	h.elementwise_function(&_sigmoid);
-
-	//Matrix<float>::sgemm(*posprods, *h, *v);
+	// Multiply activation  by visible in order to compute ...?
 	posprods = h * v;
-
 
 }
 
 void RBM::down() { // v given h
 	LOG(LTRACE)<<"RBM::down";
 
-/*	H = h;
-	rh.uniRandReal(0.0, 1.0);
-	H.elementwiseFunctionMatrix(&_compare, rh);
-
-	vn = (H.transpose()) * W;
-
-	vn.matrixColumnVectorFunction(&_add, b);
-	vn.elementwiseFunction(&_sigmoid);*/
-
-	//memcpy(H->data, h->data, sizeof(float) * h->elements);
 	H = h;
-
-	rh.elementwise_function(&_rand);
+	//rh.elementwise_function(&_rand);
+	rh.uniRandReal(0.0, 1.0);
 	H.elementwise_function_matrix(&_compare, rh);
 
-	//H->transpose();
-	//Matrix<float>::sgemm(*vn, *H, *W);
-	//H->transpose();
 	vn = (H.transpose()) * W;
 
 	vn.matrix_column_vector_function(&_add, b);
 	vn.elementwise_function(&_sigmoid);
 
-
-
 	if (learning_type == LTYPE::CD) {
-/*
-		hn = W * (vn.transpose());
 
-		hn.matrixRowVectorFunction(&_add, c);
-		hn.elementwiseFunction(&_sigmoid);
-
-		negprods = hn * vn;
-
-		pc = vn;*/
-
-		//vn->transpose();
-		//Matrix<float>::sgemm(*hn, *W, *vn);
-		//vn->transpose();
 		hn = W * vn.transpose();
-
 		hn.matrix_row_vector_function(&_add, c);
 		hn.elementwise_function(&_sigmoid);
 
-		//Matrix<float>::sgemm(*negprods, *hn, *vn);
 		negprods = hn * vn;
-		//MATRIX_MEMCPY(pc, vn);
+
 		pc = vn;
 
 	} else {
@@ -220,106 +170,77 @@ void RBM::compute_statistics() {
 void RBM::adapt(float alpha, float decay, float sparsecost, float sparsetarget, float sparsedamping) {
 	LOG(LTRACE)<<"RBM::adapt";
 
-/*	// Reset deltas.
+	// Reset deltas.
 	W_delta.setZero();
-	b_delta.setZero();
-	c_delta.setZero();
-
-	// hidmeans = sparsedamping*hidmeans + (1-sparsedamping)*poshidact/numcases;
-	hidmeans *= (float)sparsedamping;
-
-	hidmeans_inc = h.rowwise().sum();
-
-	hidmeans_inc *= (float)((1.0f - sparsedamping) / batch_size);
-
-	hidmeans += hidmeans_inc;
-
-	// sparsegrads = sparsecost*(repmat(hidmeans,numcases,1)-sparsetarget);
-	hidmeans_inc = hidmeans;
-
-	//hidmeans_inc.array() -= sparsetarget;
-	hidmeans_inc.elementwiseFunctionScalar(&_sub, sparsetarget);
-
-	hidmeans_inc *= (float)sparsecost;
-
-	//Matrix<float>::repmat(*hidmeans_inc_rep, *hidmeans_inc, batch_size);
-	for (size_t y = 0; y < hidmeans_inc_rep.cols(); y++) {  // cols = batchsize
-		hidmeans_inc_rep.col(y) = hidmeans_inc.col(0);
-	}
-
-	sparsegrads = hidmeans_inc_rep * v;
-
-	hidmeans_inc = sparsegrads.rowwise().sum();
-
-	// Compute W increment.
-	W_delta = (posprods - negprods) - sparsegrads;
-
-	W_delta *= (alpha / batch_size);
-
-	// Compute b update.
-	b_delta = (v-pc).colwise().sum();
-
-	b_delta *= (alpha / batch_size);
-
-	// Compute c update.
-	c_delta = (h-hn).rowwise().sum();
-
-	c_delta -= hidmeans_inc;
-
-	c_delta *= (alpha / batch_size);
-
-	// Apply weight updates.
-	W += W_delta;
-	W *= (1.0f - decay);
-
-	b += b_delta;
-	c += c_delta;*/
-
-	// reset
-	W_delta.elementwise_function(&_zero);
-//	b_delta.elementwise_function(&_zero);
-//	c_delta.elementwise_function(&_zero);
 	b_delta.setZero();
 	c_delta.setZero();
 
 
 	// hidmeans = sparsedamping*hidmeans + (1-sparsedamping)*poshidact/numcases;
 	hidmeans.elementwise_function_scalar(&_mult, sparsedamping);
+	// hidmeans *= (float)sparsedamping;
+
 	hidmeans_inc.sum_rows(h);
+	//hidmeans_inc = h.rowwise().sum();
+
 	hidmeans_inc.elementwise_function_scalar(&_mult, (1.0f - sparsedamping) / batch_size);
+	//hidmeans_inc *= (float)((1.0f - sparsedamping) / batch_size);
+
 	hidmeans.elementwise_function_vector(&_add, hidmeans_inc);
+	//hidmeans += hidmeans_inc;
 
 	// sparsegrads = sparsecost*(repmat(hidmeans,numcases,1)-sparsetarget);
-	//MATRIX_MEMCPY(hidmeans_inc, hidmeans);
 	hidmeans_inc = hidmeans;
 
 	hidmeans_inc.elementwise_function_scalar(&_sub, sparsetarget);
+	//hidmeans_inc.array() -= sparsetarget;
+
 	hidmeans_inc.elementwise_function_scalar(&_mult, sparsecost);
+	//hidmeans_inc *= (float)sparsecost;
+
 	MatrixXf::repmat(hidmeans_inc_rep, hidmeans_inc, batch_size);
-	//Matrix<float>::sgemm(*sparsegrads, *hidmeans_inc_rep, *v);
+
 	sparsegrads  = hidmeans_inc_rep * v;
 
 	hidmeans_inc.sum_rows(sparsegrads);
-	// compute
-	//MATRIX_MEMCPY(W_delta, posprods);
-	W_delta = posprods;
+	//hidmeans_inc = sparsegrads.rowwise().sum();
 
+	// Compute W increment.
+	//W_delta = (posprods - negprods) - sparsegrads;
+	W_delta = posprods;
 	W_delta.elementwise_function_matrix(&_sub, negprods);
 	W_delta.elementwise_function_matrix(&_sub, sparsegrads);
+
 	W_delta.elementwise_function_scalar(&_mult, alpha / batch_size);
+	//W_delta *= (alpha / batch_size);
+
+	// Compute b update.
+	//b_delta = (v-pc).colwise().sum();
+	//b_delta *= (alpha / batch_size);
 
 	b_delta.diff_cols(v, pc);
 	b_delta.elementwise_function_scalar(&_mult, alpha / batch_size);
+
+	// Compute c update.
+	//c_delta = (h-hn).rowwise().sum();
+	//c_delta -= hidmeans_inc;
+	//c_delta *= (alpha / batch_size);
 
 	c_delta.diff_rows(h, hn);
 	c_delta.elementwise_function_vector(&_sub, hidmeans_inc);
 	c_delta.elementwise_function_scalar(&_mult, alpha / batch_size);
 
-	// apply
+	// Apply weight updates.
+	//W += W_delta;
+	//W *= (1.0f - decay);
+	//b += b_delta;
+	//c += c_delta;
+
 	W.elementwise_function_matrix(&_add, W_delta);
 	W.elementwise_function_scalar(&_mult, 1.0f - decay);
 	b.elementwise_function_vector(&_add, b_delta);
 	c.elementwise_function_vector(&_add, c_delta);
+
 }
 
 

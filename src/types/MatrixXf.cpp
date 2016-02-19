@@ -106,9 +106,9 @@ void VectorXf::diff_rows(MatrixXf& m1, MatrixXf& m2) {
 Eigen::MatrixXf MatrixXf::operator *(const Eigen::MatrixXf& mat_)
 {
 
-	#ifdef OpenBLAS_FOUND0
+	#ifdef OpenBLAS_FOUND
 	// Using openBLAS boost!
-		//printf("Using BLAS boost!\n");
+		printf("Using BLAS boost!\n");
 		// Get dimensions.
 		size_t M = this->rows();
 		size_t K =  this->cols();
