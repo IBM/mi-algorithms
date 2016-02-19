@@ -122,8 +122,8 @@ class RBM {
 	mic::types::VectorXf c_delta;
 
 	mic::types::MatrixXf h;
-	mic::types::MatrixXf hidmeans;
-	mic::types::MatrixXf hidmeans_inc;
+	mic::types::VectorXf hidmeans;
+	mic::types::VectorXf hidmeans_inc;
 	mic::types::MatrixXf hidmeans_inc_rep;
 	mic::types::MatrixXf sparsegrads;
 	//mic::types::MatrixXf H2;

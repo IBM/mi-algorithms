@@ -14,12 +14,73 @@
 namespace mic {
 namespace types {
 
+class MatrixXf;
 
 /*!
  * \brief Vector of floats with single precision (of dynamic size).
  * \author tkornuta
  */
-typedef Eigen::VectorXf VectorXf;
+//typedef Eigen::VectorXf VectorXf;
+class VectorXf : public Eigen::VectorXf {
+public:
+
+	/*!
+	 * Constructor. Calls default Eigen::VectorXf constructor.
+	 */
+	VectorXf () : Eigen::VectorXf() { };
+
+
+	/*!
+	 * Constructor. Calls default Eigen::VectorXf constructor.
+	 * @param Cols_ Number of columns.
+	 */
+	VectorXf (int Cols_) : Eigen::VectorXf(Cols_) { };
+
+	/*!
+	 * Overloaded operator - calls base operator.
+	 */
+    EIGEN_STRONG_INLINE Eigen::VectorXf& operator =(const Eigen::VectorXf& mat_) {
+		// Using base EIGEN operator =
+		return Base::operator=(mat_);
+	}
+
+
+    void sum_cols(MatrixXf& m1);
+
+    void diff_cols(MatrixXf& m1, MatrixXf& m2);
+
+    void sum_rows(MatrixXf& m1);
+
+    void diff_rows(MatrixXf& m1, MatrixXf& m2);
+
+	void elementwise_function_scalar(float(*func)(float, float), float scalar) {
+
+		#pragma omp parallel for
+		for (size_t i = 0; i < this->rows()*this->cols(); i++) {
+
+			data()[i] = (*func)(data()[i], scalar);
+
+		}
+
+	}
+
+	void elementwise_function_vector(float(*func)(float, float), VectorXf &m) {
+
+		if ((this->rows() != m.rows()) || (this->cols() != m.cols()))
+			printf("elementwise_function_matrix, dim mismatch!\n");
+
+		#pragma omp parallel for
+		for (size_t i = 0; i < this->rows()*this->cols(); i++) {
+
+			data()[i] = (*func)(data()[i], m.data()[i]);
+
+		}
+
+	}
+
+};
+
+
 
 
 /*!
@@ -106,6 +167,89 @@ public:
 	void matrixColumnVectorFunction( float(*func)(float, float), mic::types::VectorXf& v_);
 
 	void matrixRowVectorFunction( float(*func)(float, float), mic::types::VectorXf& v_);
+
+
+
+    void matrix_row_vector_function(float(*func)(float,float), VectorXf& v) {
+
+    	if ((this->rows() != v.rows()) && (v.cols() == 1))
+			printf("matrix_vector_function!\n");
+
+		#pragma omp parallel for
+		for (size_t i = 0; i < this->rows(); i++) {
+			for (size_t j = 0; j < this->cols(); j++) {
+				this->operator()(i, j) = (*func)(this->operator()(i, j), v(i));
+			}
+		}
+
+    }
+
+	void elementwise_function(float(*func)(float)) {
+
+		#pragma omp parallel for
+		for (size_t i = 0; i < this->rows()*this->cols(); i++) {
+
+			data()[i] = (*func)(data()[i]);
+
+		}
+
+	}
+
+
+	void elementwise_function_matrix(float(*func)(float, float), MatrixXf &m) {
+
+		if ((this->rows() != m.rows()) || (this->cols() != m.cols()))
+			printf("elementwise_function_matrix, dim mismatch!\n");
+
+		#pragma omp parallel for
+		for (size_t i = 0; i < this->rows()*this->cols(); i++) {
+
+			data()[i] = (*func)(data()[i], m.data()[i]);
+
+		}
+
+	}
+
+    void matrix_column_vector_function(float(*func)(float, float), VectorXf& v) {
+
+    	//if ((this->cols() != v.cols()) && (v.rows() == 1))
+		//	printf("matrix_vector_function!\n");
+
+		#pragma omp parallel for
+		for (size_t i = 0; i < this->rows(); i++) {
+			for (size_t j = 0; j < this->cols(); j++) {
+				this->operator()(i, j) = (*func)(this->operator()(i, j), v(j));
+			}
+		}
+
+    }
+
+	static void repmat(MatrixXf &out, VectorXf &in, size_t batchsize) {
+
+		//TODO, optimize
+		for (size_t j = 0; j < batchsize; j++) {
+
+			for (size_t i = 0; i < out.rows(); i++) {
+
+				out(i, j) = in(i);
+			}
+
+		}
+
+	}
+
+	void elementwise_function_scalar(float(*func)(float, float), float scalar) {
+
+		#pragma omp parallel for
+		for (size_t i = 0; i < this->rows()*this->cols(); i++) {
+
+			data()[i] = (*func)(data()[i], scalar);
+
+		}
+
+	}
+
+
 
 };
 

@@ -20,10 +20,93 @@
 namespace mic {
 namespace types {
 
+
+void VectorXf::sum_cols(MatrixXf& m1) {
+
+	//if ((this->cols() != m1.cols()))
+	//	printf("sum_cols!\n");
+
+	#pragma omp parallel for
+	for (size_t j = 0; j < m1.cols(); j++) {
+
+		float sum = 0.0f;
+
+		for (size_t i = 0; i < m1.rows(); i++) {
+
+			sum += m1(i, j);
+		}
+
+		this->operator()(j) = sum;
+	}
+
+}
+
+void VectorXf::diff_cols(MatrixXf& m1, MatrixXf& m2) {
+
+	//if ((this->cols() != m1.cols()) || (m1.cols() != m2.cols()) || (m1.rows() != m2.rows()))
+	//	printf("diff_cols!\n");
+
+	#pragma omp parallel for
+	for (size_t j = 0; j < m1.cols(); j++) {
+
+		float diff = 0.0f;
+
+		for (size_t i = 0; i < m1.rows(); i++) {
+
+			diff += m1(i, j) - m2(i, j);
+		}
+
+		this->operator()(j) = diff;
+	}
+
+}
+
+void VectorXf::sum_rows(MatrixXf& m1) {
+
+	if ((this->rows() != m1.rows()))
+		printf("sum_rows!\n");
+
+	#pragma omp parallel for
+	for (size_t i = 0; i < m1.rows(); i++) {
+
+		float sum = 0.0f;
+
+		for (size_t j = 0; j < m1.cols(); j++) {
+
+			sum += m1(i, j);
+		}
+
+		this->operator()(i, 0) = sum;
+	}
+
+}
+
+void VectorXf::diff_rows(MatrixXf& m1, MatrixXf& m2) {
+
+ 	if ((this->rows() != m1.rows()) || (m1.cols() != m2.cols()) || (m1.rows() != m2.rows()))
+			printf("diff_rows!\n");
+
+		#pragma omp parallel for
+		for (size_t i = 0; i < m1.rows(); i++) {
+
+			float diff = 0.0f;
+
+			for (size_t j = 0; j < m1.cols(); j++) {
+
+				diff += m1(i, j) - m2(i, j);
+			}
+
+			this->operator()(i) = diff;
+		}
+
+ }
+
+
+
 Eigen::MatrixXf MatrixXf::operator *(const Eigen::MatrixXf& mat_)
 {
 
-	#ifdef OpenBLAS_FOUND
+	#ifdef OpenBLAS_FOUND0
 	// Using openBLAS boost!
 		//printf("Using BLAS boost!\n");
 		// Get dimensions.
@@ -39,7 +122,7 @@ Eigen::MatrixXf MatrixXf::operator *(const Eigen::MatrixXf& mat_)
 		return c;
 	#else
 	// Calling base EIGEN operator *
-		//printf("Calling base EIGEN operator *\n");
+		printf("Calling base EIGEN operator *\n");
 		return Base::operator*(mat_);
 	#endif
 }
