@@ -24,7 +24,14 @@ namespace mic {
  */
 namespace rbm {
 
+/*!
+ * \brief Network activation types.
+ */
 enum class NTYPE {BINARY, GAUSSIAN, RELU};
+
+/*!
+ * \brief RBMs learning modes. Currently only CD is working.
+ */
 enum class LTYPE {CD, PCD};
 
 
@@ -48,12 +55,12 @@ class RBM {
 
 	/*!
 	 * Constructor.
-	 * @param n_visible
-	 * @param n_hidden
+	 * @param n_visible Number of units in the visible (input) layer.
+	 * @param n_hidden Number of units in the hidden layer.
 	 * @param v_type
 	 * @param h_type
-	 * @param l_type
-	 * @param b_size
+	 * @param l_type Learning type - currently only CD is implemented.
+	 * @param b_size Batch size.
 	 */
 	RBM(const size_t n_visible, const size_t n_hidden, NTYPE v_type, NTYPE h_type, LTYPE l_type = LTYPE::CD,
 			const size_t b_size = 1);
@@ -64,8 +71,8 @@ class RBM {
 	virtual ~RBM();
 
 	/*!
-	 * ?
-	 * @param in
+	 * Processees the input pattern and stores activation inside (in h). Computes posprods.
+	 * @param in Input pattern (SDR)
 	 */
 	void up(mic::types::MatrixXfPtr in);
 
@@ -75,12 +82,12 @@ class RBM {
 	void down();
 
 	/*!
-	 * Computes the statistics. TODO: remove.
+	 * Computes the statistics. TODO: move to additional statistics class.
 	 */
 	void compute_statistics();
 
 	/*!
-	 * Adaptation.
+	 * Adapts weights of W, b and c according to computed posprods, negprods and sprarsegrads. ;)
 	 * @param alpha
 	 * @param decay
 	 * @param sparsecost
@@ -113,7 +120,6 @@ class RBM {
 
 
 	mic::types::MatrixXf W;
-	//mic::types::VectorXf sigma;
 	mic::types::VectorXf b;
 	mic::types::VectorXf c;
 
@@ -126,7 +132,7 @@ class RBM {
 	mic::types::VectorXf hidmeans_inc;
 	mic::types::MatrixXf hidmeans_inc_rep;
 	mic::types::MatrixXf sparsegrads;
-	//mic::types::MatrixXf H2;
+
 	mic::types::MatrixXf hn;
 	mic::types::MatrixXf H;
 	mic::types::MatrixXf rv;
@@ -144,8 +150,6 @@ class RBM {
 
 	float err;
 	float hsum;
-	// float I; -- commented as not used!
-	//double mflops;
 
 	NTYPE visible_type;
 	NTYPE hidden_type;

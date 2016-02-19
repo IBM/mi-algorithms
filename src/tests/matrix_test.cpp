@@ -92,9 +92,9 @@ int main(int argc, char* argv[]) {
 #endif
 
 	// Default sizes of matrices.
-	const size_t N = 200;
-	const size_t M = 300;
-	const size_t K = 400;
+	const size_t N = 2;
+	const size_t M = 3;
+	const size_t K = 4;
 	const size_t number_of_multiplications = 100;
 
 	// Matrices.

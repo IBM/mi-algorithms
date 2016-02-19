@@ -29,22 +29,22 @@ RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size)
 	// W - weights between input and output units.
 	W.resize(num_output, num_input);
 	W_delta.resize(num_output, num_input);
-	//sigma.resize(num_input, 1); // => Eigen::VectorXd
-	b.resize(num_input); // => Eigen::VectorXd
-	b_delta.resize(num_input); // => Eigen::VectorXd
-	c.resize(num_output); // => Eigen::VectorXd
-	c_delta.resize(num_output); // => Eigen::VectorXd
+	// Hidden units biases.
+	b.resize(num_input);
+	b_delta.resize(num_input);
+	// Input units biases.
+	c.resize(num_output);
+	c_delta.resize(num_output);
 
-	//temp storage
+	// Temporary variables.
 	h.resize(num_output, batch_size);
-	//H2.resize(num_output, batch_size);
 	hn.resize(num_output, batch_size);
 	H.resize(num_output, batch_size);
 	rv.resize(batch_size, num_input);
 	rh.resize(num_output, batch_size);
 
-	hidmeans.resize(num_output); // => Eigen::VectorXd
-	hidmeans_inc.resize(num_output); // => Eigen::VectorXd
+	hidmeans.resize(num_output);
+	hidmeans_inc.resize(num_output);
 	hidmeans_inc_rep.resize(num_output, batch_size);
 	sparsegrads.resize(num_output, num_input);
 
@@ -60,7 +60,6 @@ RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size)
 	// Reset matrices/vectors.
 	W.setZero();
 	W_delta.setZero();
-	//sigma.setZero();
 	b.setZero();
 	b_delta.setZero();
 	c.setZero();
@@ -127,21 +126,21 @@ void RBM::up(mic::types::MatrixXfPtr in) { // h given v
 void RBM::down() { // v given h
 	LOG(LTRACE)<<"RBM::down";
 
+	// Compute binary activation H by thresholding h with random variables stored in matrix rh.
 	H = h;
-	//rh.elementwise_function(&_rand);
 	rh.uniRandReal(0.0, 1.0);
-	H.elementwise_function_matrix(&_compare, rh);
+	H.elementwiseFunctionMatrix(&_compare, rh);
 
 	vn = (H.transpose()) * W;
 
-	vn.matrix_column_vector_function(&_add, b);
-	vn.elementwise_function(&_sigmoid);
+	vn.matrixColumnVectorFunction(&_add, b);
+	vn.elementwiseFunction(&_sigmoid);
 
 	if (learning_type == LTYPE::CD) {
 
 		hn = W * vn.transpose();
-		hn.matrix_row_vector_function(&_add, c);
-		hn.elementwise_function(&_sigmoid);
+		hn.matrixRowVectorFunction(&_add, c);
+		hn.elementwiseFunction(&_sigmoid);
 
 		negprods = hn * vn;
 
@@ -163,8 +162,6 @@ void RBM::compute_statistics() {
 
 	// Compute sum and normalize it by batch size and number of outputs.
 	hsum = h.sum() / (batch_size * num_output);
-
-
 }
 
 void RBM::adapt(float alpha, float decay, float sparsecost, float sparsetarget, float sparsedamping) {
@@ -175,71 +172,50 @@ void RBM::adapt(float alpha, float decay, float sparsecost, float sparsetarget, 
 	b_delta.setZero();
 	c_delta.setZero();
 
-
 	// hidmeans = sparsedamping*hidmeans + (1-sparsedamping)*poshidact/numcases;
-	hidmeans.elementwise_function_scalar(&_mult, sparsedamping);
-	// hidmeans *= (float)sparsedamping;
+	hidmeans *= (float)sparsedamping;
 
-	hidmeans_inc.sum_rows(h);
-	//hidmeans_inc = h.rowwise().sum();
+	//hidmeans_inc.sum_rows(h);
+	hidmeans_inc = h.rowwise().sum();
 
-	hidmeans_inc.elementwise_function_scalar(&_mult, (1.0f - sparsedamping) / batch_size);
-	//hidmeans_inc *= (float)((1.0f - sparsedamping) / batch_size);
+	hidmeans_inc *= (float)((1.0f - sparsedamping) / batch_size);
 
-	hidmeans.elementwise_function_vector(&_add, hidmeans_inc);
-	//hidmeans += hidmeans_inc;
+	hidmeans += hidmeans_inc;
 
 	// sparsegrads = sparsecost*(repmat(hidmeans,numcases,1)-sparsetarget);
 	hidmeans_inc = hidmeans;
 
-	hidmeans_inc.elementwise_function_scalar(&_sub, sparsetarget);
-	//hidmeans_inc.array() -= sparsetarget;
+	hidmeans_inc.array() -= sparsetarget;
 
-	hidmeans_inc.elementwise_function_scalar(&_mult, sparsecost);
-	//hidmeans_inc *= (float)sparsecost;
+	hidmeans_inc *= (float)sparsecost;
 
-	MatrixXf::repmat(hidmeans_inc_rep, hidmeans_inc, batch_size);
+	hidmeans_inc_rep.repeatVector(hidmeans_inc);
 
 	sparsegrads  = hidmeans_inc_rep * v;
 
-	hidmeans_inc.sum_rows(sparsegrads);
-	//hidmeans_inc = sparsegrads.rowwise().sum();
+	//hidmeans_inc.sum_rows(sparsegrads);
+	hidmeans_inc = sparsegrads.rowwise().sum();
 
 	// Compute W increment.
-	//W_delta = (posprods - negprods) - sparsegrads;
-	W_delta = posprods;
-	W_delta.elementwise_function_matrix(&_sub, negprods);
-	W_delta.elementwise_function_matrix(&_sub, sparsegrads);
-
-	W_delta.elementwise_function_scalar(&_mult, alpha / batch_size);
-	//W_delta *= (alpha / batch_size);
+	W_delta = (posprods - negprods) - sparsegrads;
+	W_delta *= (alpha / batch_size);
 
 	// Compute b update.
-	//b_delta = (v-pc).colwise().sum();
-	//b_delta *= (alpha / batch_size);
-
-	b_delta.diff_cols(v, pc);
-	b_delta.elementwise_function_scalar(&_mult, alpha / batch_size);
+	b_delta = (v-pc).colwise().sum();
+	//b_delta.diff_cols(v, pc);
+	b_delta *= (alpha / batch_size);
 
 	// Compute c update.
-	//c_delta = (h-hn).rowwise().sum();
-	//c_delta -= hidmeans_inc;
-	//c_delta *= (alpha / batch_size);
+	c_delta = (h-hn).rowwise().sum();
+	//c_delta.diff_rows(h, hn);
+	c_delta -= hidmeans_inc;
+	c_delta *= (alpha / batch_size);
 
-	c_delta.diff_rows(h, hn);
-	c_delta.elementwise_function_vector(&_sub, hidmeans_inc);
-	c_delta.elementwise_function_scalar(&_mult, alpha / batch_size);
-
-	// Apply weight updates.
-	//W += W_delta;
-	//W *= (1.0f - decay);
-	//b += b_delta;
-	//c += c_delta;
-
-	W.elementwise_function_matrix(&_add, W_delta);
-	W.elementwise_function_scalar(&_mult, 1.0f - decay);
-	b.elementwise_function_vector(&_add, b_delta);
-	c.elementwise_function_vector(&_add, c_delta);
+	// Apply weights updates.
+	W += W_delta;
+	W *= (1.0f - decay);
+	b += b_delta;
+	c += c_delta;
 
 }
 

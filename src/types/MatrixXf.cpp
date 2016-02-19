@@ -20,95 +20,12 @@
 namespace mic {
 namespace types {
 
-
-void VectorXf::sum_cols(MatrixXf& m1) {
-
-	//if ((this->cols() != m1.cols()))
-	//	printf("sum_cols!\n");
-
-	#pragma omp parallel for
-	for (size_t j = 0; j < m1.cols(); j++) {
-
-		float sum = 0.0f;
-
-		for (size_t i = 0; i < m1.rows(); i++) {
-
-			sum += m1(i, j);
-		}
-
-		this->operator()(j) = sum;
-	}
-
-}
-
-void VectorXf::diff_cols(MatrixXf& m1, MatrixXf& m2) {
-
-	//if ((this->cols() != m1.cols()) || (m1.cols() != m2.cols()) || (m1.rows() != m2.rows()))
-	//	printf("diff_cols!\n");
-
-	#pragma omp parallel for
-	for (size_t j = 0; j < m1.cols(); j++) {
-
-		float diff = 0.0f;
-
-		for (size_t i = 0; i < m1.rows(); i++) {
-
-			diff += m1(i, j) - m2(i, j);
-		}
-
-		this->operator()(j) = diff;
-	}
-
-}
-
-void VectorXf::sum_rows(MatrixXf& m1) {
-
-	if ((this->rows() != m1.rows()))
-		printf("sum_rows!\n");
-
-	#pragma omp parallel for
-	for (size_t i = 0; i < m1.rows(); i++) {
-
-		float sum = 0.0f;
-
-		for (size_t j = 0; j < m1.cols(); j++) {
-
-			sum += m1(i, j);
-		}
-
-		this->operator()(i, 0) = sum;
-	}
-
-}
-
-void VectorXf::diff_rows(MatrixXf& m1, MatrixXf& m2) {
-
- 	if ((this->rows() != m1.rows()) || (m1.cols() != m2.cols()) || (m1.rows() != m2.rows()))
-			printf("diff_rows!\n");
-
-		#pragma omp parallel for
-		for (size_t i = 0; i < m1.rows(); i++) {
-
-			float diff = 0.0f;
-
-			for (size_t j = 0; j < m1.cols(); j++) {
-
-				diff += m1(i, j) - m2(i, j);
-			}
-
-			this->operator()(i) = diff;
-		}
-
- }
-
-
-
 Eigen::MatrixXf MatrixXf::operator *(const Eigen::MatrixXf& mat_)
 {
 
 	#ifdef OpenBLAS_FOUND
 	// Using openBLAS boost!
-		printf("Using BLAS boost!\n");
+		//printf("Using BLAS boost!\n");
 		// Get dimensions.
 		size_t M = this->rows();
 		size_t K =  this->cols();
@@ -122,7 +39,7 @@ Eigen::MatrixXf MatrixXf::operator *(const Eigen::MatrixXf& mat_)
 		return c;
 	#else
 	// Calling base EIGEN operator *
-		printf("Calling base EIGEN operator *\n");
+		//printf("Calling base EIGEN operator *\n");
 		return Base::operator*(mat_);
 	#endif
 }
@@ -226,20 +143,7 @@ void MatrixXf::matrixColumnVectorFunction( float(*func)(float, float), mic::type
 	}//: for x
 
 }
-/*
-void matrix_column_vector_function(T(*func)(T, T), Matrix<T>& v) {
 
-	if ((this->n_cols() != v.n_cols()) && (v.n_rows() == 1))
-		printf("matrix_vector_function!\n");
-
-	#pragma omp parallel for
-	for (size_t i = 0; i < n_rows(); i++) {
-		for (size_t j = 0; j < n_cols(); j++) {
-			this->operator()(i, j) = (*func)(this->operator()(i, j), v(0, j));
-		}
-	}
-
-}*/
 
 void MatrixXf::matrixRowVectorFunction( float(*func)(float, float), mic::types::VectorXf& v_) {
 
@@ -263,21 +167,18 @@ void MatrixXf::matrixRowVectorFunction( float(*func)(float, float), mic::types::
 	}//: for x
 
 }
-/*
-void matrix_row_vector_function(T(*func)(T, T), Matrix<T>& v) {
 
-	if ((this->n_rows() != v.n_rows()) && (v.n_cols() == 1))
-		printf("matrix_vector_function!\n");
+void MatrixXf::repeatVector(VectorXf &in) {
 
 	#pragma omp parallel for
-	for (size_t i = 0; i < n_rows(); i++) {
-		for (size_t j = 0; j < n_cols(); j++) {
-			this->operator()(i, j) = (*func)(this->operator()(i, j), v(i, 0));
-		}
-	}
+	for (size_t x = 0; x < this->cols(); x++) {
+		for (size_t y = 0; y < this->rows(); y++) {
 
+			(*this)(y, x) = in(y);
+		}//: y
+	}//: x
 }
-*/
+
 } /* namespace types */
 } /* namespace mic */
 
