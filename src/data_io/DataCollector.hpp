@@ -8,10 +8,12 @@
 #ifndef SRC_DATA_IO_DATACOLLECTOR_HPP_
 #define SRC_DATA_IO_DATACOLLECTOR_HPP_
 
-#include<vector>
+#include <vector>
 #include <string>
 #include <map>
 #include <limits>
+
+#include <fstream>      // std::ofstream
 
 #include<logger/Log.hpp>
 
@@ -154,7 +156,7 @@ public:
 	 * @param value_ Value to be added.
 	 */
 	void addDataToContainer(LABEL_TYPE label_, DATA_TYPE value_){
-		LOG(LTRACE)<< "DataCollector::addDataToContainer<int>";
+		LOG(LTRACE)<< "DataCollector::addDataToContainer";
 
 		// Try to find the label in registry.
 		DataContainerIt<LABEL_TYPE, DATA_TYPE> it = containers.find(label_);
@@ -164,8 +166,8 @@ public:
 			(it->second)->data.push_back(value_);
 			// Check autoscale.
 			if ((it->second)->auto_scale) {
-				(it->second)->min_value = ((it->second)->min_value > value_) ? (it->second)->min_value : value_;
-				(it->second)->max_value = ((it->second)->max_value > value_) ? (it->second)->max_value : value_;
+				(it->second)->min_value = (value_ < (it->second)->min_value) ? value_ : (it->second)->min_value;
+				(it->second)->max_value = (value_ > (it->second)->max_value) ? value_ : (it->second)->max_value;
 			}
 		} else {
 			LOG(LERROR) << "There is no container with label: " << label_;
@@ -203,6 +205,59 @@ public:
 		LOG(LTRACE)<< "DataCollector::getContainer";
 		return containers;
 	}
+
+
+	/*!
+	 * Exports collected data to csv.
+	 * @param filename_ Output filename (=data.csv).
+	 */
+	void exportDataToCsv(std::string filename_ = "data.csv"){
+		LOG(LTRACE)<< "DataCollector::exportDataToCsv";
+		// Open output filestream.
+		std::ofstream output(filename_);
+
+		// Iterate through containers.
+		for(DataContainerIt<LABEL_TYPE, DATA_TYPE> it = containers.begin(); it != containers.end(); it++) {
+			// Export header.
+			output << it->first << ", min ,";
+			output << (it->second)->min_value << ", max, ";
+			output << (it->second)->max_value << std::endl;
+
+			// Export data.
+			if ((it->second)->data.size() > 1)
+				std::copy((it->second)->data.begin(), (it->second)->data.end() - 1, std::ostream_iterator<DATA_TYPE>(output, ", "));
+			if ((it->second)->data.size())
+				output << (it->second)->data.back() << std::endl;
+		}//: for
+	}
+
+	/*!
+	 * Exports collected data to csv.
+	 * @param filename_ Output filename.
+	 * @param label_ Data label (written in file, above the line containing data)
+	 * @param data_ Data (vector)
+	 * @param append_ Flag denoting whether data should be added to existing data in a file or file should be truncated.
+	 */
+	static void exportVectorToCsv(std::string filename_, std::string label_, std::vector<DATA_TYPE> data_, bool append_ = false){
+		LOG(LTRACE)<< "DataCollector::exportVectorToCsv";
+		// Open output filestream.
+		std::ofstream output;
+		if (!append_)
+			output.open(filename_);
+		else
+			output.open(filename_, std::ofstream::out | std::ofstream::app);
+
+		// Export eader
+		output << label_ << std::endl;
+
+		// Export data.
+		if (data_.size() > 1)
+			std::copy(data_.begin(), data_.end() - 1, std::ostream_iterator<DATA_TYPE>(output, ", "));
+		if (data_.size())
+			output << data_.back() << std::endl;
+	}
+
+
 
 protected:
 	/*!

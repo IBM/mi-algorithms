@@ -21,6 +21,7 @@ set(BUILD_TEST_CHAR_ENCODER ON CACHE BOOL "Build the 1-of-k Char Encoder test ap
 
 set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
 
+set(BUILD_TEST_COLLECTOR ON CACHE BOOL "Build the application for testing data collector")
 
 
 # =======================================================================
@@ -151,3 +152,23 @@ if(${BUILD_TEST_MATRIX})
 	install(TARGETS matrix_test RUNTIME DESTINATION bin)
 
 endif(${BUILD_TEST_MATRIX})
+
+# =======================================================================
+# Build and install - data collector test application.
+# =======================================================================
+
+if(${BUILD_TEST_COLLECTOR})
+	# Create exeutable.
+	ADD_EXECUTABLE(data_collector_test tests/data_collector_test.cpp)
+	# Link it with shared libraries.
+	target_link_libraries(data_collector_test 
+		configuration
+		types
+		data_io
+		${Boost_LIBRARIES}
+		)
+
+	# install test to bin directory
+	install(TARGETS data_collector_test RUNTIME DESTINATION bin)
+
+endif(${BUILD_TEST_COLLECTOR})
