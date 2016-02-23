@@ -15,6 +15,8 @@
 
 #include<logger/Log.hpp>
 
+#include <types/image_types.hpp>
+
 namespace mic {
 namespace data_io {
 
@@ -44,33 +46,50 @@ struct DataContainer {
 	 */
 	DATA_TYPE min_value;
 
+	/*!
+	 * Colour - used in visualization.
+	 */
+	mic::types::color_rgba color;
+
+	/*!
+	 * Colour - used in visualization.
+	 */
+	float line_width;
 };
 
 /*!
- * \brief Type representing a set (map) of containers.
+ * \brief Type representing a pointer to data container.
  * \tparam DATA_TYPE Template parameter denoting basic used datatype.
+ * \author tkornuta
+ */
+template<class DATA_TYPE>
+using DataContainerPtr = typename std::shared_ptr < DataContainer < DATA_TYPE> >;
+
+/*!
+ * \brief Type representing a set (map) of containers.
  * \tparam LABEL_TYPE Template parameter denoting the label type.
+ * \tparam DATA_TYPE Template parameter denoting basic used datatype.
  * \author tkornuta
  */
 template<class LABEL_TYPE, class DATA_TYPE>
-using DataContainers = typename std::map<LABEL_TYPE, DataContainer <DATA_TYPE> >;
+using DataContainers = typename std::map<LABEL_TYPE, DataContainerPtr <DATA_TYPE> >;
 
 
 
 /*!
  * \brief Type representing a data container iterator.
- * \tparam DATA_TYPE Template parameter denoting basic used datatype.
  * \tparam LABEL_TYPE Template parameter denoting the label type.
+ * \tparam DATA_TYPE Template parameter denoting basic used datatype.
  * \author tkornuta
  */
 template<class LABEL_TYPE, class DATA_TYPE>
-using DataContainerIt = typename std::map<LABEL_TYPE, DataContainer <DATA_TYPE> >::iterator;
+using DataContainerIt = typename std::map<LABEL_TYPE, DataContainerPtr <DATA_TYPE> >::iterator;
 
 
 /*!
  * \brief Class responsible for collection of data during experiments end exporting the results to files.
- * \tparam DATA_TYPE Template parameter denoting basic used datatype.
  * \tparam LABEL_TYPE Template parameter denoting the label type.
+ * \tparam DATA_TYPE Template parameter denoting basic used datatype.
  * \author tkornuta
  */
 template <class LABEL_TYPE, class DATA_TYPE>
@@ -89,16 +108,21 @@ public:
 	/*!
 	 * Creates new data container for a given label. Sets min and max values.
 	 * @param label_ Name of the container.
+	 * @param min_ Minimum value (used in visualization).
+	 * @param min_ Maximum value (used in visualization).
+	 * @param color_ Colour of line/label (used in visualization).
+	 * @param line_width_ Line width (used in visualization).
 	 */
-	void createContainer(LABEL_TYPE label_, DATA_TYPE min_, DATA_TYPE max_) {
+	void createContainer(LABEL_TYPE label_, DATA_TYPE min_, DATA_TYPE max_, mic::types::color_rgba color_ = mic::types::color_rgba(255, 255, 255, 180), float line_width_ = 1.0f) {
 		LOG(LTRACE)<< "DataCollector::createDataContainer";
 
-		DataContainer<DATA_TYPE> tmp;
+		DataContainerPtr<DATA_TYPE> tmp (new DataContainer<DATA_TYPE> );
 		// Set min-max parameters.
-		tmp.auto_scale = false;
-		tmp.min_value = min_;
-		tmp.max_value = max_;
-
+		tmp->auto_scale = false;
+		tmp->min_value = min_;
+		tmp->max_value = max_;
+		tmp->line_width = line_width_;
+		tmp->color = color_;
 		// Add container.
 		containers.insert( std::make_pair (label_, tmp) );
 	}
@@ -106,15 +130,19 @@ public:
 	/*!
 	 * Creates new data container for a given label. This container will automatically scale (find the min/max values when adding new ones)
 	 * @param label_ Name of the container.
+	 * @param color_ Colour of line/label (used in visualization).
+	 * @param line_width_ Line width (used in visualization).
 	 */
-	void createContainer(LABEL_TYPE label_) {
+	void createContainer(LABEL_TYPE label_, mic::types::color_rgba color_ = mic::types::color_rgba(255, 255, 255, 180), float line_width_ = 1.0f) {
 		LOG(LTRACE)<< "DataCollector::createDataContainer";
 
-		DataContainer<DATA_TYPE> tmp;
+		DataContainerPtr<DATA_TYPE> tmp (new DataContainer<DATA_TYPE> );
 		// Set min-max parameters.
-		tmp.auto_scale = true;
-		tmp.min_value = std::numeric_limits<DATA_TYPE>::max();
-		tmp.max_value = std::numeric_limits<DATA_TYPE>::min();
+		tmp->auto_scale = true;
+		tmp->min_value = std::numeric_limits<DATA_TYPE>::max();
+		tmp->max_value = std::numeric_limits<DATA_TYPE>::min();
+		tmp->line_width = line_width_;
+		tmp->color = color_;
 		// Add data container.
 		containers.insert( std::make_pair (label_, tmp) );
 	}
@@ -133,11 +161,11 @@ public:
 
 		if (it != containers.end()) {
 			// Add new value to data.
-			(it->second).data.push_back(value_);
+			(it->second)->data.push_back(value_);
 			// Check autoscale.
-			if ((it->second).auto_scale) {
-				(it->second).min_value = ((it->second).min_value > value_) ? (it->second).min_value : value_;
-				(it->second).max_value = ((it->second).max_value > value_) ? (it->second).max_value : value_;
+			if ((it->second)->auto_scale) {
+				(it->second)->min_value = ((it->second)->min_value > value_) ? (it->second)->min_value : value_;
+				(it->second)->max_value = ((it->second)->max_value > value_) ? (it->second)->max_value : value_;
 			}
 		} else {
 			LOG(LERROR) << "There is no container with label: " << label_;
@@ -145,12 +173,12 @@ public:
 	}
 
 	/*!
-	 * Returns the container with a given label.
+	 * Returns the data stored by container with a given label.
 	 * @param label_ Name of the container.
 	 * @return Container with given label. If container not found - it will return an empty container.
 	 */
-	DataContainer<DATA_TYPE> getContainer(LABEL_TYPE label_){
-		LOG(LTRACE)<< "DataCollector::getContainer";
+	DataContainerPtr<DATA_TYPE> getDataFromContainer(LABEL_TYPE label_){
+		LOG(LTRACE)<< "DataCollector::getContainerData";
 
 		// Try to find the label in registry.
 		DataContainerIt<LABEL_TYPE, DATA_TYPE> it = containers.find(label_);
@@ -158,10 +186,10 @@ public:
 		if (it == containers.end()) {
 			LOG(LERROR) << "There is no container with label: " << label_;
 			// Return empty container.
-			DataContainer<DATA_TYPE> tmp;
-			tmp.auto_scale = true;
-			tmp.min_value = std::numeric_limits<DATA_TYPE>::max();
-			tmp.max_value = std::numeric_limits<DATA_TYPE>::min();
+			DataContainerPtr<DATA_TYPE> tmp (new DataContainer<DATA_TYPE> );
+			tmp->auto_scale = true;
+			tmp->min_value = std::numeric_limits<DATA_TYPE>::max();
+			tmp->max_value = std::numeric_limits<DATA_TYPE>::min();
 			return tmp;
 		} else
 			return it->second;
@@ -171,22 +199,28 @@ public:
 	 * Returns the containers.
 	 * @return Map of all stored containers.
 	 */
-	DataContainers<LABEL_TYPE, DataContainer <DATA_TYPE> > getContainers(){
+	DataContainers< LABEL_TYPE, DATA_TYPE > getContainers(){
 		LOG(LTRACE)<< "DataCollector::getContainer";
 		return containers;
 	}
-
-
 
 protected:
 	/*!
 	 * Registry storing the containers.
 	 */
-	std::map<LABEL_TYPE, DataContainer <DATA_TYPE> > containers;
+	DataContainers< LABEL_TYPE, DATA_TYPE > containers;
 
 };
 
 
+/*!
+ * \brief A pointer to data collector.
+ * \tparam LABEL_TYPE Template parameter denoting the label type.
+ * \tparam DATA_TYPE Template parameter denoting basic used datatype.
+ * \author tkornuta
+ */
+template<class LABEL_TYPE, class DATA_TYPE>
+using DataCollectorPtr = typename std::shared_ptr<mic::data_io::DataCollector<LABEL_TYPE, DATA_TYPE > >;
 
 
 
