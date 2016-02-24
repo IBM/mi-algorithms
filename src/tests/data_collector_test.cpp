@@ -44,6 +44,11 @@ int main(int argc, char* argv[]) {
 	doubles.push_back(0.3);
 	// Truncate file.
 	mic::data_io::DataCollector<std::string, double>::exportVectorToCsv("test2.csv", "doubles", doubles);
+
+	double value = 0.4;
+	mic::data_io::DataCollector<std::string, double>::exportValueToCsv("test2.csv", "next double", value, true);
+	doubles.push_back(value);
+
 	// Append the  data once again.
-	mic::data_io::DataCollector<std::string, double>::exportVectorToCsv("test2.csv", "doubles", doubles,true);
+	mic::data_io::DataCollector<std::string, double>::exportVectorToCsv("test2.csv", "doubles", doubles, true);
 }//: main

@@ -19,6 +19,8 @@
 
 #include <types/image_types.hpp>
 
+#include <Eigen/Dense>
+
 namespace mic {
 namespace data_io {
 
@@ -232,7 +234,7 @@ public:
 	}
 
 	/*!
-	 * Exports collected data to csv.
+	 * Exports the vector to csv.
 	 * @param filename_ Output filename.
 	 * @param label_ Data label (written in file, above the line containing data)
 	 * @param data_ Data (vector)
@@ -247,7 +249,7 @@ public:
 		else
 			output.open(filename_, std::ofstream::out | std::ofstream::app);
 
-		// Export eader
+		// Export header
 		output << label_ << std::endl;
 
 		// Export data.
@@ -257,6 +259,77 @@ public:
 			output << data_.back() << std::endl;
 	}
 
+	/*!
+	 * Exports a single value to file.
+	 * @param filename_ Output filename.
+	 * @param label_ Data label (written in file, before the data)
+	 * @param data_ Data (a single value).
+	 * @param append_ Flag denoting whether data should be added to existing data in a file or file should be truncated.
+	 */
+	static void exportValueToCsv(std::string filename_, std::string label_, DATA_TYPE value_, bool append_ = false){
+		LOG(LTRACE)<< "DataCollector::exportValueToCsv";
+		// Open output filestream.
+		std::ofstream output;
+		if (!append_)
+			output.open(filename_);
+		else
+			output.open(filename_, std::ofstream::out | std::ofstream::app);
+
+		// Export data.
+		output << label_ << ", " << value_ << std::endl;
+	}
+
+
+	/*!
+	 * Exports a comment to file.
+	 * @param filename_ Output filename.
+	 * @param comment_ Comment to be added (in a separate line).
+	 * @param append_ Flag denoting whether data should be added to existing data in a file or file should be truncated.
+	 */
+	static void exportCommentToCsv(std::string filename_, std::string exportCommentToCsv, bool append_ = false){
+		LOG(LTRACE)<< "DataCollector::exportCommentToCsv";
+		// Open output filestream.
+		std::ofstream output;
+		if (!append_)
+			output.open(filename_);
+		else
+			output.open(filename_, std::ofstream::out | std::ofstream::app);
+
+		// Export data.
+		output << exportCommentToCsv <<  std::endl;
+	}
+
+
+	/*!
+	 * Exports the matrix to csv.
+	 * @param filename_ Output filename.
+	 * @param label_ Data label (written in file, above the line containing data)
+	 * @param data_ Data - a vector of Eigen::Matrix pointers.
+	 * @param append_ Flag denoting whether data should be added to existing data in a file or file should be truncated.
+	 */
+	static void exportMatricesToCsv(std::string filename_, std::string label_, std::vector<std::shared_ptr< Eigen::Matrix<DATA_TYPE, Eigen::Dynamic, Eigen::Dynamic> > > data_, bool append_ = false){
+		LOG(LTRACE)<< "DataCollector::exportVectorToCsv";
+		// Open output filestream.
+		std::ofstream output;
+		if (!append_)
+			output.open(filename_);
+		else
+			output.open(filename_, std::ofstream::out | std::ofstream::app);
+
+		// Export header.
+		output << label_ << std::endl;
+
+		for (size_t i=0; i<data_.size(); i++) {
+			std::shared_ptr< Eigen::Matrix<DATA_TYPE, Eigen::Dynamic, Eigen::Dynamic> > matrix = data_[i];
+
+			DATA_TYPE* data_ptr = matrix->data();
+			// Export matrix data.
+			for (size_t i = 0; i < matrix->rows()*matrix->cols() -1; i++) {
+				output << data_ptr[i] << ", ";
+				}//: for
+			output << data_ptr[matrix->rows()*matrix->cols() -1] << std::endl;
+			}//: for
+	}
 
 
 protected:
