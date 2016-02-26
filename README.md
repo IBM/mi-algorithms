@@ -6,21 +6,18 @@ Description
 
 A subproject of Machine Intelligence Core framework.
 
-The library contains core types and several machine intelligence algorithms, such as HTM, RBM accompanied by some useful modules and functions.
+The project contains core types and several machine intelligence algorithms, such as HTM, RBM accompanied by some useful modules and functions.
 
 MIC dependencies
 ------------
-   * MIToolchain - core library of MIC.
+   * MIToolchain - core of MIC.
 
 External dependencies
 ------------
 Additionally it depends on the following external libraries:
    * Boost - library of free (open source) peer-reviewed portable C++ source libraries.
    * Eigen - a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms.
-   
-Optional external dependencies 
-------------
-   * OpenBlas - an optimized BLAS library based on GotoBLAS2 1.13 BSD version. If present - used for fastening operation on matrices.
+   * OpenBlas (optional) - An optimized library implementing BLAS routines. If present - used for fastening operation on matrices.
 
 Main modules
 ------------
@@ -34,7 +31,20 @@ Main modules
 
 Applications
 ------------
-   * char_encoder_test examplary 1-of-k Char Encoder test application
+   * char_encoder_test - examplary 1-of-k Char Encoder test application.
+   * data_collector_test - program for testing data collector.
+   * matrix_test - program for testing multiplication of matrices with/without OpenBLAS.
+   
+Installation
+------------
+```
+git clone git@github.rtp.raleigh.ibm.com:tkornut-us/mi-algorithms.git
+cd mi-algorithms
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=~/Documents/workspace/mic/
+make -j4 install
+```
 
 Maintainer
 ----------

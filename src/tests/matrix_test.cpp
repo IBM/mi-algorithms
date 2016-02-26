@@ -1,6 +1,6 @@
 /*!
  * \file matrix_test.cpp
- * \brief Contains test
+ * \brief Contains program for testing multiplication of matrices with/without OpenBLAS.
  * \author tkornut
  * \date Feb 17, 2016
  */
@@ -77,7 +77,7 @@ Eigen::MatrixXf BLAS_mmultilpy(Eigen::MatrixXf& __restrict a, Eigen::MatrixXf& _
 
 
 /*!
- * \brief Main program function for testing operations on matrices.
+ * \brief Program for testing multiplication of matrices with/without OpenBLAS.
  * \author tkornuta
  * @param[in] argc Number of parameters (not used).
  * @param[in] argv List of parameters (not used).
