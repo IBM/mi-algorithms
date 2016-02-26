@@ -36,7 +36,11 @@ install(FILES ${files} DESTINATION include/types)
 # Create shared library containing CORE TYPES and related functions.
 file(GLOB types_src types/*.cpp)
 add_library(types SHARED ${types_src})
-target_link_libraries(types logger ${Boost_LIBRARIES}  ${OpenBLAS_LIB} )
+target_link_libraries(types logger ${Boost_LIBRARIES} )
+if(OpenBLAS_FOUND)
+	target_link_libraries(types  ${OpenBLAS_LIB} )
+endif(OpenBLAS_FOUND)
+
 
 
 # =======================================================================
@@ -100,7 +104,7 @@ install(FILES ${files} DESTINATION include/rbm)
 # Create RBM shared library.
 file(GLOB rbm_src rbm/*.cpp )
 add_library(rbm SHARED ${rbm_src})
-target_link_libraries(rbm types data_utils ${OpenBLAS_LIB} )
+target_link_libraries(rbm types data_utils)
 
 
 # =======================================================================
@@ -145,8 +149,10 @@ if(${BUILD_TEST_MATRIX})
 		types
 		${Boost_LIBRARIES}
 		${EIGEN_LIBRARIES} 
-		${OpenBLAS_LIB}
 		)
+	if(OpenBLAS_FOUND)
+		target_link_libraries(matrix_test  ${OpenBLAS_LIB} )
+	endif(OpenBLAS_FOUND)
 
 	# install test to bin directory
 	install(TARGETS matrix_test RUNTIME DESTINATION bin)
