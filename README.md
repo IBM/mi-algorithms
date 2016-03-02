@@ -10,7 +10,7 @@ The project contains core types and several machine intelligence algorithms, suc
 
 MIC dependencies
 ------------
-   * MIToolchain - core of MIC.
+   * MIToolchain - the core of MIC framework.
 
 External dependencies
 ------------

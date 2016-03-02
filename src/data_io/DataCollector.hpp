@@ -301,7 +301,37 @@ public:
 
 
 	/*!
-	 * Exports the matrix to csv.
+	 * Exports eigen (or derived) matrix to a csv file (in Row-major order).
+	 * @param filename_ Output filename.
+	 * @param label_ Data label (written in file, above the line containing data)
+	 * @param matrix_ (A shared pointer to) Matrix to be exported.
+	 * @param append_ Flag denoting whether data should be added to existing data in a file or file should be truncated.
+	 */
+	static void exportMatrixToCsv(std::string filename_, std::string label_, std::shared_ptr< Eigen::Matrix<DATA_TYPE, Eigen::Dynamic, Eigen::Dynamic> > matrix_, bool append_ = false){
+		LOG(LTRACE)<< "DataCollector::exportVectorToCsv";
+		// Open output filestream.
+		std::ofstream output;
+		if (!append_)
+			output.open(filename_);
+		else
+			output.open(filename_, std::ofstream::out | std::ofstream::app);
+
+		// Export header.
+		output << label_ << std::endl;
+
+		// Export matrix.
+		for (size_t y = 0; y < matrix_->rows(); y++) {
+			for (size_t x = 0; x < matrix_->cols(); x++) {
+				output << matrix_(y,x) << ", ";
+			}//: for
+		}//: for
+		output << std::endl;
+	}
+
+
+
+	/*!
+	 * Exports vector of matrices to csv (in Row-major order).
 	 * @param filename_ Output filename.
 	 * @param label_ Data label (written in file, above the line containing data)
 	 * @param data_ Data - a vector of Eigen::Matrix pointers.
@@ -322,13 +352,18 @@ public:
 		for (size_t i=0; i<data_.size(); i++) {
 			std::shared_ptr< Eigen::Matrix<DATA_TYPE, Eigen::Dynamic, Eigen::Dynamic> > matrix = data_[i];
 
-			DATA_TYPE* data_ptr = matrix->data();
-			// Export matrix data.
-			for (size_t i = 0; i < matrix->rows()*matrix->cols() -1; i++) {
-				output << data_ptr[i] << ", ";
+			//output << *matrix;
+
+			//DATA_TYPE* data_ptr = matrix->data();
+			// Export matrix.
+			for (size_t y = 0; y < matrix->rows(); y++) {
+				for (size_t x = 0; x < matrix->cols(); x++) {
+					output << (*matrix)(y,x) << ", ";
 				}//: for
-			output << data_ptr[matrix->rows()*matrix->cols() -1] << std::endl;
 			}//: for
+			//output << data_ptr[matrix->rows()*matrix->cols() -1] << std::endl;
+			output << std::endl;
+		}//: for
 	}
 
 
