@@ -21,6 +21,8 @@ set(BUILD_TEST_CHAR_ENCODER ON CACHE BOOL "Build the 1-of-k Char Encoder test ap
 
 set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
 
+set(BUILD_TEST_TENSOR ON CACHE BOOL "Build the application for testing tensors/eigen map")
+
 set(BUILD_TEST_COLLECTOR ON CACHE BOOL "Build the application for testing data collector")
 
 
@@ -158,6 +160,28 @@ if(${BUILD_TEST_MATRIX})
 	install(TARGETS matrix_test RUNTIME DESTINATION bin)
 
 endif(${BUILD_TEST_MATRIX})
+
+# =======================================================================
+# Build and install - tensor test application.
+# =======================================================================
+
+if(${BUILD_TEST_TENSOR})
+	# Create exeutable.
+	ADD_EXECUTABLE(tensor_test tests/tensor_test.cpp)
+	# Link it with shared libraries.
+	target_link_libraries(tensor_test 
+		types
+		${Boost_LIBRARIES}
+		${EIGEN_LIBRARIES} 
+		)
+	if(OpenBLAS_FOUND)
+		target_link_libraries(tensor_test  ${OpenBLAS_LIB} )
+	endif(OpenBLAS_FOUND)
+
+	# install test to bin directory
+	install(TARGETS tensor_test RUNTIME DESTINATION bin)
+
+endif(${BUILD_TEST_TENSOR})
 
 # =======================================================================
 # Build and install - data collector test application.
