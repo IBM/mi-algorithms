@@ -41,14 +41,14 @@ struct DataContainer {
 	bool auto_scale;
 
 	/*!
-	 * Maximum value.
-	 */
-	DATA_TYPE max_value;
-
-	/*!
 	 * Minimum value.
 	 */
 	DATA_TYPE min_value;
+
+	/*!
+	 * Maximum value.
+	 */
+	DATA_TYPE max_value;
 
 	/*!
 	 * Colour - used in visualization.
