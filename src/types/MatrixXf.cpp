@@ -6,7 +6,7 @@
  */
 
 
-//#ifdef FALSE
+#if 0
 
 #include <types/MatrixXf.hpp>
 
@@ -182,4 +182,4 @@ void MatrixXf::repeatVector(VectorXf &in) {
 } /* namespace types */
 } /* namespace mic */
 
-//#endif
+#endif

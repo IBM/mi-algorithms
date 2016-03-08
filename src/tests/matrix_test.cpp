@@ -16,6 +16,8 @@
 #include <data_utils/functions.h>
 #include <data_utils/Timer.hpp>
 
+
+
 #ifdef OpenBLAS_FOUND
 #include <cblas.h>
 #endif
@@ -92,22 +94,22 @@ int main(int argc, char* argv[]) {
 #endif
 
 	// Default sizes of matrices.
-	const size_t N = 2;
-	const size_t M = 3;
-	const size_t K = 4;
+	const size_t N = 200;
+	const size_t M = 300;
+	const size_t K = 400;
 	const size_t number_of_multiplications = 100;
 
 	// Matrices.
-	mic::types::MatrixXf nm(N, M);
-	mic::types::MatrixXf mk(M, K);
-	mic::types::MatrixXf nk(N, K);
+	mic::types::Matrix<float> nm(N, M);
+	mic::types::Matrix<float> mk(M, K);
+	mic::types::Matrix<float> nk(N, K);
 
 	// Initialize matrices with random numbers.
 	nm.normRandReal(1, 0.001);
 	mk.normRandReal(1, 0.001);
-	std::cout <<"nm=\n" << nm <<  std::endl;
+	//std::cout <<"nm=\n" << nm <<  std::endl;
 
-	// Adding test.
+/*	// Adding test.
 	Eigen::VectorXf vect(N);
 	vect.setRandom();
 	std::cout <<"vect=\n" << vect <<  std::endl;
@@ -120,9 +122,9 @@ int main(int argc, char* argv[]) {
 	std::cout <<"nm2=\n" << nm2 <<  std::endl;
 	nm.elementwiseFunctionMatrix(&_add, nm2);
 	std::cout <<"nm+=nm2\n" << nm <<  std::endl;
+*/
 
-
-	std::cout <<"mk=\n" << mk <<  std::endl;
+	//std::cout <<"mk=\n" << mk <<  std::endl;
 
 	mic::data_utils::Timer timer;
 	timer.start();
@@ -143,7 +145,7 @@ int main(int argc, char* argv[]) {
 #endif*/
 	}//: for
 	double time = timer.end();
-	std::cout <<"nk=\n" << nk <<  std::endl;
+	//std::cout <<"nk=\n" << nk <<  std::endl;
 
 	std::cout  <<  "Multiplication time = " << time <<  std::endl;
 

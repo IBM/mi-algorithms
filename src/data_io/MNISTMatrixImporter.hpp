@@ -10,6 +10,7 @@
 #define SRC_DATA_IO_MNISTMATRIXIMPORTER_HPP_
 
 #include <data_io/Importer.hpp>
+#include <types/MatrixTypes.hpp>
 
 namespace mic {
 namespace data_io {

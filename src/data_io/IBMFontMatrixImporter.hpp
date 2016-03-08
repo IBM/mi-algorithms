@@ -9,6 +9,7 @@
 #define SRC_DATA_IO_IBMFONTMATRIXIMPORTER_HPP_
 
 #include <data_io/Importer.hpp>
+#include <types/MatrixTypes.hpp>
 
 namespace mic {
 namespace data_io {

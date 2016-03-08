@@ -54,8 +54,20 @@ private:
 	mic::configuration::Property<std::string> data_filename;
 };
 
+
 } /* namespace data_io */
 } /* namespace mic */
 
+namespace mic {
+namespace types {
+
+/*!
+ * \brief The <char-char> pair type used by e.g. RawTextImporter.
+ * \author tkornuta
+ */
+typedef std::pair< std::shared_ptr<char>, std::shared_ptr<char> > char_char_pair_t;
+
+}//: namespace types
+}//: namespace mic
 
 #endif /* SRC_DATA_IO_RAWTEXTIMPORTER_HPP_ */

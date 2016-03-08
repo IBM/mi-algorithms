@@ -5,7 +5,8 @@
  * \date Feb 17, 2016
  */
 
-#ifndef SRC_TYPES_MATRIXXF_HPP_
+#if 0
+//#ifndef SRC_TYPES_MATRIXXF_HPP_
 #define SRC_TYPES_MATRIXXF_HPP_
 
 //#ifdef FALSE
