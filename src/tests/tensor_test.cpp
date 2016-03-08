@@ -66,24 +66,34 @@ int main(int argc, char* argv[]) {
 	const size_t N = 20;
 	const size_t M = 30;
 	const size_t K = 4;
-	const size_t number_of_multiplications = 100;
 
-
+	// Create tensor.
 	mic::types::Tensor<double> t1({N, M, K});
 	for (int i=0; i<N*M*K; i++)
 		t1.data[i] = i;
 
-	mic::types::TensorView<double> tv1(t1, {VR(0,0), VR(0,2,14), VR()});
+	// Create different views on tensor.
+	mic::types::TensorView<double> tv1(t1, {VR(0), VR(0,2,14), VR()});
 	std::cout << tv1;
 
-	mic::types::TensorView<double> tv2(tv1, {VR(0,0), VR(0,0), VR(1,2)});
+	mic::types::TensorView<double> tv2(tv1, {VR(0,0), VR(0), VR(1,2)});
 	std::cout << tv2;
 
-	mic::types::MatrixXd mv1 = tv1.eval();
-	std::cout << mv1;
+	mic::types::TensorView<double> tv3(tv1, {VR(0), VR(1), VR(2,2)});
+	std::cout << tv2;
 
-	mic::types::MatrixXd mv2 = tv2.eval();
-	std::cout << mv2;
+	// Get (sub)tensor, (sub)matrix, (sub)vector and scalar.
+	mic::types::Tensor<double> t2 = tv1.getTensor();
+
+	mic::types::MatrixXd mat1 = tv1.getMatrix();
+	std::cout << mat1 << std::endl;
+
+	mic::types::VectorXd vec1 = tv2.getVector();
+	std::cout << vec1 << std::endl;
+
+	double s1 = tv3.getScalar();
+	std::cout << s1 << std::endl;
+
 
 	// Matrices.
 //	mic::types::Matrix<float> nm(N, M);

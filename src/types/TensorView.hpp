@@ -20,7 +20,10 @@
 namespace mic {
 namespace types {
 
-
+/*!
+ * \brief Class representing ranges as triplets similar to MATLAB min:step:max.
+ * \author tkornuta
+ */
 class ViewRange {
 private:
 	/// Minimum range limit (equal toor grater from 0).
@@ -105,9 +108,22 @@ public:
 
 
 
+/*!
+ * \brief Class defining view - a subset of data of an existing tensor.
+ * TensorView does not stores the real data. It stores the ranges and offers methods for returning subsets as tensors (nD), matrices (2D), vectors (1D) and single values (scalars).
+ *
+ * \tparam T Template parameter denoting elementary type of data used in the associated tensor (int, float, double etc.).
+ * \date Mar 7, 2016
+ * \author tkornuta
+ */
 template <class T>
 class TensorView {
 public:
+	/*!
+	 * Constructor.
+	 * @param tensor_ The tensor associated with a given view.
+	 * @param ranges_ A list of ranges - must have the same dimensions as tensor.
+	 */
 	TensorView(mic::types::Tensor<T> & tensor_, std::initializer_list<ViewRange> ranges_) {
 		//static_assert((ranges_.size() == tensor_.dim.size()), "Wrong number of dimensions");
 		assert(ranges_.size() == tensor_.dim.size());
@@ -131,7 +147,11 @@ public:
 		}//: for
 	}
 
-
+	/*!
+	 * Copying constructor. Defines a subview - view on the same tensor but with yet another ranges associated.
+	 * @param view_ Previous view.
+	 * @param ranges_ A list of ranges - must have the same dimensions as tensor view (thus the original tensor as well).
+	 */
 	TensorView(mic::types::TensorView<T> & view_, std::initializer_list<ViewRange> ranges_) {
 		//static_assert((ranges_.size() == tensor_.dim.size()), "Wrong number of dimensions");
 		assert(ranges_.size() == view_.ranges.size());
@@ -156,6 +176,12 @@ public:
 	}
 
 
+	/*!
+	 * Stream operator enabling to print tensor view ranges for all dimensions.
+	 * @param os
+	 * @param tv
+	 * @return
+	 */
 	friend std::ostream& operator<<(std::ostream& os, const TensorView<T>& tv) {
 		// For all ranges/dimensions.
 		for (size_t i=0; i < tv.ranges.size(); i++) {
@@ -168,12 +194,89 @@ public:
 		}//: for
 
 		return os;
-
 	}
 
-	 mic::types::Matrix<T> eval() {
-		 mic::types::Matrix<T> ret_m(11,11);
-		 return ret_m;
+	 /*!
+	  * Returns a new (sub)tensor taking into account the view ranges.
+	  * @return (Sub)tensor.
+	  */
+	 mic::types::Tensor<T> getTensor() {
+		 // Compute dimensions.
+
+		// Do the magic.
+		//...
+
+		 mic::types::Tensor<T> t;
+		 return t;
+	 }
+
+
+	 /*!
+	  * Returns a (sub)tensor in the form of 2D matrix taking into account the view ranges.
+	  * @return Matrix being a 2D (sub)tensor.
+	  */
+	 mic::types::Matrix<T> getMatrix() {
+		 // Check how many dimensions are active.
+		 int act_dims = 0;
+		for (size_t i=0; i < ranges.size(); i++) {
+			if (ranges[i].size() > 1)
+				act_dims++;
+		}//: for
+		assert(act_dims==2);// "getMatrix(): number of Tensor View ranges having more than one element must be equal to 2"
+		// Assign memory to returned object.
+		mic::types::Matrix<T> ret_m(11,11);
+		// Do the magic - depending on the tensor dimensions.
+		//...
+
+		// Return matrix.
+		return ret_m;
+	 }
+
+
+	 /*!
+	  * Returns a (sub)tensor in the form of 1D vector taking into account the view ranges.
+	  * @return Vector being a 1D (sub)tensor.
+	  */
+	 mic::types::VectorX<T> getVector() {
+		// Check how many dimensions are active.
+		int act_dims = 0;
+		for (size_t i=0; i < ranges.size(); i++) {
+			if (ranges[i].size() > 1)
+				act_dims++;
+		}//: for
+		assert(act_dims==1);// "getVector(): number of Tensor View ranges having more than one element must be equal to 1"
+		// Assign memory to returned object.
+		mic::types::VectorX<T> ret_v(11);
+		// Do the magic.
+		//...
+
+		// Return matrix.
+		return ret_v;
+	 }
+
+
+	 /*!
+	  * Returns a (sub)tensor in the form of a scalar taking into account the view ranges.
+	  * @return A single value of a given (template) type.
+	  */
+	 T getScalar() {
+		 // Check how many dimensions are active.
+		 int act_dims = 0;
+		for (size_t i=0; i < ranges.size(); i++) {
+			if (ranges[i].size() > 1)
+				act_dims++;
+		}//: for
+		assert(act_dims==0); // "getScalar(): all Tensor View ranges must have only one element"
+		// Assign memory to returned object.
+		T ret_v = 0;
+
+		// Do the magic - iterate through all dimensions in order to compute the index.
+		size_t index=0;
+		//...
+
+
+		// Return matrix.
+		return ret_v;
 	 }
 
 private:
@@ -182,6 +285,9 @@ private:
 	 */
 	mic::types::Tensor<T> * tensor;
 
+	/*!
+	 *
+	 */
 	std::vector<std::vector<size_t> > ranges;
 };
 

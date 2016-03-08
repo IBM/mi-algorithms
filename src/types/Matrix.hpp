@@ -34,8 +34,9 @@ using VectorX = typename Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
 /*!
  * \brief Template-typed Matrix of dynamic size.
- * Uses OpenBLAS if found by CMAKE.
+ * Uses OpenBLAS if found by CMAKE - overloaded, specializations of * operator for types: float, double.
  *
+ * \tparam T Template parameter denoting elementary type of data used (int, float, double etc.)
  * \date Mar 7, 2016
  * \author tkornuta
  */

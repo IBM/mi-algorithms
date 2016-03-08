@@ -10,8 +10,10 @@
 #ifndef __TENSOR_H__
 #define __TENSOR_H__
 
-#include <data_utils/functions.h>
+#include <stdio.h>
 #include <vector>
+
+#include <data_utils/functions.h>
 
 namespace mic {
 namespace types {
@@ -30,8 +32,10 @@ public:
 
 	Tensor(const Tensor& t) {
 		// Copy dimensions.
-		memcpy(dim, t.dim, sizeof(size_t) * t.dim.size());
 		elements = t.elements;
+		dim.reserve(t.dim.size());
+		std::copy(t.dim.begin(),t.dim.end(),std::back_inserter(dim));
+
 
 		// Copy data.
 		if (data != nullptr) delete(data);
@@ -42,14 +46,14 @@ public:
 		//this = t;
 	}
 
-	Tensor<T>& operator=(Tensor<T>& t) {
+	Tensor<T>& operator=(const Tensor<T>& t) {
 		// Copy dimensions.
-		dim = t.dim;
 		elements = t.elements;
+		dim.reserve(t.dim.size());
+		std::copy(t.dim.begin(),t.dim.end(),std::back_inserter(dim));
 
 		// Copy data.
 		memcpy(data, t.data, sizeof(T) * elements);
-
 	}
 
 	Tensor(std::initializer_list<size_t> args) {
