@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
 	double s1 = tv3.getScalar();
 	std::cout << s1 << std::endl;*/
 
-	mic::types::Tensor<double> t1({N*M*K});
+	mic::types::Tensor<double> t1({N*M*N});
 	t1.enumerate();
 	t1({2}) = 33.1;
 	t1(4) = 55;
@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 	double* data = t1.data();
 	data[10] = 1000.1;
 
-	t1.resize({N, M, K});
+	t1.resizeForced({N, M, K});
 	t1({2,2,2}) = 222.1;
 	t1(5) = 666;
 	std::cout << t1;
@@ -136,9 +136,6 @@ int main(int argc, char* argv[]) {
 			}//: for
 	std::cout << std::endl;
 
-	for(size_t i=0; i<N*M*K; i++)
-		std::cout << data[i] << ", ";
-	std::cout << std::endl;
 
 	mic::types::Tensor<double> t2 = t1.block({1,1,1},{2,2,2});
 	std::cout << t2;

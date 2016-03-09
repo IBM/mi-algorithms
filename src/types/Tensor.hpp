@@ -65,9 +65,7 @@ public:
 		std::copy(t.dimensions.begin(), t.dimensions.end(),
 				std::back_inserter(dimensions));
 
-		// Copy data.
-		if (data_ptr != nullptr)
-			delete (data_ptr);
+		// Allocate memory and copy data.
 		data_ptr = new T[t.elements];
 		memcpy(data_ptr, t.data_ptr, sizeof(T) * elements);
 	}
@@ -77,36 +75,23 @@ public:
 	 * @param t The original tensor to be copied.
 	 */
 	Tensor<T>& operator=(const Tensor<T>& t) {
+		// Check dimensions.
+		if (elements != t.elements) {
+			elements = t.elements;
+			// Allocate memory.
+			if (data_ptr != nullptr)
+				delete (data_ptr);
+			data_ptr = new T[t.elements];
+		}//: if
+
 		// Copy dimensions.
-		elements = t.elements;
+		dimensions.clear();
 		dimensions.reserve(t.dimensions.size());
 		std::copy(t.dimensions.begin(), t.dimensions.end(),
 				std::back_inserter(dimensions));
 
 		// Copy data.
 		memcpy(data_ptr, t.data_ptr, sizeof(T) * elements);
-	}
-
-	/*!
-	 * Sets all element values to zero.
-	 */
-	void zeros() {
-		memset(data_ptr, 0, elements * sizeof(T));
-	}
-
-	/*!
-	 * Sets all element values to one.
-	 */
-	void ones() {
-		memset(data_ptr, 1, elements * sizeof(T));
-	}
-
-	/*!
-	 * Enumerates - sets values of elements to their indices.
-	 */
-	void enumerate() {
-		for (int i = 0; i < elements; i++)
-			data_ptr[i] = i;
 	}
 
 	/*!
@@ -117,51 +102,6 @@ public:
 		if (data_ptr)
 			delete (data_ptr);
 	}
-
-	/*!
-	 * Stream operator enabling to print tensor dimensions and all values.
-	 * @param os_ Ostream object.
-	 * @param obj_ Tensor object.
-	 */
-	friend std::ostream& operator<<(std::ostream& os_, const Tensor& obj_) {
-		// Display dimensions.
-		os_ << "[";
-		for (size_t i = 0; i < obj_.dimensions.size() - 1; i++)
-			os_ << obj_.dimensions[i] << " x ";
-		os_ << obj_.dimensions.back() << "]: [";
-
-		// Display elements.
-		for (size_t i = 0; i < obj_.elements - 1; i++)
-			os_ << obj_.data_ptr[i] << ", ";
-		os_ << obj_.data_ptr[obj_.elements - 1] << "]\n";
-
-		return os_;
-	}
-
-	/*!
-	 * Stream operator enabling writing values to tensor.
-	 * @param is_ Istream object.
-	 * @param obj_ Tensor object.
-	 */
-/*	friend std::istream& operator>>(std::istream& is_, Tensor& obj_)
-	{
-		// TODO
-		//for (size_t i = 0; i < obj_.elements; ++i)
-		//    is_ >> obj_.data[i];
-	    // load the data using the assign function, which
-	    // clears any data already in the vector, and copies
-	    // in the data from the specified iterator range.
-	    // Here I use istream_iterators, which will read to the end
-	    // of the stream.  If you dont want to do this, then you could
-	    // read what you want into a std::string first and assign that.
-		std::string s;
-		s << is_;
-		std::cout << s.size();
-		//obj_.data.assign(std::istream_iterator<T>(is_), std::istream_iterator<T>());
-
-		return is_;
-	}*/
-
 	/*!
 	 * Flattens the tensor - sets dimensions to [ n ].
 	 */
@@ -171,7 +111,8 @@ public:
 	}
 
 	/*!
-	 * Resizes the tensor - sets new dimensions. Important note: the otal number of elements must remain unchanged.
+	 * Resizes the tensor - sets new tensor dimensions.
+	 * Important note: the total number of elements must remain unchanged.
 	 * @param dims_ New dimensions.
 	 */
 	void resize(std::vector<size_t> dims_) {
@@ -186,6 +127,43 @@ public:
 		dimensions.clear();
 		dimensions.reserve(dims_.size());
 		std::copy(dims_.begin(), dims_.end(), std::back_inserter(dimensions));
+	}
+
+	/*!
+	 * Resizes the tensor - sets new tensor dimensions. FORCED version!
+	 * Important note: if the total number of elements change, a new memory block will be allocated and the method will copy as much elements from the old memory block as possible.
+	 * If the new block will be bigger than the old one the values of "new elements" will be set to zeros.
+	 * @param dims_ New dimensions.
+	 */
+	void resizeForced(std::vector<size_t> dims_) {
+		// Check whether new dimensions are ok.
+		size_t new_size = 1;
+		for (auto ith_dimension : dims_) {
+			new_size *= ith_dimension;
+		}
+
+		// Set new dimensions.
+		dimensions.clear();
+		dimensions.reserve(dims_.size());
+		std::copy(dims_.begin(), dims_.end(), std::back_inserter(dimensions));
+
+		// Copy data.
+		if (new_size != elements) {
+			T* old_prt = data_ptr;
+			// Allocate memory.
+			data_ptr = new T[new_size];
+			// Estimate the size of block that must be copied.
+			size_t block_size = (new_size < elements) ? new_size : elements;
+			// Change number of elements.
+			elements = new_size;
+			// Zero elements.
+			zeros();
+			// Copy data.
+			memcpy(data_ptr, old_prt, sizeof(T) * block_size);
+			// Free the old block.
+			delete (old_prt);
+		} //: if
+		//: else: do nothing;)
 	}
 
 	/*!
@@ -268,6 +246,74 @@ public:
 	size_t size() {
 		return elements;
 	}
+
+	/*!
+	 * Sets all element values to zero.
+	 */
+	void zeros() {
+		memset(data_ptr, 0, elements * sizeof(T));
+	}
+
+	/*!
+	 * Sets all element values to one.
+	 */
+	void ones() {
+		memset(data_ptr, 1, elements * sizeof(T));
+	}
+
+	/*!
+	 * Enumerates - sets values of elements to their indices.
+	 */
+	void enumerate() {
+		for (int i = 0; i < elements; i++)
+			data_ptr[i] = i;
+	}
+
+
+	/*!
+	 * Stream operator enabling to print tensor dimensions and all values.
+	 * @param os_ Ostream object.
+	 * @param obj_ Tensor object.
+	 */
+	friend std::ostream& operator<<(std::ostream& os_, const Tensor& obj_) {
+		// Display dimensions.
+		os_ << "[";
+		for (size_t i = 0; i < obj_.dimensions.size() - 1; i++)
+			os_ << obj_.dimensions[i] << " x ";
+		os_ << obj_.dimensions.back() << "]: [";
+
+		// Display elements.
+		for (size_t i = 0; i < obj_.elements - 1; i++)
+			os_ << obj_.data_ptr[i] << ", ";
+		os_ << obj_.data_ptr[obj_.elements - 1] << "]\n";
+
+		return os_;
+	}
+
+	/*!
+	 * Stream operator enabling writing values to tensor.
+	 * @param is_ Istream object.
+	 * @param obj_ Tensor object.
+	 */
+/*	friend std::istream& operator>>(std::istream& is_, Tensor& obj_)
+	{
+		// TODO
+		//for (size_t i = 0; i < obj_.elements; ++i)
+		//    is_ >> obj_.data[i];
+	    // load the data using the assign function, which
+	    // clears any data already in the vector, and copies
+	    // in the data from the specified iterator range.
+	    // Here I use istream_iterators, which will read to the end
+	    // of the stream.  If you dont want to do this, then you could
+	    // read what you want into a std::string first and assign that.
+		std::string s;
+		s << is_;
+		std::cout << s.size();
+		//obj_.data.assign(std::istream_iterator<T>(is_), std::istream_iterator<T>());
+
+		return is_;
+	}*/
+
 
 	/*!
 	 * Returns the index of an element in nD matrix.
