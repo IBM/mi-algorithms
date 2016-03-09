@@ -380,8 +380,7 @@ public:
 		case 2:
 			return coordinates_[1] * dimensions[0] + coordinates_[0];
 		case 3:
-			return (coordinates_[2] * dimensions[1] + coordinates_[1])
-					* dimensions[0] + coordinates_[0];
+			return (coordinates_[2] * dimensions[1] + coordinates_[1]) * dimensions[0] + coordinates_[0];
 		default:
 			return recursiveIndex(0, coordinates_);
 		}		//: switch
@@ -396,51 +395,65 @@ public:
 	 */
 	Tensor<T> block(std::vector< std::vector<size_t> > ranges_) {
 		// All dimensions (tensor and lower and higher) must be equal!
-		//assert(lower_.size() == higher_.size());
 		assert(dimensions.size() == ranges_.size());
 
 		// Set dimensions.
-		std::vector<size_t> tmp_dims;
+		std::vector<size_t> new_dims;
 		for (size_t i=0; i < ranges_.size(); i++) {
 			// Every range must be given.
 			assert(ranges_[i].size() == 2);
 			size_t ith_dimension = ranges_[i][1] - ranges_[i][0] +1;
 			// Every dimension must be greater than 0!
-			assert(ranges_[i][0] > 0);
+			assert(ranges_[i][0] >= 0);
 			assert(ranges_[i][1] < dimensions[i]);
 			assert(ith_dimension > 0);
 			// Add dimension.
-			tmp_dims.push_back(ith_dimension);
+			new_dims.push_back(ith_dimension);
 		}//: for
 		// Create tensor of a required size.
-		mic::types::Tensor<T> t(tmp_dims);
-		std::cout << t;
+		mic::types::Tensor<T> new_tensor(new_dims);
+		std::cout << new_tensor;
 
 		// Do the magic.
 
 		// Get block by block and copy it in the right places.
 		// But first: solve the simple 1d-2d-3d cases.
-		switch (tmp_dims.size()) {
+		switch (new_dims.size()) {
 		case 1: {
 			// Copy data from lower to higher.
-			memcpy(t.data_ptr, (data_ptr + ranges_[0][0]), tmp_dims[0]* sizeof(T));
+			memcpy(new_tensor.data_ptr, (data_ptr + ranges_[0][0]), new_dims[0]* sizeof(T));
 			break;
 			}
 		case 2: {
 			// Iterate through blocks.
 			for (size_t i=ranges_[1][0], j=0; i<=ranges_[1][1]; i++, j++) {
-				std::cout << "i=" << i << " j=" << j << std::endl;
+/*				std::cout << "i=" << i << " j=" << j << std::endl;
 				std::cout << "ranges_[1][0]=" << ranges_[1][0] << std::endl;
 				std::cout << "ranges_[1][1]=" << ranges_[1][1] << std::endl;
 				std::cout << "tmp_dims[0]=" << tmp_dims[0] << std::endl;
 				std::cout << "j* tmp_dims[0]=" << j* tmp_dims[0] << std::endl;
 				std::cout << "dimensions[0]=" << dimensions[0] << std::endl;
 				std::cout << "ranges_[0][0]=" << ranges_[0][0] << std::endl;
-				std::cout << "i * dimensions[0] + ranges_[0][0]=" << i * dimensions[0] + ranges_[0][0] << std::endl;
+				std::cout << "i * dimensions[0] + ranges_[0][0]=" << i * dimensions[0] + ranges_[0][0] << std::endl;*/
 
 				// Copy data from lower to higher.
-				memcpy(t.data_ptr + j* tmp_dims[0], (data_ptr + i * dimensions[0] + ranges_[0][0]), tmp_dims[0]* sizeof(T));
+				memcpy(new_tensor.data_ptr + j* new_dims[0], (data_ptr + i * dimensions[0] + ranges_[0][0]), new_dims[0]* sizeof(T));
 			}//: for
+			break;
+			}
+		case 3: {
+			// Iterate through blocks.
+			for (size_t i2=ranges_[2][0], j2=0; i2<=ranges_[2][1]; i2++, j2++) {
+				for (size_t i1=ranges_[1][0], j1=0; i1<=ranges_[1][1]; i1++, j1++) {
+/*					std::cout << "i1=" << i1 << " j1=" << j1 << std::endl;
+					std::cout << "i2=" << i2 << " j2=" << j2 << std::endl;
+					std::cout << "j2* tmp_dims[1] =" << j2* tmp_dims[1]  << std::endl;
+					std::cout << "j1* tmp_dims[0]=" << j1* tmp_dims[0] << std::endl;*/
+
+					// Copy data from lower to higher.
+					memcpy(new_tensor.data_ptr + (j2* new_dims[1] + j1)* new_dims[0], (data_ptr + (i2 * dimensions[1] + i1) * dimensions[0] + ranges_[0][0]), new_dims[0]* sizeof(T));
+					}//: for
+				}//: for
 			break;
 			}
 		default:
@@ -448,7 +461,7 @@ public:
 		}
 
 
-		return t;
+		return new_tensor;
 	}
 
 private:
