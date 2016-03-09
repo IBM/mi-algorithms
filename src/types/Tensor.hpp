@@ -31,13 +31,13 @@ public:
 	Tensor() = default;
 
 	/*!
-	 * Constructor with a variable number of parameters in { }, denoting the tensor dimensions.
-	 * @param args Tensor dimensions ( in { }, e.g. { width height depth ... })
+	 * Constructor - sets the tensor dimension and assigns memory.
+	 * @param dims_ Tensor dimensions ({ }, vector<size_t> etc.).
 	 */
-	Tensor(std::initializer_list<size_t> args) {
+	Tensor(std::vector<size_t> dims_) {
 		// Set dimensions.
 		elements = 1;
-		for (auto ith_dimension : args) {
+		for (auto ith_dimension : dims_) {
 			// Every dimension must be greater than 0!.
 			assert(ith_dimension > 0);
 			// Add dimension.
@@ -120,37 +120,58 @@ public:
 
 	/*!
 	 * Stream operator enabling to print tensor dimensions and all values.
-	 * @param os Ostream object.
-	 * @param tv Tensor object.
-	 * @return Ostream containing tensor description.
+	 * @param os_ Ostream object.
+	 * @param obj_ Tensor object.
 	 */
-	friend std::ostream& operator<<(std::ostream& os, const Tensor& t) {
+	friend std::ostream& operator<<(std::ostream& os_, const Tensor& obj_) {
 		// Display dimensions.
-		os << "[";
-		for (size_t i = 0; i < t.dimensions.size() - 1; i++)
-			os << t.dimensions[i] << " x ";
-		os << t.dimensions.back() << "]: [";
+		os_ << "[";
+		for (size_t i = 0; i < obj_.dimensions.size() - 1; i++)
+			os_ << obj_.dimensions[i] << " x ";
+		os_ << obj_.dimensions.back() << "]: [";
 
 		// Display elements.
-		for (size_t i = 0; i < t.elements - 1; i++)
-			os << t.data_ptr[i] << ", ";
-		os << t.data_ptr[t.elements - 1] << "]\n";
+		for (size_t i = 0; i < obj_.elements - 1; i++)
+			os_ << obj_.data_ptr[i] << ", ";
+		os_ << obj_.data_ptr[obj_.elements - 1] << "]\n";
 
-		return os;
+		return os_;
 	}
 
 	/*!
-	 * Flattens the tensor - sets new dimensions [ n x 1 x 1 x ...].
+	 * Stream operator enabling writing values to tensor.
+	 * @param is_ Istream object.
+	 * @param obj_ Tensor object.
+	 */
+/*	friend std::istream& operator>>(std::istream& is_, Tensor& obj_)
+	{
+		// TODO
+		//for (size_t i = 0; i < obj_.elements; ++i)
+		//    is_ >> obj_.data[i];
+	    // load the data using the assign function, which
+	    // clears any data already in the vector, and copies
+	    // in the data from the specified iterator range.
+	    // Here I use istream_iterators, which will read to the end
+	    // of the stream.  If you dont want to do this, then you could
+	    // read what you want into a std::string first and assign that.
+		std::string s;
+		s << is_;
+		std::cout << s.size();
+		//obj_.data.assign(std::istream_iterator<T>(is_), std::istream_iterator<T>());
+
+		return is_;
+	}*/
+
+	/*!
+	 * Flattens the tensor - sets dimensions to [ n ].
 	 */
 	void flatten() {
-		for (size_t i = 0; i < dimensions.size(); i++) {
-			dimensions[i] = 1;
-		} //: for
-		dimensions[0] = elements;
+		dimensions.clear();
+		dimensions.push_back(elements);
 	}
 
 	/*!
-	 * Resizes the tensor - sets new dimensions, however total number of elements must remain unchanged.
+	 * Resizes the tensor - sets new dimensions. Important note: the otal number of elements must remain unchanged.
 	 * @param dims_ New dimensions.
 	 */
 	void resize(std::vector<size_t> dims_) {
@@ -175,7 +196,7 @@ public:
 #pragma omp parallel for
 		for (size_t i = 0; i < elements; i++) {
 			data_ptr[i] = (*func)(data_ptr[i]);
-		}//: for
+		} //: for
 	}
 
 	/*!
@@ -187,7 +208,7 @@ public:
 #pragma omp parallel for
 		for (size_t i = 0; i < elements; i++) {
 			data_ptr[i] = (*func)(data_ptr[i], scalar);
-		}//: for
+		} //: for
 	}
 
 	/*!
@@ -198,7 +219,7 @@ public:
 		T total = (T) 0;
 		for (size_t i = 0; i < elements; i++) {
 			total += data_ptr[i];
-		}//: for
+		} //: for
 		return total;
 	}
 
@@ -227,13 +248,6 @@ public:
 	}
 
 	/*!
-	 * Returns k-th element.
-	 */
-	T data(size_t k) {
-		return data_ptr[k];
-	}
-
-	/*!
 	 * Returns dimensions.
 	 */
 	std::vector<size_t> dims() {
@@ -257,7 +271,7 @@ public:
 
 	/*!
 	 * Returns the index of an element in nD matrix.
-	 * @param coordinates_ nD vector of element coordinates.
+	 * @param coordinates_ nD vector of element coordinates ({ }, vector<size_t> etc.).
 	 * @return Index of the element.
 	 */
 	size_t getIndex(std::vector<size_t> coordinates_) {
@@ -269,30 +283,81 @@ public:
 		// ...
 
 		// But first: solve the simple 1d-2d-3d cases.
-		switch (coordinates_.size()){
-			case 1: return data_ptr[coordinates_[0]];
-			case 2: return data_ptr[coordinates_[1]*dimensions[0] + coordinates_[0]];
-			case 3: return data_ptr[(coordinates_[2]*dimensions[1] + coordinates_[1])*dimensions[0] + coordinates_[0]];
-			default: return recursiveIndex(0, coordinates_);
-		}//: switch
+		switch (coordinates_.size()) {
+		case 1:
+			return coordinates_[0];
+		case 2:
+			return coordinates_[1] * dimensions[0] + coordinates_[0];
+		case 3:
+			return (coordinates_[2] * dimensions[1] + coordinates_[1])
+					* dimensions[0] + coordinates_[0];
+		default:
+			return recursiveIndex(0, coordinates_);
+		}		//: switch
 	}
 
 	/*!
-	 * Returns a single element of an nD matrix.
-	 * @param coordinates_ nD vector of element coordinates.
+	 *
+	 * @param index_ Index (a single value).
 	 * @return The value of the element.
 	 */
-	T getValue(std::vector<size_t> coordinates_) {
+	inline T& operator()(size_t index_) {
+		return data_ptr[index_];
+	}
+
+	/*!
+	 * Operator used for setting the value of a given element of nD tensor.
+	 * @param coordinates_ nD vector of element coordinates ({ }, vector<size_t> etc.).
+	 * @return The value of the element.
+	 */
+	inline T& operator()(std::vector<size_t> coordinates_) {
 		return data_ptr[getIndex(coordinates_)];
 	}
 
 	/*!
-	 * Returns a single element of an nD matrix.
+	 * Operator returning the value of a given element of nD tensor.
 	 * @param index_ Index (a single value).
 	 * @return The value of the element.
 	 */
-	T getValue(size_t index_) {
+	inline const T& operator()(size_t index_) const {
 		return data_ptr[index_];
+	}
+
+	/*!
+	 * Operator returning the value of a given element of nD tensor.
+	 * @param coordinates_ nD vector of element coordinates ({ }, vector<size_t> etc.).
+	 * @return The value of the element.
+	 */
+	inline const T& operator()(std::vector<size_t> coordinates_) const {
+		return (T) data_ptr[getIndex(coordinates_)];
+	}
+
+	/*!
+	 *
+	 * @param lower_
+	 * @param higher_
+	 * @return
+	 */
+	Tensor<T> block(std::vector<size_t> lower_, std::vector<size_t> higher_) {
+		// All dimensions (tensor and lower and higher) must be equal!
+		assert(lower_.size() == higher_.size());
+		assert(dimensions.size() == higher_.size());
+
+		// Set dimensions.
+		std::vector<size_t> tmp_dims;
+		for (size_t i=0; i < lower_.size(); i++) {
+			size_t ith_dimension = higher_[i] - lower_[i] +1;
+			// Every dimension must be greater than 0!
+			assert(ith_dimension > 0);
+			// Add dimension.
+			tmp_dims.push_back(ith_dimension);
+		}//: for
+		// Create tensor of a required size.
+		mic::types::Tensor<T> t(tmp_dims);
+		// Do the magic.
+		//1.1 >> t;
+
+		return t;
 	}
 
 private:
@@ -318,13 +383,6 @@ private:
 	 * @return Index of the element.
 	 */
 	size_t recursiveIndex(size_t dim_, std::vector<size_t> coordinates_) {
-		// Do the magic - iterate through all dimensions in order to compute the index.
-		// 1 - x
-		// 2 - y*width + x
-		// 3 - z*height*width + y*width + x = (z*height +y)*width + x
-		// 4 - v*depth*height*width + z*height*width + y*width + x = (v*d +z)(h +y)*w +x
-		// ...
-
 		if (dim_ == coordinates_.size() - 1)
 			return coordinates_[dim_];
 		else

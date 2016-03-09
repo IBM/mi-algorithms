@@ -54,6 +54,20 @@ using namespace std;
 	std::cout << '\n';*/
 
 
+/*
+Eigen Concatenation
+Horizontally:
+
+MatrixXd C(A.rows(), A.cols()+B.cols());
+C << A, B;
+
+Vertically:
+
+MatrixXd D(A.rows()+B.rows(), A.cols());
+D << A,
+     B;
+ */
+
 /*!
  * \brief Program for testing tensors/Eigen map
  * \author tkornuta
@@ -97,9 +111,16 @@ int main(int argc, char* argv[]) {
 
 	mic::types::Tensor<double> t1({N*M*K});
 	t1.enumerate();
+	t1({2}) = 33.1;
+	t1(4) = 55;
 	std::cout << t1;
 
+	double* data = t1.data();
+	data[10] = 1000.1;
+
 	t1.resize({N, M, K});
+	t1({2,2,2}) = 222.1;
+	t1(5) = 666;
 	std::cout << t1;
 
 
@@ -107,11 +128,20 @@ int main(int argc, char* argv[]) {
 	for(size_t k=0; k<K; k++)
 		for(size_t m=0; m<M; m++)
 			for(size_t n=0; n<N; n++) {
-				mic::types::TensorView<double> tv(t1, {VR(n), VR(m), VR(k)});
-				std::cout << tv ;
-				double d = tv.getScalar();
-				std::cout << d << std::endl;
+				//mic::types::TensorView<double> tv(t1, {VR(n), VR(m), VR(k)});
+				//std::cout << tv ;
+				//double d = tv.getScalar();
+				double d = t1({n,m,k});
+				std::cout << d << ", ";
 			}//: for
+	std::cout << std::endl;
+
+	for(size_t i=0; i<N*M*K; i++)
+		std::cout << data[i] << ", ";
+	std::cout << std::endl;
+
+	mic::types::Tensor<double> t2 = t1.block({1,1,1},{2,2,2});
+	std::cout << t2;
 
 
 	// Matrices.

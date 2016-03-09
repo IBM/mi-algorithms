@@ -34,6 +34,7 @@ Applications
    * char_encoder_test - examplary 1-of-k Char Encoder test application.
    * data_collector_test - program for testing data collector.
    * matrix_test - program for testing multiplication of matrices with/without OpenBLAS.
+   * tensor_test - program for testing tensor functionality.
    
 Installation
 ------------
