@@ -63,14 +63,15 @@ using namespace std;
  */
 int main(int argc, char* argv[]) {
 	// Default sizes of matrices.
-	const size_t N = 20;
-	const size_t M = 30;
+	const size_t N = 2;
+	const size_t M = 3;
 	const size_t K = 4;
 
 	// Create tensor.
-	mic::types::Tensor<double> t1({N, M, K});
-	for (int i=0; i<N*M*K; i++)
-		t1.data[i] = i;
+/*	mic::types::Tensor<double> t1({N, M, K});
+	double* data = t1.data();
+	for (int i=0; i<t1.size(); i++)
+		data[i] = i;
 
 	// Create different views on tensor.
 	mic::types::TensorView<double> tv1(t1, {VR(0), VR(0,2,14), VR()});
@@ -92,7 +93,21 @@ int main(int argc, char* argv[]) {
 	std::cout << vec1 << std::endl;
 
 	double s1 = tv3.getScalar();
-	std::cout << s1 << std::endl;
+	std::cout << s1 << std::endl;*/
+
+	mic::types::Tensor<double> t1({N, M, 0});
+	t1.enumerate();
+
+	// tensor is colmajor!
+	for(size_t k=0; k<K; k++)
+		for(size_t m=0; m<M; m++)
+			for(size_t n=0; n<N; n++) {
+				mic::types::TensorView<double> tv(t1, {VR(n), VR(m), VR(k)});
+				std::cout << t1;
+				std::cout << tv ;
+				double d = tv.getScalar();
+				std::cout << d << std::endl;
+			}//: for
 
 
 	// Matrices.

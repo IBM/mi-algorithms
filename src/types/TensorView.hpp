@@ -13,9 +13,8 @@
 
 #include <limits>
 
-#include <types/tensor.h>
-
 #include <types/MatrixTypes.hpp>
+#include <types/Tensor.hpp>
 
 namespace mic {
 namespace types {
@@ -126,7 +125,7 @@ public:
 	 */
 	TensorView(mic::types::Tensor<T> & tensor_, std::initializer_list<ViewRange> ranges_) {
 		//static_assert((ranges_.size() == tensor_.dim.size()), "Wrong number of dimensions");
-		assert(ranges_.size() == tensor_.dim.size());
+		assert(ranges_.size() == tensor_.dims().size());
 
 		// Set pointer.
 		tensor = &tensor_;
@@ -136,7 +135,7 @@ public:
 		for (ViewRange vr: ranges_) {
 			//std::cout << vr.min << ":" << vr.step << ":" << vr.max << std::endl;
 			std::vector<size_t> rrange;
-			for(size_t i = vr.min; (i <= vr.max) && (i < tensor->dim[r]); i+=vr.step) {
+			for(size_t i = vr.min; (i <= vr.max) && (i < tensor->dims(r)); i+=vr.step) {
 				rrange.push_back(i);
 //				std::cout << i << "\n";
 			}//: for
@@ -177,20 +176,25 @@ public:
 
 
 	/*!
-	 * Stream operator enabling to print tensor view ranges for all dimensions.
-	 * @param os
-	 * @param tv
-	 * @return
+	 * Stream operator enabling to print tensor view ranges for all dimensions and all values.
+	 * @param os Ostream object.
+	 * @param tv Tensor object.
+	 * @return Ostream containing tensor view description.
 	 */
 	friend std::ostream& operator<<(std::ostream& os, const TensorView<T>& tv) {
 		// For all ranges/dimensions.
 		for (size_t i=0; i < tv.ranges.size(); i++) {
 			// For all values in a given dimension.
 			os << "[";
-			for (size_t v=0; v < tv.ranges[i].size(); v++) {
+			for (size_t v=0; v < tv.ranges[i].size() -1; v++) {
 				os << tv.ranges[i][v] << ",";
 			}//: for
-			os << "]\n";
+			size_t v= tv.ranges[i].size() -1;
+			os << tv.ranges[i][v] << "]";
+			if (i != (tv.ranges.size() - 1))
+				os << " x ";
+			else
+				os << std::endl;
 		}//: for
 
 		return os;
@@ -256,6 +260,24 @@ public:
 
 
 	 /*!
+	  * Recursive method computing the index of element in nD matrix.
+	  * @param k_ dimension considered at the moment.
+	  * @return Index of the element.
+	  */
+	 size_t recursiveIndexZero(size_t k_) {
+		//std::cout <<"recursion for k_= "<<k_<<std::endl;
+		 if (k_ == ranges.size()-1) {
+				//std::cout <<"returning ranges[k_][0]= "<<ranges[k_][0] <<std::endl;
+			 return ranges[k_][0];
+		 }else {
+				//std::cout <<" tensor->dims(k_)= "<<tensor->dims(k_) <<std::endl;
+				//std::cout <<" ranges[k_][0]= "<< ranges[k_][0] <<std::endl;
+				//std::cout <<"goint deeper!" <<std::endl;
+			 return recursiveIndexZero (k_+1) * tensor->dims(k_) + ranges[k_][0];
+		 }
+	 }
+
+	 /*!
 	  * Returns a (sub)tensor in the form of a scalar taking into account the view ranges.
 	  * @return A single value of a given (template) type.
 	  */
@@ -267,16 +289,38 @@ public:
 				act_dims++;
 		}//: for
 		assert(act_dims==0); // "getScalar(): all Tensor View ranges must have only one element"
-		// Assign memory to returned object.
-		T ret_v = 0;
 
 		// Do the magic - iterate through all dimensions in order to compute the index.
-		size_t index=0;
-		//...
+		// 1 - x
+		// 2 - y*width + x
+		// 3 - z*height*width + y*width + x = (z*height +y)*width + x
+		// 4 - v*depth*height*width + z*height*width + y*width + x = (v*d +z)(h +y)*w +x
+		// ...
 
+		// But first: solve the simple 1d case;
+		if (ranges.size() == 1) {
+			std::cout <<" tensor["<<ranges[0][0]<<"] = " << tensor->data(ranges[0][0])  << std::endl;
+			// Return value.
+			return tensor->data(ranges[0][0]);
+		}//: if
 
-		// Return matrix.
-		return ret_v;
+		// Else: solve the nD case.
+		size_t index= recursiveIndexZero(0);
+		/*for (size_t k=1; k <  ranges.size(); k++) {
+			std::cout <<"loop k= "<<k<<" before index = "<<index <<std::endl;
+			std::cout <<" ranges[k][0]= "<<ranges[k][0] <<std::endl;
+			std::cout <<" tensor->dims(k-1)= "<<tensor->dims(k-1) <<std::endl;
+			std::cout <<" ranges[k-1][0]= "<< ranges[k-1][0] <<std::endl;
+			std::cout <<" (ranges[k][0] * tensor->dims(k-1) + ranges[k-1][0])= "<< (ranges[k][0] * tensor->dims(k-1) + ranges[k-1][0]) <<std::endl;
+			index *= (ranges[k][0] * tensor->dims(k-1) + ranges[k-1][0]);
+		}//: for
+		std::cout <<"postloop index = "<<index;
+		//index += ranges[0][0];*/
+		//std::cout <<"final index = "<<index;
+		std::cout <<" tensor["<<index<<"] = " << tensor->data(index)  << std::endl;
+
+		// Return value.
+		return tensor->data(index);
 	 }
 
 private:
