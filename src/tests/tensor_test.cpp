@@ -95,15 +95,19 @@ int main(int argc, char* argv[]) {
 	double s1 = tv3.getScalar();
 	std::cout << s1 << std::endl;*/
 
-	mic::types::Tensor<double> t1({N, M, 0});
+	mic::types::Tensor<double> t1({N*M*K});
 	t1.enumerate();
+	std::cout << t1;
 
-	// tensor is colmajor!
+	t1.resize({N, M, K});
+	std::cout << t1;
+
+
+	//for(size_t l=0; l<K; l++)
 	for(size_t k=0; k<K; k++)
 		for(size_t m=0; m<M; m++)
 			for(size_t n=0; n<N; n++) {
 				mic::types::TensorView<double> tv(t1, {VR(n), VR(m), VR(k)});
-				std::cout << t1;
 				std::cout << tv ;
 				double d = tv.getScalar();
 				std::cout << d << std::endl;

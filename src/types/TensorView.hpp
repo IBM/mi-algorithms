@@ -1,7 +1,7 @@
 /*!
  * \file TensorView.hpp
- * \brief 
- * \author tkornut
+ * \brief File containg a template class being a View on tensor.
+ * \author tkornuta
  * \date Mar 7, 2016
  */
 
@@ -254,28 +254,10 @@ public:
 		// Do the magic.
 		//...
 
-		// Return matrix.
+		// Return vector.
 		return ret_v;
 	 }
 
-
-	 /*!
-	  * Recursive method computing the index of element in nD matrix.
-	  * @param k_ dimension considered at the moment.
-	  * @return Index of the element.
-	  */
-	 size_t recursiveIndexZero(size_t k_) {
-		//std::cout <<"recursion for k_= "<<k_<<std::endl;
-		 if (k_ == ranges.size()-1) {
-				//std::cout <<"returning ranges[k_][0]= "<<ranges[k_][0] <<std::endl;
-			 return ranges[k_][0];
-		 }else {
-				//std::cout <<" tensor->dims(k_)= "<<tensor->dims(k_) <<std::endl;
-				//std::cout <<" ranges[k_][0]= "<< ranges[k_][0] <<std::endl;
-				//std::cout <<"goint deeper!" <<std::endl;
-			 return recursiveIndexZero (k_+1) * tensor->dims(k_) + ranges[k_][0];
-		 }
-	 }
 
 	 /*!
 	  * Returns a (sub)tensor in the form of a scalar taking into account the view ranges.
@@ -290,37 +272,14 @@ public:
 		}//: for
 		assert(act_dims==0); // "getScalar(): all Tensor View ranges must have only one element"
 
-		// Do the magic - iterate through all dimensions in order to compute the index.
-		// 1 - x
-		// 2 - y*width + x
-		// 3 - z*height*width + y*width + x = (z*height +y)*width + x
-		// 4 - v*depth*height*width + z*height*width + y*width + x = (v*d +z)(h +y)*w +x
-		// ...
-
-		// But first: solve the simple 1d case;
-		if (ranges.size() == 1) {
-			std::cout <<" tensor["<<ranges[0][0]<<"] = " << tensor->data(ranges[0][0])  << std::endl;
-			// Return value.
-			return tensor->data(ranges[0][0]);
-		}//: if
-
-		// Else: solve the nD case.
-		size_t index= recursiveIndexZero(0);
-		/*for (size_t k=1; k <  ranges.size(); k++) {
-			std::cout <<"loop k= "<<k<<" before index = "<<index <<std::endl;
-			std::cout <<" ranges[k][0]= "<<ranges[k][0] <<std::endl;
-			std::cout <<" tensor->dims(k-1)= "<<tensor->dims(k-1) <<std::endl;
-			std::cout <<" ranges[k-1][0]= "<< ranges[k-1][0] <<std::endl;
-			std::cout <<" (ranges[k][0] * tensor->dims(k-1) + ranges[k-1][0])= "<< (ranges[k][0] * tensor->dims(k-1) + ranges[k-1][0]) <<std::endl;
-			index *= (ranges[k][0] * tensor->dims(k-1) + ranges[k-1][0]);
-		}//: for
-		std::cout <<"postloop index = "<<index;
-		//index += ranges[0][0];*/
-		//std::cout <<"final index = "<<index;
-		std::cout <<" tensor["<<index<<"] = " << tensor->data(index)  << std::endl;
+		// Get scalar coordinates - from ranges.
+		std::vector<size_t> coords;
+		for (size_t i=0; i < ranges.size(); i++) {
+			coords.push_back(ranges[i][0]);
+		}
 
 		// Return value.
-		return tensor->data(index);
+		return tensor->getValue(coords);
 	 }
 
 private:
