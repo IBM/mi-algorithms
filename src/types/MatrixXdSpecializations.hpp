@@ -10,9 +10,12 @@
 
 #include <types/Matrix.hpp>
 
+#ifdef OpenBLAS_FOUND
+#include <cblas.h>
+#endif
+
 namespace mic {
 namespace types {
-
 
 /*!
  * \brief Template specialization: overloaded matrix multiplication operator - for doubles. Uses OpenBLAS if found by CMAKE.

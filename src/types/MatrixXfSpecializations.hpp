@@ -10,6 +10,10 @@
 
 #include <types/Matrix.hpp>
 
+#ifdef OpenBLAS_FOUND
+#include <cblas.h>
+#endif
+
 namespace mic {
 namespace types {
 

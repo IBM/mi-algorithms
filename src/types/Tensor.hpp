@@ -18,7 +18,7 @@ namespace types {
 
 /*!
  * \brief Template class representing an nD (n-Dimensional) tensor.
- * \author tkornuta/kmrocki
+ * \author tkornuta
  * \tparam T template parameter denoting data type stored in tensor.
  */
 template<class T = float>
@@ -38,16 +38,18 @@ public:
 		// Set dimensions.
 		elements = 1;
 		for (auto ith_dimension : dims_) {
-			// Every dimension must be greater than 0!.
+			// Every dimension must be greater than 0!
 			assert(ith_dimension > 0);
 			// Add dimension.
 			dimensions.push_back(ith_dimension);
 			elements *= ith_dimension;
-		}
+		}//: for
 
 		// Allocate memory.
+		if (data_ptr != nullptr)
+			delete (data_ptr);
 		data_ptr = new T[elements];
-		// Check whether data was allocated.
+		// Check whether data was allocated. :]
 		assert(data_ptr != nullptr);
 
 		// Initialize: set all elements to zeros.
@@ -65,8 +67,11 @@ public:
 		std::copy(t.dimensions.begin(), t.dimensions.end(),
 				std::back_inserter(dimensions));
 
-		// Allocate memory and copy data.
+		// Allocate memory.
+		if (data_ptr != nullptr)
+			delete (data_ptr);
 		data_ptr = new T[t.elements];
+		// Copy data.
 		memcpy(data_ptr, t.data_ptr, sizeof(T) * elements);
 	}
 
@@ -119,6 +124,8 @@ public:
 		// Check whether new dimensions are ok.
 		size_t new_size = 1;
 		for (auto ith_dimension : dims_) {
+			// Every dimension must be greater than 0!
+			assert(ith_dimension > 0);
 			new_size *= ith_dimension;
 		}
 		assert(new_size == elements);
@@ -139,6 +146,8 @@ public:
 		// Check whether new dimensions are ok.
 		size_t new_size = 1;
 		for (auto ith_dimension : dims_) {
+			// Every dimension must be greater than 0!
+			assert(ith_dimension > 0);
 			new_size *= ith_dimension;
 		}
 
@@ -316,34 +325,7 @@ public:
 
 
 	/*!
-	 * Returns the index of an element in nD matrix.
-	 * @param coordinates_ nD vector of element coordinates ({ }, vector<size_t> etc.).
-	 * @return Index of the element.
-	 */
-	size_t getIndex(std::vector<size_t> coordinates_) {
-		// Do the magic - iterate through all dimensions in order to compute the index.
-		// 1 - x
-		// 2 - y*width + x
-		// 3 - z*height*width + y*width + x = (z*height +y)*width + x
-		// 4 - v*depth*height*width + z*height*width + y*width + x = (v*d +z)(h +y)*w +x
-		// ...
-
-		// But first: solve the simple 1d-2d-3d cases.
-		switch (coordinates_.size()) {
-		case 1:
-			return coordinates_[0];
-		case 2:
-			return coordinates_[1] * dimensions[0] + coordinates_[0];
-		case 3:
-			return (coordinates_[2] * dimensions[1] + coordinates_[1])
-					* dimensions[0] + coordinates_[0];
-		default:
-			return recursiveIndex(0, coordinates_);
-		}		//: switch
-	}
-
-	/*!
-	 *
+	 * Operator used for setting the value of a given element of nD tensor.
 	 * @param index_ Index (a single value).
 	 * @return The value of the element.
 	 */
@@ -379,29 +361,92 @@ public:
 	}
 
 	/*!
-	 *
+	 * Returns the index of an element in nD matrix.
+	 * @param coordinates_ nD vector of element coordinates ({ }, vector<size_t> etc.).
+	 * @return Index of the element.
+	 */
+	size_t getIndex(std::vector<size_t> coordinates_) {
+		// Do the magic - iterate through all dimensions in order to compute the index.
+		// 1 - x
+		// 2 - y*width + x
+		// 3 - z*height*width + y*width + x = (z*height +y)*width + x
+		// 4 - v*depth*height*width + z*height*width + y*width + x = (v*d +z)(h +y)*w +x
+		// ...
+
+		// But first: solve the simple 1d-2d-3d cases.
+		switch (coordinates_.size()) {
+		case 1:
+			return coordinates_[0];
+		case 2:
+			return coordinates_[1] * dimensions[0] + coordinates_[0];
+		case 3:
+			return (coordinates_[2] * dimensions[1] + coordinates_[1])
+					* dimensions[0] + coordinates_[0];
+		default:
+			return recursiveIndex(0, coordinates_);
+		}		//: switch
+	}
+
+
+	/*!
+	 * Returns the (sub)tensor, whereas the dimensions
 	 * @param lower_
 	 * @param higher_
 	 * @return
 	 */
-	Tensor<T> block(std::vector<size_t> lower_, std::vector<size_t> higher_) {
+	Tensor<T> block(std::vector< std::vector<size_t> > ranges_) {
 		// All dimensions (tensor and lower and higher) must be equal!
-		assert(lower_.size() == higher_.size());
-		assert(dimensions.size() == higher_.size());
+		//assert(lower_.size() == higher_.size());
+		assert(dimensions.size() == ranges_.size());
 
 		// Set dimensions.
 		std::vector<size_t> tmp_dims;
-		for (size_t i=0; i < lower_.size(); i++) {
-			size_t ith_dimension = higher_[i] - lower_[i] +1;
+		for (size_t i=0; i < ranges_.size(); i++) {
+			// Every range must be given.
+			assert(ranges_[i].size() == 2);
+			size_t ith_dimension = ranges_[i][1] - ranges_[i][0] +1;
 			// Every dimension must be greater than 0!
+			assert(ranges_[i][0] > 0);
+			assert(ranges_[i][1] < dimensions[i]);
 			assert(ith_dimension > 0);
 			// Add dimension.
 			tmp_dims.push_back(ith_dimension);
 		}//: for
 		// Create tensor of a required size.
 		mic::types::Tensor<T> t(tmp_dims);
+		std::cout << t;
+
 		// Do the magic.
-		//1.1 >> t;
+
+		// Get block by block and copy it in the right places.
+		// But first: solve the simple 1d-2d-3d cases.
+		switch (tmp_dims.size()) {
+		case 1: {
+			// Copy data from lower to higher.
+			memcpy(t.data_ptr, (data_ptr + ranges_[0][0]), tmp_dims[0]* sizeof(T));
+			break;
+			}
+		case 2: {
+			// Iterate through blocks.
+			for (size_t i=ranges_[1][0], j=0; i<=ranges_[1][1]; i++, j++) {
+				std::cout << "i=" << i << " j=" << j << std::endl;
+				std::cout << "ranges_[1][0]=" << ranges_[1][0] << std::endl;
+				std::cout << "ranges_[1][1]=" << ranges_[1][1] << std::endl;
+				std::cout << "tmp_dims[0]=" << tmp_dims[0] << std::endl;
+				std::cout << "j* tmp_dims[0]=" << j* tmp_dims[0] << std::endl;
+				std::cout << "dimensions[0]=" << dimensions[0] << std::endl;
+				std::cout << "ranges_[0][0]=" << ranges_[0][0] << std::endl;
+				std::cout << "i * dimensions[0] + ranges_[0][0]=" << i * dimensions[0] + ranges_[0][0] << std::endl;
+
+				// Copy data from lower to higher.
+				memcpy(t.data_ptr + j* tmp_dims[0], (data_ptr + i * dimensions[0] + ranges_[0][0]), tmp_dims[0]* sizeof(T));
+			}//: for
+			break;
+			}
+		default:
+			assert(0);
+		}
+
 
 		return t;
 	}

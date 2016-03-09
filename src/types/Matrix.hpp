@@ -11,10 +11,6 @@
 #include <Eigen/Dense>
 #include <random>
 
-#ifdef OpenBLAS_FOUND
-#include <cblas.h>
-#endif
-
 namespace mic {
 namespace types {
 

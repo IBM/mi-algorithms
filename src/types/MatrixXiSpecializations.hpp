@@ -13,7 +13,6 @@
 namespace mic {
 namespace types {
 
-
 /*!
  * \brief Vector of integers (of dynamic size).
  * \author tkornuta
