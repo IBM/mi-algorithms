@@ -136,11 +136,11 @@ int main(int argc, char* argv[]) {
 			}//: for
 	std::cout << std::endl;
 
-	t1.resizeForced({3,3,4});
+	t1.resizeForced({4,3,4});
 	t1.enumerate();
 	std::cout << t1;
 
-	mic::types::Tensor<double> t2 = t1.block({{0,1},{0,1},{1,1}});
+	mic::types::Tensor<double> t2 = t1.block({{0,2},{0,2},{1,3}});
 	std::cout << t2;
 
 

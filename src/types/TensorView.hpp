@@ -25,12 +25,13 @@ namespace types {
  */
 class ViewRange {
 private:
-	/// Minimum range limit (equal toor grater from 0).
+	/// Minimum range limit (equal to or grater from 0).
 	size_t min;
 	/// Maximum range limit.
 	size_t max;
 	/// Size of step.
 	size_t step;
+	/// TODO: "block" size in given dimension!!!!
 
 public:
 
