@@ -11,9 +11,6 @@
 #include <stdio.h>
 #include <vector>
 
-#include <data_utils/functions.h>
-//#include <types/Matrix.hpp>
-
 namespace mic {
 namespace types {
 
@@ -100,7 +97,6 @@ public:
 	 * @param t The original tensor to be copied.
 	 */
 	Tensor<T>& operator=(const Tensor<T>& t) {
-		std::cout<<"Operator =\n";
 		// Check the dimensions.
 		if (elements != t.elements) {
 			elements = t.elements;
@@ -279,7 +275,8 @@ public:
 	 * Sets all element values to one.
 	 */
 	void ones() {
-		memset(data_ptr, 1, elements * sizeof(T));
+		for (int i = 0; i < elements; i++)
+			data_ptr[i] = 1;
 	}
 
 	/*!
@@ -306,7 +303,7 @@ public:
 		// Display elements.
 		for (size_t i = 0; i < obj_.elements - 1; i++)
 			os_ << obj_.data_ptr[i] << ", ";
-		os_ << obj_.data_ptr[obj_.elements - 1] << "]\n";
+		os_ << obj_.data_ptr[obj_.elements - 1] << "]";
 
 		return os_;
 	}
@@ -367,6 +364,8 @@ public:
 	 * @return Index of the element.
 	 */
 	size_t getIndex(std::vector<size_t> coordinates_) {
+		// Dimensions must match!
+		assert(dims().size() == coordinates_.size());
 		// Do the magic - iterate through all dimensions in order to compute the index.
 		// 1 - x
 		// 2 - y*width + x
@@ -495,7 +494,6 @@ public:
 		size_t new_block_size = 0;
 		size_t added_zero_dim = 0;
 		for (auto tensor: tensors_) {
-			std::cout<< tensor << std::endl;
 			assert(dimensions.size() == tensor.dimensions.size());
 			for (size_t d=1; d<dimensions.size(); d++) {
 				assert(dimensions[d] == tensor.dimensions[d]);

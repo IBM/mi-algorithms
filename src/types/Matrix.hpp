@@ -11,10 +11,12 @@
 #include <Eigen/Dense>
 #include <random>
 
-#include <types/Tensor.hpp>
-
 namespace mic {
 namespace types {
+
+/// Forward declaration of a class Tensor.
+template<typename T>
+class Tensor;
 
 /*!
  * \brief Typedef for template-typed dynamic matrices.
