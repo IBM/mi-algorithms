@@ -28,7 +28,9 @@ public:
 	/*!
 	 * Default constructor (empty).
 	 */
-	Tensor() = default;
+	Tensor() : data_ptr(nullptr), elements(0) {
+
+	}
 
 	/*!
 	 * Constructor - sets the tensor dimension and assigns memory.
@@ -46,8 +48,6 @@ public:
 		}//: for
 
 		// Allocate memory.
-		if (data_ptr != nullptr)
-			delete (data_ptr);
 		data_ptr = new T[elements];
 		// Check whether data was allocated. :]
 		assert(data_ptr != nullptr);
@@ -68,8 +68,6 @@ public:
 				std::back_inserter(dimensions));
 
 		// Allocate memory.
-		if (data_ptr != nullptr)
-			delete (data_ptr);
 		data_ptr = new T[t.elements];
 		// Copy data.
 		memcpy(data_ptr, t.data_ptr, sizeof(T) * elements);
@@ -80,6 +78,7 @@ public:
 	 * @param t The original tensor to be copied.
 	 */
 	Tensor<T>& operator=(const Tensor<T>& t) {
+		std::cout<<"Operator =\n";
 		// Check the dimensions.
 		if (elements != t.elements) {
 			elements = t.elements;
@@ -120,7 +119,7 @@ public:
 	 * Important note: the total number of elements must remain unchanged.
 	 * @param dims_ New dimensions.
 	 */
-	void resize(std::vector<size_t> dims_) {
+	void conservativeResize(std::vector<size_t> dims_) {
 		// Check whether new dimensions are ok.
 		size_t new_size = 1;
 		for (auto ith_dimension : dims_) {
@@ -137,12 +136,14 @@ public:
 	}
 
 	/*!
-	 * Resizes the tensor - sets new tensor dimensions. FORCED version!
-	 * Important note: if the total number of elements change, a new memory block will be allocated and the method will copy as much elements from the old memory block as possible.
+	 * Resizes the tensor - sets new tensor dimensions.
+	 * Analogically to Eigen, the resize() method is a no-operation if the actual matrix size doesn't change.
+	 * Otherwise, i.e. if the total number of elements must change, a new memory block will be allocated and the method will copy as much elements from the old memory block as possible.
+	 * If you want a conservative variant of resize() which does not change the coefficients, use conservativeResize(),
 	 * If the new block will be bigger than the old one the values of "new elements" will be set to zeros.
 	 * @param dims_ New dimensions.
 	 */
-	void resizeForced(std::vector<size_t> dims_) {
+	void resize(std::vector<size_t> dims_) {
 		// Check whether new dimensions are ok.
 		size_t new_size = 1;
 		for (auto ith_dimension : dims_) {
@@ -460,6 +461,47 @@ public:
 		// Adjust the dimensions.
 		dimensions[0] += obj_.dimensions[0];
 		elements += obj_.elements;
+	}
+
+	/*!
+	 * Concatenates a set tensors - attaches the tensors passed as argument "to the back" of a given tensor.
+	 * Note: both tensors must have exactly the same dimensions except the 0th dimension.
+	 * @param objs_ A list of tensors to be attached.
+	 */
+	void concatenate(std::vector<mic::types::Tensor<T> > tensors_) {
+		// All dimensions (except 0th) of all tensors must be equal!
+		size_t new_block_size = 0;
+		size_t added_zero_dim = 0;
+		for (auto tensor: tensors_) {
+			std::cout<< tensor << std::endl;
+			assert(dimensions.size() == tensor.dimensions.size());
+			for (size_t d=1; d<dimensions.size(); d++) {
+				assert(dimensions[d] == tensor.dimensions[d]);
+			}//: for
+			new_block_size += tensor.elements;
+			added_zero_dim += tensor.dimensions[0];
+		}//: for
+
+		// Ptr to old data.
+		T* old_prt = data_ptr;
+
+		// Allocate a new block of memory.
+		data_ptr = new T[elements + new_block_size];
+		// Copy old data.
+		memcpy(data_ptr, old_prt, sizeof(T) * elements);
+		// Free the old block.
+		delete (old_prt);
+
+		// Copy the rest.
+		size_t block_end = elements;
+		for (auto tensor: tensors_) {
+			memcpy(data_ptr + block_end, tensor.data_ptr, sizeof(T) * tensor.elements);
+			block_end += tensor.elements;
+		}//: for
+
+		// Adjust the dimensions.
+		dimensions[0] += added_zero_dim;
+		elements += new_block_size;
 	}
 
 

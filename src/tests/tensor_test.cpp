@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 	//double* data = t1.data();
 	//data[10] = 1000.1;
 
-	t1.resizeForced({N, M, K});
+	t1.resize({N, M, K});
 	//t1({2,2,2}) = 222.1;
 	//t1(5) = 666;
 	//std::cout << t1;
@@ -136,18 +136,20 @@ int main(int argc, char* argv[]) {
 			}//: for
 	std::cout << std::endl;
 
-	t1.resizeForced({4});
+	t1.resize({4,4,4});
 	t1.enumerate();
 	std::cout << t1;
 
-	mic::types::Tensor<double> t2 = t1.block({{0,1}});
+	mic::types::Tensor<double> t2 = t1.block({{0,1},{1,2},{1,3}});
 	//t2.resizeForced({2,2});
 	std::cout << t2;
 
 	t1.flatten();
 	t2.flatten();
-	t1.concatenate(t2);
-	t1.resize({3,2});
+
+	std::cout << t1;
+	t1.concatenate({t2,t2});
+	//t1.resize({3,2});
 	std::cout << t1;
 
 	// Matrices.
