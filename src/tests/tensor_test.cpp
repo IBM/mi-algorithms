@@ -136,13 +136,15 @@ int main(int argc, char* argv[]) {
 			}//: for
 	std::cout << std::endl;
 
-	t1.resizeForced({2,2,2,2,2});
+	t1.resizeForced({5,2,2,2,2});
 	t1.enumerate();
 	std::cout << t1;
 
 	mic::types::Tensor<double> t2 = t1.block({{0,1},{0,1},{0,1},{0,1},{0,1}});
 	std::cout << t2;
 
+	t1.concatenate(t2);
+	std::cout << t1;
 
 	// Matrices.
 //	mic::types::Matrix<float> nm(N, M);

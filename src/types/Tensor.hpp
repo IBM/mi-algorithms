@@ -80,7 +80,7 @@ public:
 	 * @param t The original tensor to be copied.
 	 */
 	Tensor<T>& operator=(const Tensor<T>& t) {
-		// Check dimensions.
+		// Check the dimensions.
 		if (elements != t.elements) {
 			elements = t.elements;
 			// Allocate memory.
@@ -198,17 +198,6 @@ public:
 		} //: for
 	}
 
-	/*!
-	 * Sums all tensor elements.
-	 * @return Sum of elements.
-	 */
-	T sum(void) {
-		T total = (T) 0;
-		for (size_t i = 0; i < elements; i++) {
-			total += data_ptr[i];
-		} //: for
-		return total;
-	}
 
 	/*!
 	 * Set values of all matrix elements to random with a normal distribution.
@@ -299,7 +288,7 @@ public:
 		return os_;
 	}
 
-	/*!
+	/*
 	 * Stream operator enabling writing values to tensor.
 	 * @param is_ Istream object.
 	 * @param obj_ Tensor object.
@@ -307,18 +296,6 @@ public:
 /*	friend std::istream& operator>>(std::istream& is_, Tensor& obj_)
 	{
 		// TODO
-		//for (size_t i = 0; i < obj_.elements; ++i)
-		//    is_ >> obj_.data[i];
-	    // load the data using the assign function, which
-	    // clears any data already in the vector, and copies
-	    // in the data from the specified iterator range.
-	    // Here I use istream_iterators, which will read to the end
-	    // of the stream.  If you dont want to do this, then you could
-	    // read what you want into a std::string first and assign that.
-		std::string s;
-		s << is_;
-		std::cout << s.size();
-		//obj_.data.assign(std::istream_iterator<T>(is_), std::istream_iterator<T>());
 
 		return is_;
 	}*/
@@ -454,6 +431,35 @@ public:
 		}//: switch
 
 		return new_tensor;
+	}
+
+	/*!
+	 * Concatenates two tensors - attaches the tensor passed as argument "to the back".
+	 * Note: both tensors must have exactly the same dimensions except the 0th dimension.
+	 * @param obj_ Tensor to be attached.
+	 */
+	void concatenate(const Tensor& obj_) {
+		// All dimensions (except 0th) must be equal!
+		assert(dimensions.size() == obj_.dimensions.size());
+		for (size_t d=1; d<dimensions.size(); d++) {
+			assert(dimensions[d] == obj_.dimensions[d]);
+		}//: for
+
+		// Copy data.
+		T* old_prt = data_ptr;
+		// Allocate a new block of memory.
+		data_ptr = new T[elements + obj_.elements];
+
+		// Copy data.
+		memcpy(data_ptr, old_prt, sizeof(T) * elements);
+		memcpy(data_ptr, obj_.data_ptr, sizeof(T) * obj_.elements);
+
+		// Free the old block.
+		delete (old_prt);
+
+		// Adjust the dimensions.
+		dimensions[0] += obj_.dimensions[0];
+		elements += obj_.elements;
 	}
 
 
