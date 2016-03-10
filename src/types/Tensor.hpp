@@ -388,8 +388,8 @@ public:
 
 
 	/*!
-	 * Returns the (sub)tensor, a new tensor with data being a subtraction from the onriginal tensor taking into account the ranges given as pairs (lower, higher).
-	 * @param lower_ Ranges given as pairs (lower, higher) e <0,size-1> for each dimension.
+	 * Returns the (sub)tensor, a new tensor with data being a subtraction from the original tensor taking into account the ranges given as pairs (lower, higher).
+	 * @param lower_ Ranges given as pairs (lower, higher) e <0,size-1> for each dimension. If given range consists of a single value, then it is treated as (lower=higher).
 	 * @return The created subtensor
 	 */
 	Tensor<T> block(std::vector< std::vector<size_t> > ranges_) {
@@ -400,7 +400,11 @@ public:
 		std::vector<size_t> new_dims;
 		for (size_t i=0; i < ranges_.size(); i++) {
 			// Every range must be given.
-			assert(ranges_[i].size() == 2);
+			assert((ranges_[i].size() >0) && (ranges_[i].size() < 3));
+			// Add second range - just duble the first one.
+			if (ranges_[i].size() == 1)
+				ranges_[i].push_back(ranges_[i][0]);
+			// Calculate the dimension.
 			size_t ith_dimension = ranges_[i][1] - ranges_[i][0] +1;
 			// Every dimension must be greater than 0!
 			assert(ranges_[i][0] >= 0);
@@ -411,10 +415,8 @@ public:
 		}//: for
 		// Create tensor of a required size.
 		mic::types::Tensor<T> new_tensor(new_dims);
-		std::cout << new_tensor;
 
 		// Do the magic.
-
 		// Get block by block and copy it in the right places.
 		// But first: solve the simple 1d-2d-3d cases.
 		switch (new_dims.size()) {
@@ -426,15 +428,6 @@ public:
 		case 2: {
 			// Iterate through blocks.
 			for (size_t i=ranges_[1][0], j=0; i<=ranges_[1][1]; i++, j++) {
-/*				std::cout << "i=" << i << " j=" << j << std::endl;
-				std::cout << "ranges_[1][0]=" << ranges_[1][0] << std::endl;
-				std::cout << "ranges_[1][1]=" << ranges_[1][1] << std::endl;
-				std::cout << "tmp_dims[0]=" << tmp_dims[0] << std::endl;
-				std::cout << "j* tmp_dims[0]=" << j* tmp_dims[0] << std::endl;
-				std::cout << "dimensions[0]=" << dimensions[0] << std::endl;
-				std::cout << "ranges_[0][0]=" << ranges_[0][0] << std::endl;
-				std::cout << "i * dimensions[0] + ranges_[0][0]=" << i * dimensions[0] + ranges_[0][0] << std::endl;*/
-
 				// Copy data from lower to higher.
 				memcpy(new_tensor.data_ptr + j* new_dims[0], (data_ptr + i * dimensions[0] + ranges_[0][0]), new_dims[0]* sizeof(T));
 			}//: for
@@ -444,65 +437,53 @@ public:
 			// Iterate through blocks.
 			for (size_t i2=ranges_[2][0], j2=0; i2<=ranges_[2][1]; i2++, j2++) {
 				for (size_t i1=ranges_[1][0], j1=0; i1<=ranges_[1][1]; i1++, j1++) {
-					/*std::cout << "i=" << i1 << ", " << i2 << std::endl;
-					std::cout << "j=" << j1 << ", " << j2 << std::endl;*/
-
-/*					std::cout << "multiplying by new_dims[0]=" << new_dims[0] << std::endl;
-					std::cout << "j1=" << j1 << std::endl;
-					std::cout << "multiplying by new_dims[1]=" << new_dims[1] << std::endl;
-					std::cout << "j2=" << j2 << std::endl;
-					std::cout << "returning (j2* new_dims[1] + j1) =" << (j2* new_dims[1] + j1) << std::endl;*/
-					std::cout << "hardcoded tgt index=" << (j2* new_dims[1] + j1)* new_dims[0] << std::endl;
-					std::cout << "hardcoded src index=" << (i2 * dimensions[1] + i1) * dimensions[0] + ranges_[0][0] << std::endl;
 					// Copy data from lower to higher.
 					memcpy(new_tensor.data_ptr + (j2* new_dims[1] + j1)* new_dims[0], (data_ptr + (i2 * dimensions[1] + i1) * dimensions[0] + ranges_[0][0]), new_dims[0]* sizeof(T));
 					}//: for
 				}//: for
-
-			std::cout << "=============================" << std::endl;
-
-			// START FROM 1!!
-/*			for (size_t r=1; r<ranges_.size(); r++) {
-				//j = recursiveGetIndexForDims(0, ranges_, new_dims);
-				std::cout << "recursive j = "<< << std::endl;
-			}//: for*/
-			std::vector<size_t> is;
-			std::vector<size_t> js;
-			recursiveRangeLoop(1, ranges_, is, js, new_dims);
-
 			break;
 			}
 		default:
-			assert(0);
-		}
-
+			// Vector of indices.
+			std::vector<size_t> is;
+			std::vector<size_t> js;
+			// Recursively copy block by block.
+			recursiveBlockCopy(1, ranges_, is, js, new_dims, new_tensor.data_ptr);
+		}//: switch
 
 		return new_tensor;
 	}
 
-	void recursiveRangeLoop (size_t dim_, std::vector< std::vector<size_t> > ranges_, std::vector<size_t> is_, std::vector<size_t> js_, std::vector<size_t> new_dims_) {
-		if (dim_ == ranges_.size()){
-			/*std::cout << " i = ";
-			for (size_t i=0; i<is_.size(); i++)
-				std::cout << is_[i] << ", ";
-			std::cout << std::endl;*/
-			/*std::cout << " j = ";
-			for (size_t j=0; j<js_.size(); j++)
-				std::cout << js_[j] << ", ";
-			std::cout << std::endl;*/
+	/*!
+	 *
+	 * WARNING: Tensor dimensions must be > 1!
+	 * @param dim_
+	 * @param ranges_
+	 * @param is_
+	 * @param js_
+	 * @param new_dims_
+	 * @param dst_data_ptr_
+	 */
+	void recursiveBlockCopy (size_t dim_, std::vector< std::vector<size_t> > ranges_, std::vector<size_t> is_, std::vector<size_t> js_, std::vector<size_t> new_dims_, T* dst_data_ptr_) {
+		assert(new_dims_.size()>1);
+		if (dim_ == new_dims_.size()){
 
 			// Calculate destination index.
 			size_t tgt_index = recursiveCalculateTargetIndex(0, js_, new_dims_);
-			std::cout << "recursive tgt_index = " << tgt_index << std::endl;
+			//std::cout << "recursive tgt_index = " << tgt_index << std::endl;
 			// Calculate destination index.
 			size_t src_index = recursiveCalculateSourceIndex(0, is_, ranges_[0][0]);
-			std::cout << "recursive src_index = " << src_index << std::endl;
+			//std::cout << "recursive src_index = " << src_index << std::endl;
+			// Copy data from source to target.
+			memcpy(dst_data_ptr_ + tgt_index, (data_ptr + src_index), new_dims_[0]* sizeof(T));
+
 			return;
 		}
+		// For all ranges collect indices list for source and targets.
 		for (size_t i=ranges_[dim_][0], j=0; i<=ranges_[dim_][1]; i++, j++) {
 			is_.push_back(i);
 			js_.push_back(j);
-			recursiveRangeLoop(dim_ + 1, ranges_, is_, js_, new_dims_);
+			recursiveBlockCopy(dim_ + 1, ranges_, is_, js_, new_dims_, dst_data_ptr_);
 			is_.pop_back();
 			js_.pop_back();
 		}
@@ -528,7 +509,6 @@ public:
 			return tmp2;
 		}
 	}
-	//(j2* new_dims[1] + j1)* new_dims[0]
 
 	size_t recursiveCalculateSourceIndex(size_t dim_, std::vector<size_t> is_, size_t offset_) {
 		if (dim_ == is_.size()) {
@@ -550,7 +530,6 @@ public:
 			return tmp2;
 		}
 	}
-	//(i2 * dimensions[1] + i1) * dimensions[0] + ranges_[0][0]
 
 private:
 	/*!
