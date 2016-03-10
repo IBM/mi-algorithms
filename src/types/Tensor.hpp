@@ -12,18 +12,24 @@
 #include <vector>
 
 #include <data_utils/functions.h>
+//#include <types/Matrix.hpp>
 
 namespace mic {
 namespace types {
+
+/// Forward declaration of a class Matrix.
+template<typename T>
+class Matrix;
 
 /*!
  * \brief Template class representing an nD (n-Dimensional) tensor.
  * \author tkornuta
  * \tparam T template parameter denoting data type stored in tensor.
  */
-template<class T = float>
+template<class T>
 class Tensor {
 public:
+
 
 	/*!
 	 * Default constructor (empty).
@@ -60,7 +66,7 @@ public:
 	 * Copying constructor - copies the values of the given tensor, including tensor dimensions and data.
 	 * @param t The original tensor to be copied.
 	 */
-	Tensor(const Tensor& t) {
+	Tensor(const Tensor<T>& t) {
 		// Copy dimensions.
 		elements = t.elements;
 		dimensions.reserve(t.dimensions.size());
@@ -71,6 +77,22 @@ public:
 		data_ptr = new T[t.elements];
 		// Copy data.
 		memcpy(data_ptr, t.data_ptr, sizeof(T) * elements);
+	}
+
+	/*!
+	 * Copying constructor - copies the values of the given 2D matrix.
+	 * @param t The original matrix to be copied.
+	 */
+	Tensor(const mic::types::Matrix<T>& mat_) {
+		// Copy dimensions.
+		elements = mat_.cols() * mat_.rows();
+		dimensions.push_back(mat_.cols());
+		dimensions.push_back(mat_.rows());
+
+		// Allocate memory.
+		data_ptr = new T[elements];
+		// Copy data.
+		memcpy(data_ptr, mat_.data(), sizeof(T) * elements);
 	}
 
 	/*!
@@ -234,7 +256,7 @@ public:
 	/*!
 	 * Returns k-th dimension.
 	 */
-	size_t dims(size_t k) {
+	size_t dim(size_t k) {
 		return dimensions[k];
 	}
 

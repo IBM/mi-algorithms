@@ -1,7 +1,7 @@
 /*!
  * \file tensor_test.cpp
  * \brief Contains program for testing of tensors/Eigen map.
- * \author tkornut
+ * \author tkornuta
  * \date Feb 17, 2016
  */
 
@@ -16,42 +16,6 @@
 
 using namespace Eigen;
 using namespace std;
-
-/*
- Eigen::MatrixXf operator () (size_t n) {
- float *addr = data+ n*(dim[0]*dim[1]);
- // Map
- return Map<Eigen::MatrixXf>(addr,dim[1],dim[0]).transpose();
- }
- */
-
-
-/*	std::vector<int> v = { 0, 1, 2, 3, 4, 5 };
-
-	for (const int &i : v) // access by const reference
-		std::cout << i << ' ';
-	std::cout << '\n';
-
-	for (auto i : v) // access by value, the type of i is int
-		std::cout << i << ' ';
-	std::cout << '\n';
-
-	for (auto&& i : v) // access by reference, the type of i is int&
-		std::cout << i << ' ';
-	std::cout << '\n';
-
-	for (int n : { 0, 1, 2, 3, 4, 5 }) // the initializer may be a braced-init-list
-		std::cout << n << ' ';
-	std::cout << '\n';
-
-	int a[] = { 0, 1, 2, 3, 4, 5 };
-	for (int n : a)  // the initializer may be an array
-		std::cout << n << ' ';
-	std::cout << '\n';
-
-	for (int n : a)
-		std::cout << 1 << ' '; // the loop variable need not be used
-	std::cout << '\n';*/
 
 
 /*
@@ -81,56 +45,25 @@ int main(int argc, char* argv[]) {
 	const size_t M = 3;
 	const size_t K = 4;
 
-	// Create tensor.
-/*	mic::types::Tensor<double> t1({N, M, K});
-	double* data = t1.data();
-	for (int i=0; i<t1.size(); i++)
-		data[i] = i;
-
-	// Create different views on tensor.
-	mic::types::TensorView<double> tv1(t1, {VR(0), VR(0,2,14), VR()});
-	std::cout << tv1;
-
-	mic::types::TensorView<double> tv2(tv1, {VR(0,0), VR(0), VR(1,2)});
-	std::cout << tv2;
-
-	mic::types::TensorView<double> tv3(tv1, {VR(0), VR(1), VR(2,2)});
-	std::cout << tv2;
-
-	// Get (sub)tensor, (sub)matrix, (sub)vector and scalar.
-	mic::types::Tensor<double> t2 = tv1.getTensor();
-
-	mic::types::MatrixXd mat1 = tv1.getMatrix();
-	std::cout << mat1 << std::endl;
-
-	mic::types::VectorXd vec1 = tv2.getVector();
-	std::cout << vec1 << std::endl;
-
-	double s1 = tv3.getScalar();
-	std::cout << s1 << std::endl;*/
-
 	mic::types::Tensor<double> t1({N*M*K*N});
 	t1.enumerate();
-	//t1({2}) = 33.1;
-	//t1(4) = 55;
-	//std::cout << t1;
+	t1({2}) = 33.1;
+	t1(4) = 55;
+	std::cout << t1;
 
-	//double* data = t1.data();
-	//data[10] = 1000.1;
+	double* data = t1.data();
+	data[10] = 1000.1;
 
 	t1.resize({N, M, K});
-	//t1({2,2,2}) = 222.1;
-	//t1(5) = 666;
-	//std::cout << t1;
+	t1({2,2,2}) = 222.1;
+	t1(5) = 666;
+	std::cout << t1;
 
 
 	//for(size_t l=0; l<K; l++)
 	for(size_t k=0; k<K; k++)
 		for(size_t m=0; m<M; m++)
 			for(size_t n=0; n<N; n++) {
-				//mic::types::TensorView<double> tv(t1, {VR(n), VR(m), VR(k)});
-				//std::cout << tv ;
-				//double d = tv.getScalar();
 				double d = t1({n,m,k});
 				std::cout << d << ", ";
 			}//: for
@@ -149,8 +82,15 @@ int main(int argc, char* argv[]) {
 
 	std::cout << t1;
 	t1.concatenate({t2,t2});
-	//t1.resize({3,2});
+	t1.resize({3,2});
 	std::cout << t1;
+
+	mic::types::Matrix<double> mat = t1;
+	std::cout << mat << std::endl;
+
+
+	mic::types::Tensor<double> t4 = mat;
+	std::cout << t4;
 
 	// Matrices.
 //	mic::types::Matrix<float> nm(N, M);

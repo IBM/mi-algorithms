@@ -11,6 +11,8 @@
 #include <Eigen/Dense>
 #include <random>
 
+#include <types/Tensor.hpp>
+
 namespace mic {
 namespace types {
 
@@ -57,7 +59,22 @@ public:
 	}
 
 	/*!
-	 * Overloaded operator - calls base operator.
+	 * Copying constructor on the basis of a tensor. Copies dimensions and data.
+	 * Note: tensor must be 2D.
+	 * @param tensor_ Tensor
+	 */
+	Matrix(mic::types::Tensor<T>& tensor_) :
+		mic::types::MatrixX<T>(tensor_.dim(1), tensor_.dim(0))
+	{
+		// Tensor must be 2D!
+		assert(tensor_.dims().size() == 2);
+		memcpy(this->data(), tensor_.data(), tensor_.size() * sizeof(T));
+	}
+
+	/*!
+	 * Overloaded assignment operator - calls base operator.
+	 * @param mat_ Input matrix
+	 * @return An exact copy of the input matrix.
 	 */
 	EIGEN_STRONG_INLINE
 	mic::types::MatrixX<T>& operator =(const mic::types::MatrixX<T>& mat_) {
@@ -65,9 +82,15 @@ public:
 		return mic::types::MatrixX<T>::operator=(mat_);
 	}
 
+	/*!
+	 * Overloaded multiplication operator
+	 * @param mat_ Input matrix
+	 * @return Resulting matrix - multiplication of this and input mat_.
+	 */
+	EIGEN_STRONG_INLINE
 	mic::types::MatrixX<T> operator *(const mic::types::MatrixX<T>& mat_) {
 		// Calling base EIGEN operator *
-		printf("Calling base EIGEN operator *\n");
+		//printf("Calling base EIGEN operator *\n");
 		return mic::types::MatrixX<T>::operator*(mat_);
 	}
 
