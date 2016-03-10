@@ -101,9 +101,9 @@ int main(int argc, char* argv[]) {
 
 	//
 	mic::types::Matrix<double> mat = t1;
-	std::cout << "matrix from tensor = " <<  mat << std::endl;
+	std::cout << "matrix from tensor = \n" <<  mat << std::endl;
 	mat *= 2;
-	std::cout << "matrix *2 = " <<  mat << std::endl;
+	std::cout << "matrix *2 = \n" <<  mat << std::endl;
 
 	mic::types::Tensor<double> t4 = mat;
 	std::cout << "tensor from matrix = " << t4 << std::endl;
