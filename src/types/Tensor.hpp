@@ -362,6 +362,7 @@ public:
 
 	/*!
 	 * Returns the index of an element in nD matrix.
+	 * For dimensions higher than 3 it uses recursive function.
 	 * @param coordinates_ nD vector of element coordinates ({ }, vector<size_t> etc.).
 	 * @return Index of the element.
 	 */
@@ -389,6 +390,7 @@ public:
 
 	/*!
 	 * Returns the (sub)tensor, a new tensor with data being a subtraction from the original tensor taking into account the ranges given as pairs (lower, higher).
+	 * For dimensions higher than 3 it uses recursive block copy.
 	 * @param lower_ Ranges given as pairs (lower, higher) e <0,size-1> for each dimension. If given range consists of a single value, then it is treated as (lower=higher).
 	 * @return The created subtensor
 	 */
@@ -444,92 +446,16 @@ public:
 			break;
 			}
 		default:
-			// Vector of indices.
+			// Vector of indices - empty for now, will be filled by recursive block copy.
 			std::vector<size_t> is;
 			std::vector<size_t> js;
-			// Recursively copy block by block.
+			// Recursively copy block by block - starting from 1st dimension, as 0th is treated as the size of block.
 			recursiveBlockCopy(1, ranges_, is, js, new_dims, new_tensor.data_ptr);
 		}//: switch
 
 		return new_tensor;
 	}
 
-	/*!
-	 *
-	 * WARNING: Tensor dimensions must be > 1!
-	 * @param dim_
-	 * @param ranges_
-	 * @param is_
-	 * @param js_
-	 * @param new_dims_
-	 * @param dst_data_ptr_
-	 */
-	void recursiveBlockCopy (size_t dim_, std::vector< std::vector<size_t> > ranges_, std::vector<size_t> is_, std::vector<size_t> js_, std::vector<size_t> new_dims_, T* dst_data_ptr_) {
-		assert(new_dims_.size()>1);
-		if (dim_ == new_dims_.size()){
-
-			// Calculate destination index.
-			size_t tgt_index = recursiveCalculateTargetIndex(0, js_, new_dims_);
-			//std::cout << "recursive tgt_index = " << tgt_index << std::endl;
-			// Calculate destination index.
-			size_t src_index = recursiveCalculateSourceIndex(0, is_, ranges_[0][0]);
-			//std::cout << "recursive src_index = " << src_index << std::endl;
-			// Copy data from source to target.
-			memcpy(dst_data_ptr_ + tgt_index, (data_ptr + src_index), new_dims_[0]* sizeof(T));
-
-			return;
-		}
-		// For all ranges collect indices list for source and targets.
-		for (size_t i=ranges_[dim_][0], j=0; i<=ranges_[dim_][1]; i++, j++) {
-			is_.push_back(i);
-			js_.push_back(j);
-			recursiveBlockCopy(dim_ + 1, ranges_, is_, js_, new_dims_, dst_data_ptr_);
-			is_.pop_back();
-			js_.pop_back();
-		}
-	}
-
-	size_t recursiveCalculateTargetIndex(size_t dim_, std::vector<size_t> js_, std::vector<size_t> dims_) {
-		if (dim_ == js_.size()) {
-
-			//std::cout << " returning js_["<< dim_-1 <<"] = " << js_[dim_-1] << std::endl;
-			return js_[dim_-1];
-		} else if (dim_ == 0) {
-			//std::cout << "calling recursiveCalculateTargetIndex(dim_+1 ("<< dim_ + 1 << "), js_, dims_)"<< std::endl;
-			size_t tmp = recursiveCalculateTargetIndex(dim_ + 1, js_, dims_);
-			size_t tmp2 = tmp * dims_[dim_];
-			//std::cout <<  " returning tmp2 ("<< tmp2 <<") = tmp (" << tmp << ") * dims_[dim_ ("<< dim_<< ")] ("<< dims_[dim_] << ") "<< std::endl;
-			return tmp2;
-		}else {
-
-			//std::cout << "calling recursiveCalculateTargetIndex(dim_+1 ("<< dim_ + 1 << "), js_, dims_)"<< std::endl;
-			size_t tmp = recursiveCalculateTargetIndex(dim_ + 1, js_, dims_);
-			size_t tmp2 = tmp * dims_[dim_] + js_[dim_-1];
-			//std::cout <<  " returning tmp2 ("<< tmp2 <<") = tmp (" << tmp << ") * dims_[dim_ ("<< dim_<< ")] ("<< dims_[dim_] << ") + js_[dim_-1] ("<< js_[dim_-1]  << ") "<< std::endl;
-			return tmp2;
-		}
-	}
-
-	size_t recursiveCalculateSourceIndex(size_t dim_, std::vector<size_t> is_, size_t offset_) {
-		if (dim_ == is_.size()) {
-
-			//std::cout << " returning is_["<< dim_-1 <<"] = " << is_[dim_-1] << std::endl;
-			return is_[dim_-1];
-		} else if (dim_ == 0) {
-			//std::cout << "calling recursiveCalculateSourceIndex(dim_+1 ("<< dim_ + 1 << "), is_, dimensions)"<< std::endl;
-			size_t tmp = recursiveCalculateSourceIndex(dim_ + 1, is_, offset_);
-			size_t tmp2 = tmp * dimensions[dim_] + offset_;
-			//std::cout <<  " returning tmp2 ("<< tmp2 <<") = tmp (" << tmp << ") * dimensions[dim_ ("<< dim_<< ")] ("<< dimensions[dim_] << ") + offset (" << offset_ <<")"<< std::endl;
-			return tmp2;
-		}else {
-
-			//std::cout << "calling recursiveCalculateSourceIndex(dim_+1 ("<< dim_ + 1 << "), is_, dims_)"<< std::endl;
-			size_t tmp = recursiveCalculateSourceIndex(dim_ + 1, is_, offset_);
-			size_t tmp2 = tmp * dimensions[dim_] + is_[dim_-1];
-			//std::cout <<  " returning tmp2 ("<< tmp2 <<") = tmp (" << tmp << ") * dimensions[dim_ ("<< dim_<< ")] ("<< dimensions[dim_] << ") + is_[dim_-1] ("<< is_[dim_-1]  << ") "<< std::endl;
-			return tmp2;
-		}
-	}
 
 private:
 	/*!
@@ -559,6 +485,103 @@ private:
 		else
 			return recursiveIndex(dim_ + 1, coordinates_) * dimensions[dim_] + coordinates_[dim_];
 	}
+
+
+	/*!
+	 * A recursive function copying the blocks of data from source (current) tensor to the new one.
+	 * 0th dimension (of the new tensor) is treated as the size of a block.
+	 * The function calls itself (recursively) in order to generate a vector of indices used subsequently for calculation of positions in both source and target data tables.
+	 * It uses two helper functions (also recursive) for computation of those positions.
+	 * WARNING: Tensor dimensions must be > 1!
+	 * @param dim_ The currently analyzed dimension of tensor.
+	 * @param ranges_ nD vector of pairs of ranges.
+	 * @param is_ nD vector of indices in the source tensor.
+	 * @param js_ nD vector of indices in the new/target tensor.
+	 * @param new_dims_ nD vector of dimensions of the new tensor.
+	 * @param tgt_data_ptr_ Pointer to the memory block of the new tensor.
+	 */
+	void recursiveBlockCopy (size_t dim_, std::vector< std::vector<size_t> > ranges_, std::vector<size_t> is_, std::vector<size_t> js_, std::vector<size_t> new_dims_, T* tgt_data_ptr_) {
+		// Check dimensions!
+		assert(new_dims_.size()>1);
+		//
+		if (dim_ == new_dims_.size()){
+			// Calculate destination index.
+			size_t tgt_index = recursiveCalculateTargetIndex(0, js_, new_dims_);
+			//std::cout << "recursive tgt_index = " << tgt_index << std::endl;
+			// Calculate destination index.
+			size_t src_index = recursiveCalculateSourceIndex(0, is_, ranges_[0][0]);
+			//std::cout << "recursive src_index = " << src_index << std::endl;
+			// Copy data from source to target.
+			memcpy(tgt_data_ptr_ + tgt_index, (data_ptr + src_index), new_dims_[0]* sizeof(T));
+			return;
+		}
+		// For all ranges collect indices list for source and targets.
+		for (size_t i=ranges_[dim_][0], j=0; i<=ranges_[dim_][1]; i++, j++) {
+			// Add indices to lists.
+			is_.push_back(i);
+			js_.push_back(j);
+			// Better call Saul! Otherwise call block copy ;)
+			recursiveBlockCopy(dim_ + 1, ranges_, is_, js_, new_dims_, tgt_data_ptr_);
+			// Remove recently added indices from lists. ;)
+			is_.pop_back();
+			js_.pop_back();
+		}
+	}
+
+	/*!
+	 * A recursive function responsible for the calculation of position (index) in target (i.e. new) data table.
+	 * @param dim_ The currently analyzed dimension of tensor.
+	 * @param js_ nD vector of indices in the new/target tensor.
+	 * @param dims_ nD vector of dimensions of the (new) tensor.
+	 * @return Index in target (new) data table.
+	 */
+	size_t recursiveCalculateTargetIndex(size_t dim_, std::vector<size_t> js_, std::vector<size_t> dims_) {
+		if (dim_ == js_.size()) {
+			//std::cout << " returning js_["<< dim_-1 <<"] = " << js_[dim_-1] << std::endl;
+			return js_[dim_-1];
+		} else if (dim_ == 0) {
+			//std::cout << "calling recursiveCalculateTargetIndex(dim_+1 ("<< dim_ + 1 << "), js_, dims_)"<< std::endl;
+			size_t tmp = recursiveCalculateTargetIndex(dim_ + 1, js_, dims_);
+			size_t tmp2 = tmp * dims_[dim_];
+			//std::cout <<  " returning tmp2 ("<< tmp2 <<") = tmp (" << tmp << ") * dims_[dim_ ("<< dim_<< ")] ("<< dims_[dim_] << ") "<< std::endl;
+			return tmp2;
+		} else {
+
+			//std::cout << "calling recursiveCalculateTargetIndex(dim_+1 ("<< dim_ + 1 << "), js_, dims_)"<< std::endl;
+			size_t tmp = recursiveCalculateTargetIndex(dim_ + 1, js_, dims_);
+			size_t tmp2 = tmp * dims_[dim_] + js_[dim_-1];
+			//std::cout <<  " returning tmp2 ("<< tmp2 <<") = tmp (" << tmp << ") * dims_[dim_ ("<< dim_<< ")] ("<< dims_[dim_] << ") + js_[dim_-1] ("<< js_[dim_-1]  << ") "<< std::endl;
+			return tmp2;
+		}//: else
+	}
+
+	/*!
+	 * A recursive function responsible for the calculation of position (index) in source (i.e. this) data table.
+	 * @param dim_ The currently analyzed dimension of tensor.
+	 * @param is_ nD vector of indices in the source tensor.
+	 * @param offset_ Offset added aat the end(always const = range[0][0]).
+	 * @return Index in source (this) data table.
+	 */
+	size_t recursiveCalculateSourceIndex(size_t dim_, std::vector<size_t> is_, size_t offset_) {
+		if (dim_ == is_.size()) {
+			//std::cout << " returning is_["<< dim_-1 <<"] = " << is_[dim_-1] << std::endl;
+			return is_[dim_-1];
+		} else if (dim_ == 0) {
+			//std::cout << "calling recursiveCalculateSourceIndex(dim_+1 ("<< dim_ + 1 << "), is_, dimensions)"<< std::endl;
+			size_t tmp = recursiveCalculateSourceIndex(dim_ + 1, is_, offset_);
+			size_t tmp2 = tmp * dimensions[dim_] + offset_;
+			//std::cout <<  " returning tmp2 ("<< tmp2 <<") = tmp (" << tmp << ") * dimensions[dim_ ("<< dim_<< ")] ("<< dimensions[dim_] << ") + offset (" << offset_ <<")"<< std::endl;
+			return tmp2;
+		} else {
+			//std::cout << "calling recursiveCalculateSourceIndex(dim_+1 ("<< dim_ + 1 << "), is_, dims_)"<< std::endl;
+			size_t tmp = recursiveCalculateSourceIndex(dim_ + 1, is_, offset_);
+			size_t tmp2 = tmp * dimensions[dim_] + is_[dim_-1];
+			//std::cout <<  " returning tmp2 ("<< tmp2 <<") = tmp (" << tmp << ") * dimensions[dim_ ("<< dim_<< ")] ("<< dimensions[dim_] << ") + is_[dim_-1] ("<< is_[dim_-1]  << ") "<< std::endl;
+			return tmp2;
+		}//: else
+	}
+
+
 };
 
 } //: namespace types
