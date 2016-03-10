@@ -452,7 +452,7 @@ public:
 
 		// Copy data.
 		memcpy(data_ptr, old_prt, sizeof(T) * elements);
-		memcpy(data_ptr, obj_.data_ptr, sizeof(T) * obj_.elements);
+		memcpy(data_ptr + elements, obj_.data_ptr, sizeof(T) * obj_.elements);
 
 		// Free the old block.
 		delete (old_prt);
