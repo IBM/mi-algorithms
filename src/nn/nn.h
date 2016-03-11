@@ -16,7 +16,7 @@ TODO:
 #ifndef __NN_H__
 #define __NN_H__
 
-#include <layers.h>
+#include <nn/layers.h>
 #include <iomanip>
 
 class NN {
@@ -124,8 +124,8 @@ class NN {
 
 		}
 
-		/*TODO*/
-		Eigen::MatrixXf compute_numerical_gradients(void) { }
+		/*****	TODO	*****/
+		/*		Eigen::MatrixXf compute_numerical_gradients(void) { }*/
 
 		float test(std::deque<datapoint>& data) {
 

@@ -25,6 +25,7 @@ set(BUILD_TEST_TENSOR ON CACHE BOOL "Build the application for testing tensors/e
 
 set(BUILD_TEST_COLLECTOR ON CACHE BOOL "Build the application for testing data collector")
 
+set(BUILD_TEST_CONVNET_MNIST ON CACHE BOOL "Build the application for testing convolutional NN")
 
 # =======================================================================
 # Build MI Algorithms.
@@ -202,3 +203,28 @@ if(${BUILD_TEST_COLLECTOR})
 	install(TARGETS data_collector_test RUNTIME DESTINATION bin)
 
 endif(${BUILD_TEST_COLLECTOR})
+
+# =======================================================================
+# Build and install - convolutional NN test application.
+# =======================================================================
+
+if(${BUILD_TEST_CONVNET_MNIST})
+        # Create exeutable.
+        ADD_EXECUTABLE(convnet_mnist tests/convnet_mnist.cc)
+        # Link it with shared libraries.
+        target_link_libraries(convnet_mnist
+		logger
+                types
+		data_io
+                ${Boost_LIBRARIES}
+                ${EIGEN_LIBRARIES}
+                )
+        if(OpenBLAS_FOUND)
+                target_link_libraries(tensor_test  ${OpenBLAS_LIB} )
+        endif(OpenBLAS_FOUND)
+
+        # install test to bin directory
+        install(TARGETS convnet_mnist RUNTIME DESTINATION bin)
+
+endif(${BUILD_TEST_CONVNET_MNIST_TEST})
+

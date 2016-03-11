@@ -5,11 +5,11 @@
 * @Last Modified time: 2016-03-11 10:17:28
 */
 
-#ifndef __LAYERS_H__
-#define __LAYERS_H__
+#ifndef __NN_LAYERS_H__
+#define __NN_LAYERS_H__
 
-#include <utils.h>
-#include <io.h>
+#include <nn/nn_utils.h>
+#include <data_io/matrix_io.h>
 #include <string>
 
 //abstract
@@ -162,7 +162,7 @@ class Convolution : public Layer {
 
 		Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size) :
 			Layer(inputs * channels, filters * (sqrt(inputs) - filter_size + 1) * (sqrt(inputs) - filter_size + 1), batch_size, "conv"),
-			input_channels(channels), kernel_size(filter_size), output_channels(filters),
+			input_channels(channels), output_channels(filters), kernel_size(filter_size),
 			output_map_size((sqrt(inputs) - filter_size + 1) * (sqrt(inputs) - filter_size + 1)) {
 
 
@@ -218,8 +218,7 @@ class Linear : public Layer {
 
 		void forward(bool apply_dropout = false) {
 
-			y = b.replicate(1, x.cols());
-			BLAS_mmul(y, W, x);
+			y = W * x + b.replicate(1, x.cols());
 
 			if (apply_dropout)
 				applyDropout();
@@ -227,13 +226,9 @@ class Linear : public Layer {
 
 		void backward() {
 
-			dW.setZero();
-			BLAS_mmul(dW, dy, x, false, true);
-			//dW = dy * x.transpose();
+			dW = dy * x.transpose();
 			db = dy.rowwise().sum();
-			dx.setZero();
-			BLAS_mmul(dx, W, dy, true, false);
-			//dx = W.transpose() * dy;
+			dx = W.transpose() * dy;
 
 		}
 
