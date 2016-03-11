@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 	t1.conservativeResize({N, M, K});
 	t1({2,2,2}) = 222.1;
 	t1(5) = 666;
-	std::cout << "resized t1" << t1 << std::endl;
+	std::cout << "resized t1 = " << t1 << std::endl;
 
 	// Get access to elements one by one.
 	std::cout << "Printing elements one by one (getIndex): ";
@@ -99,12 +99,13 @@ int main(int argc, char* argv[]) {
 	t1.resize({3,2});
 	std::cout << " t1 resized to {3, 2} = " << t1 << std::endl;
 
-	//
+	// Map 2D tensor to matrix.
 	mic::types::Matrix<double> mat = t1;
 	std::cout << "matrix from tensor = \n" <<  mat << std::endl;
 	mat *= 2;
 	std::cout << "matrix *2 = \n" <<  mat << std::endl;
 
+	// Map matrix to 2D tensor.
 	mic::types::Tensor<double> t4 = mat;
 	std::cout << "tensor from matrix = " << t4 << std::endl;
 

@@ -19,7 +19,7 @@
 
 #include <types/image_types.hpp>
 
-#include <Eigen/Dense>
+#include <types/MatrixTypes.hpp>
 
 namespace mic {
 namespace data_io {
@@ -301,13 +301,13 @@ public:
 
 
 	/*!
-	 * Exports eigen (or derived) matrix to a csv file (in Row-major order).
+	 * Exports Eigen (or derived) matrix to a csv file (in Row-major order).
 	 * @param filename_ Output filename.
 	 * @param label_ Data label (written in file, above the line containing data)
 	 * @param matrix_ (A shared pointer to) Matrix to be exported.
 	 * @param append_ Flag denoting whether data should be added to existing data in a file or file should be truncated.
 	 */
-	static void exportMatrixToCsv(std::string filename_, std::string label_, std::shared_ptr< Eigen::Matrix<DATA_TYPE, Eigen::Dynamic, Eigen::Dynamic> > matrix_, bool append_ = false){
+	static void exportMatrixToCsv(std::string filename_, std::string label_, std::shared_ptr< mic::types::Matrix<DATA_TYPE> > matrix_, bool append_ = false){
 		LOG(LTRACE)<< "DataCollector::exportVectorToCsv";
 		// Open output filestream.
 		std::ofstream output;
@@ -337,7 +337,7 @@ public:
 	 * @param data_ Data - a vector of Eigen::Matrix pointers.
 	 * @param append_ Flag denoting whether data should be added to existing data in a file or file should be truncated.
 	 */
-	static void exportMatricesToCsv(std::string filename_, std::string label_, std::vector<std::shared_ptr< Eigen::Matrix<DATA_TYPE, Eigen::Dynamic, Eigen::Dynamic> > > data_, bool append_ = false){
+	static void exportMatricesToCsv(std::string filename_, std::string label_, std::vector< mic::types::MatrixPtr<DATA_TYPE> > data_, bool append_ = false){
 		LOG(LTRACE)<< "DataCollector::exportVectorToCsv";
 		// Open output filestream.
 		std::ofstream output;
@@ -350,15 +350,15 @@ public:
 		output << label_ << std::endl;
 
 		for (size_t i=0; i<data_.size(); i++) {
-			std::shared_ptr< Eigen::Matrix<DATA_TYPE, Eigen::Dynamic, Eigen::Dynamic> > matrix = data_[i];
+			mic::types::MatrixPtr<DATA_TYPE> matrix_ptr = data_[i];
 
 			//output << *matrix;
 
 			//DATA_TYPE* data_ptr = matrix->data();
 			// Export matrix.
-			for (size_t y = 0; y < matrix->rows(); y++) {
-				for (size_t x = 0; x < matrix->cols(); x++) {
-					output << (*matrix)(y,x) << ", ";
+			for (size_t y = 0; y < matrix_ptr->rows(); y++) {
+				for (size_t x = 0; x < matrix_ptr->cols(); x++) {
+					output << (*matrix_ptr)(y,x) << ", ";
 				}//: for
 			}//: for
 			//output << data_ptr[matrix->rows()*matrix->cols() -1] << std::endl;

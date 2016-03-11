@@ -22,15 +22,15 @@ class Tensor;
  * \brief Typedef for template-typed dynamic matrices.
  * \author tkornuta
  */
-template<typename T>
-using MatrixX = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+//template<typename T>
+//using MatrixX = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
 /*!
  * \brief Typedef for template-typed dynamic vectors.
  * \author tkornuta
  */
-template<typename T>
-using VectorX = typename Eigen::Matrix<T, Eigen::Dynamic, 1>;
+//template<typename T>
+//using VectorX = typename Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
 /*!
  * \brief Template-typed Matrix of dynamic size.
@@ -41,14 +41,14 @@ using VectorX = typename Eigen::Matrix<T, Eigen::Dynamic, 1>;
  * \author tkornuta
  */
 template<typename T>
-class Matrix: public mic::types::MatrixX<T> {
+class Matrix: public Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> {
 public:
 
 	/*!
 	 * Constructor. Calls default Eigen::MatrixXf constructor.
 	 */
 	Matrix() :
-			mic::types::MatrixX<T>() {
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>() {
 	}
 
 	/*!
@@ -57,7 +57,7 @@ public:
 	 * @param Cols_ Number of columns.
 	 */
 	Matrix(int Rows_, int Cols_) :
-			mic::types::MatrixX<T>(Rows_, Cols_) {
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(Rows_, Cols_) {
 	}
 
 	/*!
@@ -66,7 +66,7 @@ public:
 	 * @param tensor_ Tensor
 	 */
 	Matrix(mic::types::Tensor<T>& tensor_) :
-		mic::types::MatrixX<T>(tensor_.dim(1), tensor_.dim(0))
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(tensor_.dim(1), tensor_.dim(0))
 	{
 		// Tensor must be 2D!
 		assert(tensor_.dims().size() == 2);
@@ -79,9 +79,9 @@ public:
 	 * @return An exact copy of the input matrix.
 	 */
 	EIGEN_STRONG_INLINE
-	mic::types::MatrixX<T>& operator =(const mic::types::MatrixX<T>& mat_) {
+	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& mat_) {
 		// Using base EIGEN operator =
-		return mic::types::MatrixX<T>::operator=(mat_);
+		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
 	}
 
 	/*!
@@ -90,10 +90,10 @@ public:
 	 * @return Resulting matrix - multiplication of this and input mat_.
 	 */
 	EIGEN_STRONG_INLINE
-	mic::types::MatrixX<T> operator *(const mic::types::MatrixX<T>& mat_) {
+	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> operator *(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& mat_) {
 		// Calling base EIGEN operator *
 		//printf("Calling base EIGEN operator *\n");
-		return mic::types::MatrixX<T>::operator*(mat_);
+		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator*(mat_);
 	}
 
 	/*!
@@ -177,8 +177,7 @@ public:
 	 * @param func Function to be applied.
 	 * @param mat_ Matrix passed to function as argument.
 	 */
-	void elementwiseFunctionMatrix(T (*func)(T, T),
-			mic::types::MatrixX<T> & mat_) {
+	void elementwiseFunctionMatrix(T (*func)(T, T), Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> & mat_) {
 
 		// Check dimensions.
 		if ((this->rows() != mat_.rows()) || (this->cols() != mat_.cols()))
@@ -202,7 +201,7 @@ public:
 	 * @param v_ Vector passed to function
 	 */
 	void matrixColumnVectorFunction(T (*func)(T, T),
-			mic::types::VectorX<T>& v_) {
+			Eigen::Matrix<T, Eigen::Dynamic, 1>& v_) {
 
 		if (this->rows() != v_.cols())
 			printf("matrixColumnVectorFunction: dimensions mismatch\n");
@@ -228,7 +227,7 @@ public:
 	 * @param func Used function
 	 * @param v_ Vector passed to function
 	 */
-	void matrixRowVectorFunction(T (*func)(T, T), mic::types::VectorX<T>& v_) {
+	void matrixRowVectorFunction(T (*func)(T, T), Eigen::Matrix<T, Eigen::Dynamic, 1>& v_) {
 
 		if (this->cols() != v_.cols())
 			printf("matrixRowVectorFunction: dimensions mismatch\n");
@@ -255,7 +254,7 @@ public:
 	 * Sets the consecutive columns to be equal to given vector.
 	 * @param in Input vector, that will be "cloned".
 	 */
-	void repeatVector(mic::types::VectorX<T> &in) {
+	void repeatVector(Eigen::Matrix<T, Eigen::Dynamic, 1> &in) {
 #pragma omp parallel for
 		for (size_t x = 0; x < this->cols(); x++) {
 			for (size_t y = 0; y < this->rows(); y++) {
@@ -268,6 +267,13 @@ public:
 
 };
 
+
+/*!
+ * \brief Typedef for shared pointer to template-typed dynamic matrices.
+ * \author tkornuta
+ */
+template<typename T>
+using MatrixPtr = typename std::shared_ptr< mic::types::Matrix<T> >;
 
 }				//: namespace types
 }				//: namespace mic

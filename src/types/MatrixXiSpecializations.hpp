@@ -37,7 +37,7 @@ typedef mic::types::Matrix<int> MatrixXi;
  * \brief Shared pointer to matrix of integers (of dynamic size).
  * \author tkornuta
  */
-typedef std::shared_ptr< Eigen::MatrixXi > MatrixXiPtr;
+typedef std::shared_ptr< mic::types::MatrixXi > MatrixXiPtr;
 
 
 }//: namespace types

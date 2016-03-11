@@ -64,7 +64,7 @@ typedef mic::types::Matrix<double> MatrixXd;
  * \brief Shared pointer to matrix of double precision floats (of dynamic size).
  * \author tkornuta
  */
-typedef std::shared_ptr< MatrixXd > MatrixXdPtr;
+typedef std::shared_ptr< mic::types::MatrixXd > MatrixXdPtr;
 
 
 /*!
