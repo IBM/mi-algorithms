@@ -11,10 +11,26 @@
 #include <stdio.h>
 #include <vector>
 
+#include <fstream>
+
+#include <boost/serialization/serialization.hpp>
+// include this header to serialize vectors
+#include <boost/serialization/vector.hpp>
+// include this header to serialize arrays
+#include <boost/serialization/array.hpp>
+#include <boost/serialization/version.hpp>
+
+// Forward declaration of class boost::serialization::access
+namespace boost {
+namespace serialization {
+class access;
+}//: serialization
+}//: access
+
 namespace mic {
 namespace types {
 
-/// Forward declaration of a class Matrix.
+// Forward declaration of a class Matrix.
 template<typename T>
 class Matrix;
 
@@ -31,7 +47,7 @@ public:
 	/*!
 	 * Default constructor (empty).
 	 */
-	Tensor() : data_ptr(nullptr), elements(0) {
+	Tensor() : elements(0), data_ptr(nullptr) {
 
 	}
 
@@ -308,20 +324,7 @@ public:
 		return os_;
 	}
 
-	/*
-	 * Stream operator enabling writing values to tensor.
-	 * @param is_ Istream object.
-	 * @param obj_ Tensor object.
-	 */
-/*	friend std::istream& operator>>(std::istream& is_, Tensor& obj_)
-	{
-		// TODO
-
-		return is_;
-	}*/
-
-
-	/*!
+    /*!
 	 * Operator used for setting the value of a given element of nD tensor.
 	 * @param index_ Index (a single value).
 	 * @return The value of the element.
@@ -527,14 +530,14 @@ public:
 
 private:
 	/*!
-	 * Dimensions.
-	 */
-	std::vector<size_t> dimensions;
-
-	/*!
 	 * Number of elements.
 	 */
 	size_t elements;
+
+	/*!
+	 * Dimensions.
+	 */
+	std::vector<size_t> dimensions;
 
 	/*!
 	 * Table of elements of data types.
@@ -649,10 +652,50 @@ private:
 		}//: else
 	}
 
+	// Friend class - required for using boost serialization.
+    friend class boost::serialization::access;
 
+    /*!
+     * Serialization save - saves the tensor object to archive.
+     * @param ar Used archive.
+     * @param version Version of the tensor class (not used currently).
+     */
+    template<class Archive>
+     void save(Archive & ar, const unsigned int version) const {
+        ar & elements;
+        ar & dimensions;
+        ar & boost::serialization::make_array<T>(data_ptr, elements);
+     }
+
+    /*!
+     * Serialization load - loads the tensor object to archive.
+     * @param ar Used archive.
+     * @param version Version of the tensor class (not used currently).
+     */
+     template<class Archive>
+     void load(Archive & ar, const unsigned int version) {
+		ar & elements;
+		ar & dimensions;
+		// Allocate memory.
+		if (data_ptr != nullptr)
+			delete (data_ptr);
+		data_ptr = new T[elements];
+		ar & boost::serialization::make_array<T>(data_ptr, elements);
+     }
+
+     // The serialization must be splited as load requires to allocate the memory.
+     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
 } //: namespace types
 } //: namespace mic
+
+// Just in case if something important will change in the tensor class - set version.
+BOOST_CLASS_VERSION(mic::types::Tensor<bool>, 1)
+BOOST_CLASS_VERSION(mic::types::Tensor<short>, 1)
+BOOST_CLASS_VERSION(mic::types::Tensor<int>, 1)
+BOOST_CLASS_VERSION(mic::types::Tensor<long>, 1)
+BOOST_CLASS_VERSION(mic::types::Tensor<float>, 1)
+BOOST_CLASS_VERSION(mic::types::Tensor<double>, 1)
 
 #endif /* SRC_TYPES_TENSOR_HPP_ */

@@ -13,6 +13,15 @@
 #include <types/MatrixTypes.hpp>
 #include <types/Tensor.hpp>
 
+#include <fstream>
+// Include headers that implement a archive in simple text format
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+
+
 using namespace Eigen;
 using namespace std;
 
@@ -108,6 +117,29 @@ int main(int argc, char* argv[]) {
 	// Map matrix to 2D tensor.
 	mic::types::Tensor<double> t4 = mat;
 	std::cout << "tensor from matrix = " << t4 << std::endl;
+
+	const char* fileName = "saved.xml";
+
+	// Save data
+	{
+		// Create an output archive
+		std::ofstream ofs(fileName);
+		boost::archive::text_oarchive ar(ofs);
+		// Write data
+		ar & t4;
+	}
+
+	// Restore data
+	mic::types::Tensor<double> restored_t5;
+
+	{
+		// Create and input archive
+		std::ifstream ifs(fileName);
+		boost::archive::text_iarchive ar(ifs);
+		// Load data
+		ar & restored_t5;
+		std::cout << "restored = " << restored_t5 << std::endl;
+	}
 
 } //: main
 
