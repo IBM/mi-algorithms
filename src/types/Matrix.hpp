@@ -14,23 +14,9 @@
 namespace mic {
 namespace types {
 
-/// Forward declaration of a class Tensor.
+// Forward declaration of a class Tensor.
 template<typename T>
 class Tensor;
-
-/*!
- * \brief Typedef for template-typed dynamic matrices.
- * \author tkornuta
- */
-//template<typename T>
-//using MatrixX = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
-
-/*!
- * \brief Typedef for template-typed dynamic vectors.
- * \author tkornuta
- */
-//template<typename T>
-//using VectorX = typename Eigen::Matrix<T, Eigen::Dynamic, 1>;
 
 /*!
  * \brief Template-typed Matrix of dynamic size.
