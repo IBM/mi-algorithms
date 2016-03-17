@@ -97,7 +97,7 @@ install(FILES ${files} DESTINATION include/htm/shared)
 # Create HTM shared library.
 file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
 add_library(htm SHARED ${htm_src})
-target_link_libraries(htm types data_utils)
+target_link_libraries(htm types data_utils system_utils)
 
 # =======================================================================
 # Install includes related to RBM used by other libraries.
