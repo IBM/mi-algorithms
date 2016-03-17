@@ -220,11 +220,11 @@ if(${BUILD_TEST_CONVNET_MNIST})
                 ${EIGEN_LIBRARIES}
                 )
         if(OpenBLAS_FOUND)
-                target_link_libraries(tensor_test  ${OpenBLAS_LIB} )
+                target_link_libraries(convnet_mnist  ${OpenBLAS_LIB} )
         endif(OpenBLAS_FOUND)
 
         # install test to bin directory
         install(TARGETS convnet_mnist RUNTIME DESTINATION bin)
 
-endif(${BUILD_TEST_CONVNET_MNIST_TEST})
+endif(${BUILD_TEST_CONVNET_MNIST})
 
