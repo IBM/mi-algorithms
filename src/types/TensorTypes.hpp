@@ -10,6 +10,10 @@
 
 #include <types/Tensor.hpp>
 
+namespace mic {
+namespace types {
+
+
 /*!
  * \brief Tensor of integers (of dynamic size).
  * \author tkornuta
@@ -51,6 +55,7 @@ typedef mic::types::Tensor<double> TensorXd;
  */
 typedef std::shared_ptr< mic::types::TensorXd > TensorXdPtr;
 
-
+} //: namespace types
+} //: namespace mic
 
 #endif /* SRC_TYPES_TENSORTYPES_HPP_ */

@@ -9,7 +9,10 @@
 #define SRC_TYPES_TENSOR_HPP_
 
 #include <stdio.h>
+
 #include <vector>
+
+#include <random>
 
 #include <fstream>
 

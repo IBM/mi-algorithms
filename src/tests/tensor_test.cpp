@@ -11,7 +11,7 @@
 #include <sys/time.h>
 
 #include <types/MatrixTypes.hpp>
-#include <types/Tensor.hpp>
+#include <types/TensorTypes.hpp>
 
 #include <fstream>
 // Include headers that implement a archive in simple text format
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
 	const size_t K = 4;
 
 	// Create new tensor.
-	mic::types::Tensor<double> t1({N*M*K});
+	mic::types::TensorXd t1({N*M*K});
 	t1.enumerate();
 	// Different methods of setting the new value of data.
 	t1({2}) = 33.1;
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "resized t1 = " << t1 << std::endl;
 
 	// Get a subtensor.
-	mic::types::Tensor<double> t2 = t1.block({{0,3},{0},{0},{0,1}});
+	mic::types::TensorXd t2 = t1.block({{0,3},{0},{0},{0,1}});
 	std::cout << "subtensor t2 = " << t2 << std::endl;
 
 	// Flatten both tensors.
@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
 	std::cout << "matrix *2 = \n" <<  mat << std::endl;
 
 	// Map matrix to 2D tensor.
-	mic::types::Tensor<double> t4 = mat;
+	mic::types::TensorXd t4 = mat;
 	std::cout << "tensor from matrix = " << t4 << std::endl;
 
 	const char* fileName = "saved.xml";
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// Restore data
-	mic::types::Tensor<double> restored_t5;
+	mic::types::TensorXd restored_t5;
 
 	{
 		// Create and input archive
