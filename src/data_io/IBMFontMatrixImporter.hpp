@@ -27,13 +27,16 @@ enum IBMfont_t
 } /* namespace data_io */
 } /* namespace mic */
 
+namespace mic {
+namespace configuration {
+
 
 /*!
  * \brief Class template specialization used for lexical casting between string and IBMfont_t type.
  * \author tkornuta
  */
 template<>
-class mic::configuration::LexicalTranslator<mic::data_io::IBMfont_t> {
+class LexicalTranslator<mic::data_io::IBMfont_t> {
 public:
 	static std::string toStr(const mic::data_io::IBMfont_t & val) {
 		try {
@@ -59,6 +62,9 @@ public:
 		return mic::data_io::font8x8_type;
 	}
 };
+
+} /* namespace configuration */
+} /* namespace mic */
 
 
 namespace mic {

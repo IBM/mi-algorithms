@@ -10,6 +10,8 @@
 
 #include <Eigen/Dense>
 #include <random>
+#include <memory>
+
 
 namespace mic {
 namespace types {

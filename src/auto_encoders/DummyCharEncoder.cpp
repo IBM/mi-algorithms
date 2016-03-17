@@ -6,6 +6,7 @@
  */
 
 #include <auto_encoders/DummyCharEncoder.hpp>
+#include <cstring> // for memset 
 
 namespace mic {
 namespace auto_encoders {

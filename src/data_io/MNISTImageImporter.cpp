@@ -92,7 +92,7 @@ bool MNISTImageImporter::importData(){
 				mic::data_utils::alloc_image( img_ptr.get(), mic::types::GRAYSCALE, image_width, image_height);
 
 				// Parse and set image data.
-				for (size_t i = 0; i < image_width*image_height; i++) {
+				for (size_t i = 0; i <  (size_t)image_width*image_height; i++) {
 
 					unsigned row = i / image_width;
 					unsigned col = i % image_height;

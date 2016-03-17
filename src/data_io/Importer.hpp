@@ -107,7 +107,9 @@ public:
 //			throw std::exception
 		}
 		// Return given sample and increment index afterwards.
-		return getSample(index++);
+		std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > sample = getSample(index);
+		index += 1; 
+		return getSample(sample);
 	}
 
 	/*!
@@ -136,7 +138,7 @@ public:
 	 * Sets the index of the next returned sample.
 	 * @param index_ Sample index.
 	 */
-	void setSampleIndex(unsigned long index_ = 0) {
+	void setSampleIndex(size_t index_ = 0) {
 		index = index_;
 	}
 
@@ -154,7 +156,7 @@ protected:
 	/*!
 	 * Property: index of the returned sample - it is used ONLY in getNextSample (i.e. iterative, not random sampling) method.
 	 */
-	mic::configuration::Property<unsigned long> index;
+	mic::configuration::Property<size_t> index;
 
 	/*!
 	 * Random device used for generation of random numbers.

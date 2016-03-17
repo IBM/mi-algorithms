@@ -10,12 +10,19 @@
 #include <nn/nn.h>
 #include <iostream>
 #include <nn/nn_utils.h>
+
+#ifdef OpenBLAS_FOUND
 #include <cblas.h>
+#endif
+
 
 int main() {
 
 	//using OpenMP - limit OpenBLAS to core
-	openblas_set_num_threads(1);
+#ifdef OpenBLAS_FOUND
+	//openblas_set_num_threads(1);
+#endif
+
 
 	// load MNIST data
 	std::deque<datapoint> train_data =

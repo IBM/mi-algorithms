@@ -294,7 +294,7 @@ public:
 	 * Sets all element values to one.
 	 */
 	void ones() {
-		for (int i = 0; i < elements; i++)
+		for (size_t i = 0; i < elements; i++)
 			data_ptr[i] = 1;
 	}
 
@@ -302,7 +302,7 @@ public:
 	 * Enumerates - sets values of elements to their indices.
 	 */
 	void enumerate() {
-		for (int i = 0; i < elements; i++)
+		for (size_t i = 0; i < elements; i++)
 			data_ptr[i] = i;
 	}
 

@@ -11,7 +11,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 # Check, whether all necessary libraries are linked
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl") 
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}") 
 
 # =======================================================================
 # Add CMAKE variables.
@@ -64,7 +64,7 @@ install(FILES ${files} DESTINATION include/data_io)
 # Create shared library containing DATA IO.
 file(GLOB data_io_src data_io/*.cpp)
 add_library(data_io SHARED ${data_io_src})
-target_link_libraries(data_io system_utils types data_utils configuration)
+target_link_libraries(data_io types data_utils configuration)
 
 # =======================================================================
 # Install includes related to AUTO ENCODERS used by other libraries.
@@ -84,7 +84,7 @@ install(FILES ${files} DESTINATION include/classifiers)
 # Create shared library containing CLASSIFIERS.
 file(GLOB classifiers_src classifiers/*.cpp)
 add_library(classifiers SHARED ${classifiers_src})
-target_link_libraries(classifiers system_utils types data_utils )
+target_link_libraries(classifiers types data_utils)
 
 # =======================================================================
 # Install includes related to HTM used by other libraries.
@@ -97,7 +97,7 @@ install(FILES ${files} DESTINATION include/htm/shared)
 # Create HTM shared library.
 file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
 add_library(htm SHARED ${htm_src})
-target_link_libraries(htm types data_utils system_utils)
+target_link_libraries(htm types data_utils)
 
 # =======================================================================
 # Install includes related to RBM used by other libraries.

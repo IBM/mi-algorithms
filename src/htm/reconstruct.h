@@ -2,6 +2,7 @@
 #define __RECONSTRUCT_H__
 
 #include <htm/layer.h>
+#include <stdlib.h>
 
 namespace mic {
 namespace htm {

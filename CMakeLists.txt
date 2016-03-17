@@ -114,7 +114,7 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY "MIAlgorithms")
 # refers to the fact that this is the set of components that
 # will be included when CPack is instructed to put everything
 # into the binary installer (the default behavior).
-set(CPACK_COMPONENTS_ALL system_utils logger configuration application)
+set(CPACK_COMPONENTS_ALL logger configuration application)
 
 # This must always be last!
 include(CPack)
