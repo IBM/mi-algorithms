@@ -18,7 +18,12 @@ TODO:
 
 #include <nn/layers.h>
 #include <iomanip>
-
+#ifdef _WIN32
+//#include <stdio.h>
+//#include <string>
+//#include <cstring>
+//#include <sstream>
+#endif
 class NN {
 
 	public:

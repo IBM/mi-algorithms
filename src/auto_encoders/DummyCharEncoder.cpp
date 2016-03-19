@@ -7,6 +7,9 @@
 
 #include <auto_encoders/DummyCharEncoder.hpp>
 #include <cstring> // for memset 
+#ifdef _WIN32
+#include <string.h>
+#endif
 
 namespace mic {
 namespace auto_encoders {

@@ -8,7 +8,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Set compiler/linker flags.
 # =======================================================================
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+if (WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -fpermissive -std=c++11 -save-temps")
+else ()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif ()
 
 # Check, whether all necessary libraries are linked
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}") 
@@ -114,7 +118,11 @@ target_link_libraries(rbm types data_utils)
 # Install target libraries.
 # =======================================================================
 
-install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib)
+if (WIN32)
+  install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+else ()
+  install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib)
+endif ()
 
 # =======================================================================
 # Build and install - char encoder test application.

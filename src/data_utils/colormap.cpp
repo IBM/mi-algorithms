@@ -63,6 +63,9 @@ color_rgba map_value_to_color(float val, float min, float max, COLORMAP_TYPE t) 
     //default
     //printf("map_value_to_color: unknown switch\n");
     //return jet_colormap(value);
+#ifdef _WIN32
+    return(jet_colormap(value)); // have to have return value
+#endif
 }
 
 color_rgba jet_colormap(float value) {

@@ -106,7 +106,11 @@ void print_image_data(image* img) {
 
 		printf("-----Image-----\n");
 		printf("Type: %d\n", img->type);
+#ifdef _WIN32    
+		printf("Data length: %Iu\n", img->data_size); // %zu not recognized
+#else    
 		printf("Data length: %zu\n", img->data_size);
+#endif
 		
 		for (unsigned i = 0; i < img->data_size; i++) {
 

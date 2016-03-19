@@ -6,6 +6,10 @@
  */
 
 #include <htm/PerformanceStatistics.hpp>
+#ifdef _WIN32
+#include <stdio.h>
+#include <stdlib.h>
+#endif
 
 // TODO Refactor - configuration!
 #include <htm/shared/defs.h>

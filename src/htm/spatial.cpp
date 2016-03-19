@@ -6,6 +6,12 @@
 #include <data_utils/rand.hpp>
 #include <data_utils/input.h>
 #include <data_utils/inline.h>
+
+#ifdef _WIN32
+#include <float.h>
+#include <math.h>
+#endif
+
 using namespace mic::data_utils;
 
 namespace mic {
@@ -313,7 +319,11 @@ void update_columns(layer* l, float multiplier) {
 
 void permanence_update(float* p, const float val) {
 
+#ifdef _WIN32
+	if (!(std::isnan(val)))
+#else    
 	if (!isnan(val))
+#endif    
 		*p = *p + val;
 }
 
