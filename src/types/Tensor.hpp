@@ -139,7 +139,7 @@ public:
 	 * Assign operator - copies the values of the given tensor, including tensor dimensions and data.
 	 * @param t The original tensor to be copied.
 	 */
-	Tensor<T>& operator=(const Tensor<T>& t) {
+	const Tensor<T>& operator=(const Tensor<T>& t) {
 		// Check the dimensions.
 		if (elements != t.elements) {
 			elements = t.elements;
@@ -157,6 +157,7 @@ public:
 
 		// Copy data.
 		memcpy(data_ptr, t.data_ptr, sizeof(T) * elements);
+		return *this;
 	}
 
 	/*!
