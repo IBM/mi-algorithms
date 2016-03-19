@@ -56,6 +56,30 @@ public:
 
 	/*!
 	 * Constructor - sets the tensor dimension and assigns memory.
+	 * @param dims_ Tensor dimensions - initilizer list ({ }).
+	 */
+	Tensor(std::initializer_list<size_t> dims_) {
+		// Set dimensions.
+		elements = 1;
+		for (auto ith_dimension : dims_) {
+			// Every dimension must be greater than 0!
+			assert(ith_dimension > 0);
+			// Add dimension.
+			dimensions.push_back(ith_dimension);
+			elements *= ith_dimension;
+		}//: for
+
+		// Allocate memory.
+		data_ptr = new T[elements];
+		// Check whether data was allocated. :]
+		assert(data_ptr != nullptr);
+
+		// Initialize: set all elements to zeros.
+		zeros();
+	}
+
+	/*!
+	 * Constructor - sets the tensor dimension and assigns memory.
 	 * @param dims_ Tensor dimensions ({ }, vector<size_t> etc.).
 	 */
 	Tensor(std::vector<size_t> dims_) {
@@ -294,6 +318,7 @@ public:
 	 * Sets all element values to one.
 	 */
 	void ones() {
+#pragma omp parallel for
 		for (size_t i = 0; i < elements; i++)
 			data_ptr[i] = 1;
 	}
@@ -302,8 +327,19 @@ public:
 	 * Enumerates - sets values of elements to their indices.
 	 */
 	void enumerate() {
+#pragma omp parallel for
 		for (size_t i = 0; i < elements; i++)
 			data_ptr[i] = i;
+	}
+
+	/*!
+	 * Sets values of all element to the value given as parameter.
+	 * @param value_ The value to be set.
+	 */
+	void setValue(T value_) {
+#pragma omp parallel for
+		for (size_t i = 0; i < elements; i++)
+			data_ptr[i] = value_;
 	}
 
 
