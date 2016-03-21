@@ -44,21 +44,10 @@ public:
 	 * @param Rows_ Number of rows.
 	 * @param Cols_ Number of columns.
 	 */
+	EIGEN_STRONG_INLINE
 	Matrix(int Rows_, int Cols_) :
 		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(Rows_, Cols_) {
-	}
-
-	/*!
-	 * Copying constructor on the basis of a tensor. Copies dimensions and data.
-	 * Note: tensor must be 2D.
-	 * @param tensor_ Tensor
-	 */
-	Matrix(mic::types::Tensor<T>& tensor_) :
-		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(tensor_.dim(1), tensor_.dim(0))
-	{
-		// Tensor must be 2D!
-		assert(tensor_.dims().size() == 2);
-		memcpy(this->data(), tensor_.data(), tensor_.size() * sizeof(T));
+		this->setZero();
 	}
 
 	/*!
@@ -73,7 +62,33 @@ public:
 	}
 
 	/*!
-	 * Overloaded multiplication operator
+	 * Copying constructor on the basis of a tensor. Copies dimensions and data.
+	 * Note: tensor must be 2D.
+	 * @param tensor_ Tensor
+	 */
+	EIGEN_STRONG_INLINE
+	Matrix(mic::types::Tensor<T>& tensor_) :
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(tensor_.dim(1), tensor_.dim(0))
+	{
+		// Tensor must be 2D!
+		assert(tensor_.dims().size() == 2);
+		// Copy the whole block.
+		memcpy(this->data(), tensor_.data(), tensor_.size() * sizeof(T));
+	}
+
+	/*!
+	 * Overloaded assignment operator - calls base operator.
+	 * @param mat_ Input matrix
+	 * @return An exact copy of the input matrix.
+	 */
+	EIGEN_STRONG_INLINE
+	const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const mic::types::Matrix<T>& mat_) {
+		// Using base EIGEN operator =
+		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
+	}
+
+	/*!
+	 * Overloaded multiplication operator.
 	 * @param mat_ Input matrix
 	 * @return Resulting matrix - multiplication of this and input mat_.
 	 */
@@ -82,6 +97,20 @@ public:
 		// Calling base EIGEN operator *
 		//printf("Calling base EIGEN operator *\n");
 		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator*(mat_);
+	}
+
+
+	/*!
+	 * Sets values of all element to the value given as parameter.
+	 * @param value_ The value to be set.
+	 */
+	void setValue(T value_) {
+		// Get access to data.
+		T* data_ptr = this->data();
+
+#pragma omp parallel for
+		for (size_t i = 0; i < this->rows() * this->cols(); i++)
+			data_ptr[i] = value_;
 	}
 
 	/*!
@@ -179,7 +208,7 @@ public:
 #pragma omp parallel for
 		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
 			data_ptr[i] = (*func)(data_ptr[i], m_data_ptr[i]);
-		}
+		}//: for i
 
 	}
 
@@ -205,9 +234,8 @@ public:
 			for (size_t y = 0; y < this->rows(); y++) {
 				//data_ptr[x + y*cols] = (*func)(data_ptr[x + y*cols], vector_data_ptr[x]);
 				(*this)(y, x) = (*func)((*this)(y, x), v_(y));
-			}		//: for y
-		}		//: for x
-
+			}//: for y
+		}//: for x
 	}
 
 	/*!
@@ -233,10 +261,10 @@ public:
 				//(*this)(y,x) += v_(x);
 				(*this)(y, x) = (*func)((*this)(y, x), v_(x));
 				//data_ptr[x + y*cols] = (*func)(data_ptr[x + y*cols], vector_data_ptr[y]);
-			}				//: for y
-		}				//: for x
-
+			}//: for y
+		}//: for x
 	}
+
 
 	/*!
 	 * Sets the consecutive columns to be equal to given vector.
@@ -248,9 +276,8 @@ public:
 			for (size_t y = 0; y < this->rows(); y++) {
 
 				(*this)(y, x) = in(y);
-			}				//: y
-		}				//: x
-
+			}//: y
+		}//: x
 	}
 
 };

@@ -94,9 +94,9 @@ int main(int argc, char* argv[]) {
 #endif
 
 	// Default sizes of matrices.
-	const size_t N = 200;
-	const size_t M = 300;
-	const size_t K = 400;
+	const size_t N = 2;
+	const size_t M = 3;
+	const size_t K = 4;
 	const size_t number_of_multiplications = 100;
 
 	// Matrices.
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
 	mk.normRandReal(1, 0.001);
 	//std::cout <<"nm=\n" << nm <<  std::endl;
 
-/*	// Adding test.
+	// Adding test.
 	Eigen::VectorXf vect(N);
 	vect.setRandom();
 	std::cout <<"vect=\n" << vect <<  std::endl;
@@ -122,7 +122,6 @@ int main(int argc, char* argv[]) {
 	std::cout <<"nm2=\n" << nm2 <<  std::endl;
 	nm.elementwiseFunctionMatrix(&_add, nm2);
 	std::cout <<"nm+=nm2\n" << nm <<  std::endl;
-*/
 
 	//std::cout <<"mk=\n" << mk <<  std::endl;
 
