@@ -118,11 +118,7 @@ target_link_libraries(rbm types data_utils)
 # Install target libraries.
 # =======================================================================
 
-if (WIN32)
-  install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
-else ()
-  install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib)
-endif ()
+install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
 
 # =======================================================================
 # Build and install - char encoder test application.

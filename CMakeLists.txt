@@ -100,7 +100,7 @@ install(FILES ${CMAKE_BINARY_DIR}/MIAlgorithmsConfig.cmake DESTINATION ${CMAKE_I
 # CPack variables used when generating binary installer
 set(CPACK_PACKAGE_NAME "MIAlgorithms")
 set(CPACK_PACKAGE_VENDOR "MIAlgorithms")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MIAlgorithms - Machine Intelligence Toolchain")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MIAlgorithms - Machine Intelligence Algorithms")
 set(CPACK_PACKAGE_VERSION ${MIAlgorithms_VERSION})
 set(CPACK_PACKAGE_VERSION_MAJOR ${MIAlgorithms_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${MIAlgorithms_VERSION_MINOR})
@@ -114,7 +114,7 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY "MIAlgorithms")
 # refers to the fact that this is the set of components that
 # will be included when CPack is instructed to put everything
 # into the binary installer (the default behavior).
-set(CPACK_COMPONENTS_ALL logger configuration application)
+set(CPACK_COMPONENTS_ALL types data_io data_utils auto_encoders classifiers htm rbm)
 
 # This must always be last!
 include(CPack)
