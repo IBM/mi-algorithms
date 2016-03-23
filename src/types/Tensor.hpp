@@ -345,6 +345,63 @@ public:
 
 
 	/*!
+	 * Operator returning new tensor being the sum of two tensors.
+	 * @param obj_ The second tensor (on the right side of the +).
+	 * @return New, resulting tensor being the sum.
+	 */
+	mic::types::Tensor<T> operator+(mic::types::Tensor<T> obj_) {
+		// Dimensions must match.
+		assert(dims().size() == obj_.dims().size());
+		for (size_t d=1; d<dimensions.size(); d++) {
+			assert(dimensions[d] == obj_.dimensions[d]);
+		}//: for
+
+		// Create new tensor.
+		mic::types::Tensor<T> new_tensor(dimensions);
+#pragma omp parallel for
+		for (size_t i = 0; i < elements; i++)
+			new_tensor.data_ptr[i] = data_ptr[i] + obj_.data_ptr[i];
+
+		// Return it.
+		return new_tensor;
+	}
+
+	/*!
+	 * Operator returning new tensor being the difference of two tensors.
+	 * @param obj_ The second tensor (on the right side of the -).
+	 * @return New, resulting tensor being the tensor difference.
+	 */
+	mic::types::Tensor<T> operator-(mic::types::Tensor<T> obj_) {
+		// Dimensions must match.
+		assert(dims().size() == obj_.dims().size());
+		for (size_t d=1; d<dimensions.size(); d++) {
+			assert(dimensions[d] == obj_.dimensions[d]);
+		}//: for
+
+		// Create new tensor.
+		mic::types::Tensor<T> new_tensor(dimensions);
+#pragma omp parallel for
+		for (size_t i = 0; i < elements; i++)
+			new_tensor.data_ptr[i] = data_ptr[i] - obj_.data_ptr[i];
+
+		// Return it.
+		return new_tensor;
+	}
+
+	/*!
+	 * Functions sums the tensor elements.
+	 * @return Sum of tensor elements.
+	 */
+	T sum() {
+		T sum = 0;
+		for (size_t i = 0; i < elements; i++)
+			sum += data_ptr[i];
+
+		// Return the sum.
+		return sum;
+	}
+
+	/*!
 	 * Stream operator enabling to print tensor dimensions and all values.
 	 * @param os_ Ostream object.
 	 * @param obj_ Tensor object.
