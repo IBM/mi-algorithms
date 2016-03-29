@@ -46,17 +46,15 @@ public:
 	 * @brief Method responsible for encoding input data into SDR (a table of floats).
 	 * @param[in] input_ Input data.
 	 * @param[out] sdr_ Output SDR.
-	 * @param[in] size_ Size of output SDR. As default set to DEFAULT_SDR_LENGTH.
 	 */
-	virtual void encode(const inputDataType& input_, SDRType& sdr_, const size_t size_ = DEFAULT_SDR_LENGTH) = 0;
+	virtual void encode(const inputDataType& input_, SDRType& sdr_) = 0;
 
 	/*!
 	 * Method responsible for decoding of SDR into data.
 	 * @param[out] output_ Output data.
 	 * @param[in] sdr_ Input SDR.
-	 * @param[in] size_ Size of output SDR. As default set to DEFAULT_SDR_LENGTH.
 	 */
-	virtual void decode(inputDataType& output_, const SDRType& sdr_, const size_t size_ = DEFAULT_SDR_LENGTH) = 0;
+	virtual void decode(inputDataType& output_, const SDRType& sdr_) = 0;
 
 };
 

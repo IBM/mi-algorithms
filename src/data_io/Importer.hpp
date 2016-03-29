@@ -16,8 +16,6 @@
 #include <logger/Log.hpp>
 #include <configuration/PropertyTree.hpp>
 
-//#include <types/MatrixTypes.hpp>
-
 namespace mic {
 
 /**
@@ -41,13 +39,14 @@ public:
 	 * Constructor. Initializes random generator and sets index to zero. Registers index property.
 	 * @param node_name_ Name of the node in configuration file.
 	 */
-	Importer(std::string node_name_) : PropertyTree(node_name_),
+	Importer(std::string node_name_, size_t batch_size_ = 1) : PropertyTree(node_name_),
 		index("index",0),
+		batch_size("batch_size", batch_size_),
 		rng_mt19937_64(rd())
 	{
 		// Register properties - so their values can be overridden (read from the configuration file).
 		registerProperty(index);
-
+		registerProperty(batch_size);
 	}
 
 	/*!
@@ -78,7 +77,7 @@ public:
 
 	/*!
 	 * Picks a random sample from the dataset (the same sample can be selected many times - n-tuples).
-	 * Returns a pair consisting of <data, label>.
+	 * @return Sample - a pair of <shared pointers to samples and labels>.
 	 */
 	std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > getRandomSample() {
 
@@ -95,16 +94,17 @@ public:
 	}
 
 	/*!
-	 * Iterates through samples and returns them one by one. After returning the last element from the dataset the procedure starts from the beginning.
-	 * @return
+	 * Iterates through samples and returns them one by one.
+	 * After returning the last element from the dataset the procedure starts from the beginning.
+	 * This behaviour can be avoided by manualy calling the isLastSample() method.
+	 * @return Sample - a pair of <shared pointers to samples and labels>.
 	 */
 	std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > getNextSample() {
 
 		// Check index.
-		if(index >= data.size()-1){
+		if(index >= data.size()){
 			// Reset index.
 			index = 0;
-//			throw std::exception
 		}
 		// Return given sample and increment index afterwards.
 		std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > sample = getSample(index);
@@ -115,9 +115,9 @@ public:
 	/*!
 	 * Returns sample with given index. If index is out of dataset range throws an "std::out_of_range" exception.
 	 * @param index_ Sample index.
-	 * @return Sample.
+	 * @return Sample - a pair of <shared pointers to samples and labels>.
 	 */
-	std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > getSample(unsigned long index_) {
+	std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > getSample(size_t index_) {
 
 		// Check index.
 		if ((index_ < 0) || (index_ >= data.size())){
@@ -134,12 +134,100 @@ public:
 
 	}
 
+
+	/*!
+	 * Returns a batch of random samples.
+	 * @return Batch - a vector of pairs of <shared pointers to samples and labels>.
+	 */
+	std::vector<std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > > getRandomBatch() {
+
+		// Initialize uniform index distribution - integers.
+		std::uniform_int_distribution<> index_dist(0, data.size()-1);
+
+		std::vector<size_t> indices;
+		for (size_t i=0; i<batch_size; i++) {
+			// Pick an index.
+			indices.push_back((size_t)index_dist(rng_mt19937_64));
+
+		}//: batch_size
+
+		// Return data.
+		return getBatch(indices);
+	}
+
+
+	/*!
+	 * Iterates through samples and returns them batch by batch.
+	 * After returning the last possible batch from the dataset the procedure starts from the beginning.
+	 * This behaviour can be avoided by manualy calling the isLastBatch() method.
+	 * @return Batch - a vector of pairs of <shared pointers to samples and labels>.
+	 */
+	std::vector<std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > > getNextBatch() {
+
+		// Check index.
+		if((index+batch_size) >= data.size()){
+			// Reset index.
+			index = 0;
+		}
+		// Generate list of indices.
+		std::vector<size_t> indices;
+		for (size_t i=0; i<batch_size; i++) {
+			// Pick an index.
+			indices.push_back((size_t)(index+i));
+
+		}//: batch_size
+
+		// Increment index.
+		index += batch_size;
+		// Return data.
+		return getBatch(indices);
+	}
+
+
+	/*!
+	 * Returns batch of samples with given indices.
+	 * If any of the indices is out of dataset range throws an "std::out_of_range" exception.
+	 * @param indices_ Vector of indices
+	 * @return Batch - a vector of pairs of <shared pointers to samples and labels>.
+	 */
+	std::vector<std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > > getBatch(std::vector<size_t> indices_) {
+
+		// Empty vector - batch.
+		std::vector<std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > > batch;
+
+		// For all indices.
+		for (size_t local_index: indices_) {
+			// Check index.
+			if ((local_index < 0) || (local_index >= data.size())){
+				// Reset index.
+				throw std::out_of_range("getSample index out of range");
+			}//: if
+
+			// Get data
+			std::shared_ptr<dataType> data_ptr = data[local_index];
+			std::shared_ptr<labelType> label_ptr = labels[local_index];
+
+			// Add sample to batch.
+			batch.push_back(std::make_pair (data_ptr, label_ptr));
+		}
+		// Return batch.
+		return batch;
+	}
+
 	/*!
 	 * Sets the index of the next returned sample.
 	 * @param index_ Sample index.
 	 */
 	void setSampleIndex(size_t index_ = 0) {
 		index = index_;
+	}
+
+	bool isLastSample() {
+		return (index >= data.size());
+	}
+
+	bool isLastBatch() {
+		return ((index+batch_size) >= data.size());
 	}
 
 protected:
@@ -157,6 +245,11 @@ protected:
 	 * Property: index of the returned sample - it is used ONLY in getNextSample (i.e. iterative, not random sampling) method.
 	 */
 	mic::configuration::Property<size_t> index;
+
+	/*!
+	 * Batch size. As defaults set to one.
+	 */
+	mic::configuration::Property<size_t> batch_size;
 
 	/*!
 	 * Random device used for generation of random numbers.
