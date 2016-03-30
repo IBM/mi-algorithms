@@ -67,6 +67,12 @@ namespace types {
  */
 typedef std::pair< std::shared_ptr<char>, std::shared_ptr<char> > char_char_pair_t;
 
+/*!
+ * \brief The <char-char> pair type used by e.g. RawTextImporter.
+ * \author tkornuta
+ */
+typedef std::pair< std::vector< std::shared_ptr<char> >, std::vector< std::shared_ptr<char> > > char_char_batch_t;
+
 }//: namespace types
 }//: namespace mic
 

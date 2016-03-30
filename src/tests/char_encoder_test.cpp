@@ -37,13 +37,22 @@ int main(int argc, char* argv[]) {
 	LOGGER->addOutput(new ConsoleOutput());
 	LOG(LINFO) << "Logger initialized. Starting application";
 
+	// Manualy set sdr and batch size.
+	size_t sdr_size = 128;
+	size_t batch_size = 5;
+
+
 	mic::auto_encoders::DummyCharEncoder encoder;
-	mic::types::floatSDR sdr;
+	mic::types::MatrixXf sdr(sdr_size,1);
+	LOG(LWARNING) << "sdr.cols()=" << sdr.cols() << " sdr.rows()=" << sdr.rows();
 
 	// Load dataset.
 	mic::data_io::RawTextImporter importer;
-	// Manually set paths. DEPRICATED!
+	// Manually set paths. DEPRICATED! Used here only for simplification of the test.
 	importer.setDataFilename("/Users/tkornut/Documents/workspace/machine-intelligence-core/data/txt/pl/ep-06-01-16-003.txt");
+	importer.setBatchSize(batch_size);
+
+
 	if (!importer.importData())
 		return -1;
 
@@ -59,13 +68,9 @@ int main(int argc, char* argv[]) {
 
 			// Random select image.
 			char_char_pair_t sample = importer.getRandomSample();
-			//LOG(LINFO)<<" Orig = '" << *(sample.first) << "' label = '" << *(sample.second) << "'";
 
 			// Encode the selected image into SDR.
 			encoder.encode(*(sample.first), sdr);
-
-			// Process - change a single element of SDR...
-			//sdr[0]=255;
 
 			// Decode SDR.
 			char dec_char;
@@ -74,6 +79,34 @@ int main(int argc, char* argv[]) {
 			// Display result.
 			LOG(LINFO)<<" Orig = '" << *(sample.first) << "' decoded SDR = '" << dec_char << "' label = '" << *(sample.second) << "'";
 
+			// Get random batch.
+			char_char_batch_t batch = importer.getNextBatch();
+			LOG(LINFO)<<" Batch: ";
+			for (size_t i=0; i < batch.first.size(); i++ ) {
+				LOG(LINFO)<<" ["<<i<< "] = '" << *(batch.first[i]) <<"'";
+			}//: for
+
+
+			// Encode the whole batch.
+			mic::types::MatrixXf batch_matrix (sdr_size, batch_size);
+			encoder.encode(batch.first, batch_matrix);
+			LOG(LINFO)<<" Batched matrix: ";
+			LOG(LINFO) << batch_matrix;
+
+			// Decode batch matrix.
+			char_char_batch_t decoded_batch;
+			encoder.decode(decoded_batch.first, batch_matrix);
+
+
+			LOG(LINFO)<<" Decoded batch: ";
+			for (size_t i=0; i < decoded_batch.first.size(); i++ ) {
+				LOG(LINFO)<<" ["<<i<< "] = '" << *(decoded_batch.first[i]) <<"'";
+			}//: for
+
+
+			// Check if the batch was the last one.
+			if (importer.isLastBatch())
+				break;
 		}//: if ! paused
 
 		// Sleep.
