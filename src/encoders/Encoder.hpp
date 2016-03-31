@@ -12,6 +12,8 @@
 #include <vector>
 #include <iostream>
 
+#include <memory> // std::shared_ptr
+
 namespace mic {
 
 /*!
