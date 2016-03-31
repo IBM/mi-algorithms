@@ -10,6 +10,9 @@
 
 #include <types/Matrix.hpp>
 
+#include <types/Pair.hpp>
+
+
 #ifdef OpenBLAS_FOUND
 #include <cblas.h>
 #endif
