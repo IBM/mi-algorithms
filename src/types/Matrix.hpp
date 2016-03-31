@@ -33,6 +33,10 @@ namespace types {
 template<typename T>
 class Tensor;
 
+// Forward declaration of a class Vector.
+template<typename T>
+class Vector;
+
 /*!
  * \brief Template-typed Matrix of dynamic size.
  * Uses OpenBLAS if found by CMAKE - overloaded, specializations of * operator for types: float, double.
@@ -42,12 +46,13 @@ class Tensor;
  * \author tkornuta
  */
 template<typename T>
-class Matrix: public Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> {
+class Matrix : public Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> {
 public:
 
 	/*!
 	 * Constructor. Calls default Eigen::MatrixXf constructor.
 	 */
+	EIGEN_STRONG_INLINE
 	Matrix() :
 		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>() {
 	}
@@ -64,14 +69,27 @@ public:
 	}
 
 	/*!
-	 * Overloaded assignment operator - calls base operator.
-	 * @param mat_ Input matrix
-	 * @return An exact copy of the input matrix.
+	 * Copying constructor on the basis of a vector. Sets dimensions to rows = size(), cols = 1.
+	 * @param vector_ Vector
 	 */
 	EIGEN_STRONG_INLINE
-	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& mat_) {
-		// Using base EIGEN operator =
-		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
+	Matrix(const Eigen::Matrix<T, Eigen::Dynamic, 1>& vector_) :
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(vector_.size(), 1)
+	{
+		// Copy the whole vector block.
+		memcpy(this->data(), vector_.data(), vector_.size() * sizeof(T));
+	}
+
+	/*!
+	 * Copying constructor on the basis of another matrix.
+	 * @param matrix_ Matrix to be copied.
+	 */
+	EIGEN_STRONG_INLINE
+	Matrix(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& matrix_) :
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(matrix_.rows(), matrix_.cols())
+	{
+		// Copy the whole vector block.
+		memcpy(this->data(), matrix_.data(), matrix_.size() * sizeof(T));
 	}
 
 	/*!
@@ -89,16 +107,35 @@ public:
 		memcpy(this->data(), tensor_.data(), tensor_.size() * sizeof(T));
 	}
 
+	/*
+	 * Overloaded assignment operator - calls base operator.
+	 * @param mat_ Input matrix
+	 * @return An exact copy of the input matrix.
+	 */
+/*	EIGEN_STRONG_INLINE
+	const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const mic::types::Matrix<T>& mat_) {
+		// Using base EIGEN operator =
+		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
+	}*/
+
+
+/*	EIGEN_STRONG_INLINE
+	const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const Eigen::Matrix<T, Eigen::Dynamic, 1>& vector_) {
+		// Using base EIGEN operator =
+		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(vector_);
+	}*/
+
 	/*!
 	 * Overloaded assignment operator - calls base operator.
 	 * @param mat_ Input matrix
 	 * @return An exact copy of the input matrix.
 	 */
 	EIGEN_STRONG_INLINE
-	const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const mic::types::Matrix<T>& mat_) {
+	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& mat_) {
 		// Using base EIGEN operator =
 		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
 	}
+
 
 	/*!
 	 * Overloaded multiplication operator.
@@ -347,8 +384,8 @@ private:
 template<typename T>
 using MatrixPtr = typename std::shared_ptr< mic::types::Matrix<T> >;
 
-}				//: namespace types
-}				//: namespace mic
+}//: namespace types
+}//: namespace mic
 
 
 

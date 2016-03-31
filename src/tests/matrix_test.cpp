@@ -113,12 +113,25 @@ int main(int argc, char* argv[]) {
 	mk.normRandReal(1, 0.001);
 	//std::cout <<"nm=\n" << nm <<  std::endl;
 
-	// Adding test.
-	Eigen::VectorXf vect(N);
+	// Initialize vector.
+	mic::types::VectorXf vect(N);
 	vect.setRandom();
+
+	// Examples of mapping from vectors to matrices.
+	mic::types::MatrixXf vect_copy = vect;
+	mic::types::MatrixXf vect_copy2;
+	vect_copy2 = (mic::types::MatrixXf)vect;
+
+	// Adding test.
+	vect_copy2 += vect;
+	std::cout <<"vect_copy=\n" << vect_copy <<  std::endl;
+	std::cout <<"vect_copy2=\n" << vect_copy2 <<  std::endl;
+
 	std::cout <<"vect=\n" << vect <<  std::endl;
 	nm.colwise() += vect;
 	std::cout <<"nm+=vect\n" << nm <<  std::endl;
+
+
 
 	// Elementwise function test.
 	mic::types::MatrixXf nm2(N, M);
