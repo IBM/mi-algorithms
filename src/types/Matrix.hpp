@@ -10,7 +10,7 @@
 
 #include <Eigen/Dense>
 #include <random>
-#include <memory>
+#include <memory> // std::shared_ptr
 
 
 namespace mic {
