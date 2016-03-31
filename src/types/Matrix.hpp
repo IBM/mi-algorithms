@@ -12,6 +12,19 @@
 #include <random>
 #include <memory> // std::shared_ptr
 
+#include <boost/serialization/serialization.hpp>
+// include this header to serialize vectors
+#include <boost/serialization/vector.hpp>
+// include this header to serialize arrays
+#include <boost/serialization/array.hpp>
+#include <boost/serialization/version.hpp>
+
+// Forward declaration of class boost::serialization::access
+namespace boost {
+namespace serialization {
+class access;
+}//: serialization
+}//: access
 
 namespace mic {
 namespace types {
@@ -280,6 +293,50 @@ public:
 		}//: x
 	}
 
+private:
+
+	// Friend class - required for using boost serialization.
+    friend class boost::serialization::access;
+
+    /*!
+     * Serialization save - saves the matrix object to archive.
+     * @param ar Used archive.
+     * @param version Version of the matrix class (not used currently).
+     */
+	template<class Archive>
+	void save(Archive & ar, const unsigned int version) const {
+    	size_t rows, cols;
+    	rows = this->rows();
+    	cols = this->cols();
+		ar & rows;
+		ar & cols;
+        // Save elements.
+        size_t elements = this->rows() * this->cols();
+		T* data_ptr = (T*)this->data();
+        ar & boost::serialization::make_array<T>(data_ptr, elements);
+     }
+
+    /*!
+     * Serialization load - loads the matrix object to archive.
+     * @param ar Used archive.
+     * @param version Version of the matrix class (not used currently).
+     */
+     template<class Archive>
+     void load(Archive & ar, const unsigned int version) {
+    	size_t rows, cols;
+		ar & rows;
+		ar & cols;
+		// Allocate memory - resize.
+		this->resize(rows, cols);
+		// Load elements
+        size_t elements = this->rows() * this->cols();
+		T* data_ptr = this->data();
+		ar & boost::serialization::make_array<T>(data_ptr, elements);
+     }
+
+     // The serialization must be splited as load requires to allocate the memory.
+     BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 };
 
 
@@ -292,5 +349,15 @@ using MatrixPtr = typename std::shared_ptr< mic::types::Matrix<T> >;
 
 }				//: namespace types
 }				//: namespace mic
+
+
+
+// Just in case if something important will change in the tensor class - set version.
+BOOST_CLASS_VERSION(mic::types::Matrix<bool>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<short>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<int>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<long>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<float>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<double>, 1)
 
 #endif /* SRC_TYPES_MATRIX_HPP_ */

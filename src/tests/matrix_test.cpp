@@ -16,6 +16,10 @@
 #include <data_utils/functions.h>
 #include <data_utils/Timer.hpp>
 
+#include <fstream>
+// Include headers that implement a archive in simple text format
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 
 #ifdef OpenBLAS_FOUND
@@ -147,6 +151,32 @@ int main(int argc, char* argv[]) {
 	//std::cout <<"nk=\n" << nk <<  std::endl;
 
 	std::cout  <<  "Multiplication time = " << time <<  std::endl;
+
+
+	const char* fileName = "saved.xml";
+
+	// Save data
+	{
+		// Create an output archive
+		std::ofstream ofs(fileName);
+		boost::archive::text_oarchive ar(ofs);
+		// Write data
+		ar & nm;
+		std::cout << "Saved matrix = " << nm << std::endl;
+
+	}
+
+	// Restore data
+	mic::types::MatrixXd restored_mat;
+
+	{
+		// Create and input archive
+		std::ifstream ifs(fileName);
+		boost::archive::text_iarchive ar(ifs);
+		// Load data
+		ar & restored_mat;
+		std::cout << "Restored matrix = " << restored_mat << std::endl;
+	}
 
 }//: main
 
