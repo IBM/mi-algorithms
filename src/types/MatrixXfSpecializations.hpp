@@ -87,6 +87,13 @@ typedef std::pair< MatrixXfPtr, std::shared_ptr<char> > MatrixXfCharPair;
  */
 typedef std::pair< MatrixXfPtr, std::shared_ptr<unsigned int> > MatrixXfUintPair;
 
+/*!
+ * \brief The <single precision float matrix - single precision float matrix> pair.
+ * \author tkornuta
+ */
+typedef std::pair< MatrixXfPtr, MatrixXfPtr > MatrixXfMatrixXfPair;
+
+
 }//: namespace types
 }//: namespace mic
 

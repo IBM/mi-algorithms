@@ -35,7 +35,7 @@ public:
 	 * @brief Constructor - empty.
 	 */
 	Encoder()  {
-		std::cout<<" Hello Encoder\n";
+//		std::cout<<" Hello Encoder\n";
 	};
 
 	/*!

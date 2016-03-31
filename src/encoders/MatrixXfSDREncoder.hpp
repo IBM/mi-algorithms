@@ -32,7 +32,7 @@ public:
 	MatrixXfSDREncoder(size_t sdr_length_) : mic::encoders::Encoder<inputDataType, mic::types::MatrixXf>(),
 		sdr_length(sdr_length_)
 	{
-		std::cout<<" Hello MatrixXfSDREncoder\n";
+//		std::cout<<" Hello MatrixXfSDREncoder\n";
 	};
 
 	/*!

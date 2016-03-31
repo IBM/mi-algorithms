@@ -20,9 +20,12 @@ namespace encoders {
  */
 class CharMatrixXfEncoder: public mic::encoders::MatrixXfSDREncoder<char> {
 public:
-	/// Default constructor - empty.
+	/*!
+	 * Default constructor.
+	 * @param sdr_length_ SDR length.
+	 */
 	CharMatrixXfEncoder(size_t sdr_length_) : MatrixXfSDREncoder(sdr_length_) {
-		std::cout<<" Hello CharMatrixXfEncoder\n";
+//		std::cout<<" Hello CharMatrixXfEncoder\n";
 	};
 
 	/// Default destructor - empty.
