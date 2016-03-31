@@ -72,13 +72,17 @@ target_link_libraries(data_io types data_utils configuration)
 
 # =======================================================================
 # Install includes related to AUTO ENCODERS used by other libraries.
-FILE(GLOB files auto_encoders/*.hpp)
+FILE(GLOB files encoders/*.hpp )
+install(FILES ${files} DESTINATION include/encoders)
+
+FILE(GLOB files auto_encoders/*.hpp )
 install(FILES ${files} DESTINATION include/auto_encoders)
 
 # Create shared library containing AUTO ENCODERS.
-file(GLOB auto_encoders_src auto_encoders/*.cpp)
+file(GLOB auto_encoders_src encoders/*.cpp auto_encoders/*.cpp)
 add_library(auto_encoders SHARED ${auto_encoders_src})
 target_link_libraries(auto_encoders types )
+
 
 # =======================================================================
 # Install includes related to CLASSIFIERS used by other libraries.

@@ -14,7 +14,7 @@ using namespace mic::data_utils;
 
 #include <data_io/RawTextImporter.hpp>
 
-#include <auto_encoders/DummyCharEncoder.hpp>
+#include <encoders/CharMatrixXfEncoder.hpp>
 
 #include <logger/Log.hpp>
 #include <logger/ConsoleOutput.hpp>
@@ -41,10 +41,7 @@ int main(int argc, char* argv[]) {
 	size_t sdr_size = 128;
 	size_t batch_size = 5;
 
-
-	mic::auto_encoders::DummyCharEncoder encoder;
-	mic::types::MatrixXf sdr(sdr_size,1);
-	LOG(LWARNING) << "sdr.cols()=" << sdr.cols() << " sdr.rows()=" << sdr.rows();
+	mic::encoders::CharMatrixXfEncoder encoder(sdr_size);
 
 	// Load dataset.
 	mic::data_io::RawTextImporter importer;
@@ -70,14 +67,13 @@ int main(int argc, char* argv[]) {
 			char_char_pair_t sample = importer.getRandomSample();
 
 			// Encode the selected image into SDR.
-			encoder.encode(*(sample.first), sdr);
+			std::shared_ptr<mic::types::MatrixXf> sdr = encoder.encodeSample(sample.first);
 
 			// Decode SDR.
-			char dec_char;
-			encoder.decode(dec_char, sdr);
+			std::shared_ptr<char> dec_char = encoder.decodeSample(sdr);
 
 			// Display result.
-			LOG(LINFO)<<" Orig = '" << *(sample.first) << "' decoded SDR = '" << dec_char << "' label = '" << *(sample.second) << "'";
+			LOG(LINFO)<<" Orig = '" << *(sample.first) << "' decoded SDR = '" << (*dec_char) << "' label = '" << *(sample.second) << "'";
 
 			// Get random batch.
 			char_char_batch_t batch = importer.getNextBatch();
@@ -88,19 +84,17 @@ int main(int argc, char* argv[]) {
 
 
 			// Encode the whole batch.
-			mic::types::MatrixXf batch_matrix (sdr_size, batch_size);
-			encoder.encode(batch.first, batch_matrix);
-			LOG(LINFO)<<" Batched matrix: ";
-			LOG(LINFO) << batch_matrix;
+			std::shared_ptr<mic::types::MatrixXf> batch_matrix = encoder.encodeBatch(batch.first);
+			LOG(LDEBUG)<<" Batched matrix: ";
+			LOG(LDEBUG) << *batch_matrix;
 
 			// Decode batch matrix.
-			char_char_batch_t decoded_batch;
-			encoder.decode(decoded_batch.first, batch_matrix);
+			std::vector<std::shared_ptr<char> > decoded_batch = encoder.decodeBatch(batch_matrix);
 
 
 			LOG(LINFO)<<" Decoded batch: ";
-			for (size_t i=0; i < decoded_batch.first.size(); i++ ) {
-				LOG(LINFO)<<" ["<<i<< "] = '" << *(decoded_batch.first[i]) <<"'";
+			for (size_t i=0; i < decoded_batch.size(); i++ ) {
+				LOG(LINFO)<<" ["<<i<< "] = '" << *(decoded_batch[i]) <<"'";
 			}//: for
 
 

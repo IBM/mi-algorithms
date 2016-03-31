@@ -15,17 +15,17 @@
 namespace mic {
 
 /*!
- * \brief Contains auto-encoder parent class and all derived classes.
+ * \brief Contains auto-encoder parent class and all derived classes. DEPRICATED.
  * \author tkornuta
  */
 namespace auto_encoders {
 
 /*!
- * @brief Parent class for all auto-encoders.
+ * \brief Parent class for all auto-encoders.  DEPRICATED.
  *
- * @author tkornuta
- * @tparam inputDataType Template parameter defining the input datatype.
- * @tparam SDRType Template parameter defining the SDR type.
+ * \author tkornuta
+ * \tparam inputDataType Template parameter defining the input datatype.
+ * \tparam SDRType Template parameter defining the SDR type.
  */
 template <typename inputDataType, typename SDRType>
 class Encoder {
