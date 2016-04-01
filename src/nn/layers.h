@@ -12,6 +12,8 @@
 #include <data_io/matrix_io.h>
 #include <string>
 
+#include<types/MatrixTypes.hpp>
+
 //abstract
 class Layer {
 
@@ -20,32 +22,32 @@ class Layer {
 		const std::string name;
 
 		//used in forward pass
-		Matrix x; //inputs
-		Matrix y; //outputs
+		mic::types::MatrixXf x; //inputs
+		mic::types::MatrixXf y; //outputs
 
 		//grads, used in backward pass
-		Matrix dx;
-		Matrix dy;
+		mic::types::MatrixXf dx;
+		mic::types::MatrixXf dy;
 
 		const float dropout;
-		Matrix dropout_mask;
+		mic::types::MatrixXf dropout_mask;
 
 		Layer(size_t inputs, size_t outputs, size_t batch_size, std::string _label = "layer", float _dropout = 1.0f) : name(_label), dropout(_dropout) {
 
-			x = Matrix(inputs, batch_size);
-			y = Matrix(outputs, batch_size);
-			dx = Matrix(inputs, batch_size);
-			dy = Matrix(outputs, batch_size);
+			x = mic::types::MatrixXf(inputs, batch_size);
+			y = mic::types::MatrixXf(outputs, batch_size);
+			dx = mic::types::MatrixXf(inputs, batch_size);
+			dy = mic::types::MatrixXf(outputs, batch_size);
 
 			//for dropout implementation
-			dropout_mask = Matrix::Ones(y.rows(), y.cols());
+			dropout_mask = mic::types::MatrixXf::Ones(y.rows(), y.cols());
 
 		};
 
 		// Dropout paper - http://arxiv.org/pdf/1207.0580.pdf
 		void applyDropout() {
 
-			Matrix rands = Matrix::Zero(y.rows(), y.cols());
+			mic::types::MatrixXf rands = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(y.rows(), y.cols());
 			rand(rands, 0.0f, 1.0f);
 			//dropout mask - 1s - preserved elements
 			dropout_mask = (rands.array() < dropout).cast <float> ();
@@ -103,13 +105,13 @@ class Pooling : public Layer {
 				  batch_size, "pool"),
 			channels(_channels), window_size(_window_size) {
 
-			cache = Matrix::Zero(x.rows(), x.cols());
+			cache = mic::types::MatrixXf::Zero(x.rows(), x.cols());
 
 		};
 
 		~Pooling() {};
 
-		Matrix cache;
+		mic::types::MatrixXf cache;
 
 		const size_t channels;
 		const size_t window_size;
@@ -119,14 +121,14 @@ class Convolution : public Layer {
 
 	public:
 
-		Matrix W;
-		Vector b;
+		mic::types::MatrixXf W;
+		mic::types::VectorXf b;
 
-		Matrix dW;
-		Matrix db;
+		mic::types::MatrixXf dW;
+		mic::types::MatrixXf db;
 
-		Matrix mW;
-		Matrix mb;
+		mic::types::MatrixXf mW;
+		mic::types::MatrixXf mb;
 
 		const size_t input_channels;
 		const size_t output_channels;
@@ -166,8 +168,8 @@ class Convolution : public Layer {
 			output_map_size((sqrt(inputs) - filter_size + 1) * (sqrt(inputs) - filter_size + 1)) {
 
 
-			W = Matrix(filters, filter_size * filter_size * input_channels);
-			b = Vector::Zero(filters);
+			W = mic::types::MatrixXf(filters, filter_size * filter_size * input_channels);
+			b = (Eigen::VectorXf)Eigen::VectorXf::Zero(filters);
 
 			//W << 0.1, 0, 0, 0, 0, 0, 0, 0, 0;
 			size_t fan_in = channels * filter_size * filter_size;
@@ -176,15 +178,15 @@ class Convolution : public Layer {
 
 			rand(W, -range, range);
 
-			mW = Matrix::Zero(W.rows(), W.cols());
-			mb = Vector::Zero(b.rows());
+			mW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
+			mb = mic::types::VectorXf::Zero(b.rows());
 
 		};
 
 		void resetGrads() {
 
-			dW = Matrix::Zero(W.rows(), W.cols());
-			db = Vector::Zero(b.rows());;
+			dW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
+			db = mic::types::VectorXf::Zero(b.rows());;
 
 		}
 
@@ -207,14 +209,14 @@ class Linear : public Layer {
 
 	public:
 
-		Matrix W;
-		Vector b;
+		mic::types::MatrixXf W;
+		mic::types::VectorXf b;
 
-		Matrix dW;
-		Matrix db;
+		mic::types::MatrixXf dW;
+		mic::types::MatrixXf db;
 
-		Matrix mW;
-		Matrix mb;
+		mic::types::MatrixXf mW;
+		mic::types::MatrixXf mb;
 
 		void forward(bool apply_dropout = false) {
 
@@ -235,21 +237,21 @@ class Linear : public Layer {
 		Linear(size_t inputs, size_t outputs, size_t batch_size, float _dropout = 1.0f) :
 			Layer(inputs, outputs, batch_size, "fc", _dropout) {
 
-			W = Matrix(outputs, inputs);
-			b = Vector::Zero(outputs);
+			W = mic::types::MatrixXf(outputs, inputs);
+			b = (Eigen::VectorXf)Eigen::VectorXf::Zero(outputs);
 			double range = sqrt(6.0 / double(inputs + outputs));
 
 			rand(W, -range, range);
 
-			mW = Matrix::Zero(W.rows(), W.cols());
-			mb = Vector::Zero(b.rows());
+			mW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
+			mb = mic::types::VectorXf::Zero(b.rows());
 
 		};
 
 		void resetGrads() {
 
-			dW = Matrix::Zero(W.rows(), W.cols());
-			db = Vector::Zero(b.rows());
+			dW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
+			db = mic::types::VectorXf::Zero(b.rows());
 		}
 
 		void applyGrads(double alpha, double decay = 0) {

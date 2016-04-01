@@ -107,6 +107,7 @@ int main(int argc, char* argv[]) {
 	mic::types::Matrix<float> nm(N, M);
 	mic::types::Matrix<float> mk(M, K);
 	mic::types::Matrix<float> nk(N, K);
+	mic::types::MatrixXf nm_zero = (Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>)Eigen::MatrixXf::Zero(N,M);
 
 	// Initialize matrices with random numbers.
 	nm.normRandReal(1, 0.001);

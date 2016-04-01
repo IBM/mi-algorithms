@@ -32,7 +32,7 @@ class NN {
 
 		const size_t batch_size;
 
-		void forward(Matrix& input_data, bool apply_dropout = false) {
+		void forward(mic::types::MatrixXf& input_data, bool apply_dropout = false) {
 
 			//copy inputs to the lowest point in the network
 			layers[0]->x = input_data;
@@ -50,7 +50,7 @@ class NN {
 
 		}
 
-		void backward(Matrix& t) {
+		void backward(mic::types::MatrixXf& t) {
 
 			//set targets at the top
 			layers[layers.size() - 1]->dy = t;
@@ -85,8 +85,8 @@ class NN {
 		void train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, bool apply_dropout = false) {
 
 			//get random examples of size batch_size from data
-			Eigen::VectorXi random_numbers(batch_size);
-			Matrix batch, targets;
+			mic::types::VectorXi random_numbers(batch_size);
+			mic::types::MatrixXf batch, targets;
 			float loss, smooth_loss;
 			float damping_factor = 0.99;
 
@@ -130,12 +130,12 @@ class NN {
 		}
 
 		/*****	TODO	*****/
-		/*		Eigen::MatrixXf compute_numerical_gradients(void) { }*/
+		/*		Eigen::mic::types::MatrixXfXf compute_numerical_gradients(void) { }*/
 
 		float test(std::deque<datapoint>& data) {
 
-			Eigen::VectorXi numbers(batch_size);
-			Matrix batch, targets;
+			mic::types::VectorXi numbers(batch_size);
+			mic::types::MatrixXf batch, targets;
 
 			size_t classes = 10;
 			size_t correct = 0;

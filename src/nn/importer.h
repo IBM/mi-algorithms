@@ -16,13 +16,15 @@ Integrate with external MI data importers*/
 
 //TODO: integrate with MI Matrix/Vector
 //set Matrix implementation
-#include <Eigen/Dense>
+/*#include <Eigen/Dense>
 typedef Eigen::VectorXf Vector;
-typedef Eigen::MatrixXf Matrix;
+typedef Eigen::MatrixXf Matrix;*/
+
+#include <types/MatrixTypes.hpp>
 
 typedef struct {
 
-	Vector x; 	//inputs
+	mic::types::VectorXf x; 	//inputs
 	int y; 		//label
 
 } datapoint;
@@ -65,7 +67,7 @@ class CIFAR10Importer : public ImageImporter {
 
 					if (!infile.eof()) {
 
-						Vector temp(w * h * c);
+						mic::types::VectorXf temp(w * h * c);
 
 						allocs++;
 
@@ -141,7 +143,7 @@ class MNISTImporter : public ImageImporter {
 
 					if (!infile.eof() && !labels_file.eof()) {
 
-						Vector temp(w * h);
+						mic::types::VectorXf temp(w * h);
 
 
 						allocs++;
@@ -160,7 +162,7 @@ class MNISTImporter : public ImageImporter {
 						datapoint dp;
 						//Eigen uses column-major layout as default, this is a quick fix to make visualizations easier
 						if (transpose_inputs) {
-							Matrix transposed = temp;
+							mic::types::MatrixXf transposed = temp;
 							transposed.resize(w, h);
 							transposed.transposeInPlace();
 							transposed.resize(w * h, 1);
