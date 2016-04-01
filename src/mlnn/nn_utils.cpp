@@ -1,36 +1,11 @@
-/*
-* @Author: kmrocki
-* @Date:   2016-02-24 10:47:03
-* @Last Modified by:   kmrocki
-* @Last Modified time: 2016-03-10 12:43:26
-*/
+/*!
+ * \file nn_utils.cpp
+ * \brief 
+ * \author tkornut
+ * \date Mar 31, 2016
+ */
 
-#ifndef __NN_UTILS_H__
-#define __NN_UTILS_H__
-
-#include <iostream>
-#include <iomanip>
-#include <random>
-
-//TODO: integrate with MI Matrixf/Vector
-//setMatrix  implementation
-/*#include <Eigen/Dense>
-typedef Eigen::VectorXf Vector;
-typedef Eigen::MatrixXf Matrix;*/
-#include <types/MatrixTypes.hpp>
-
-inline float sqrt_eps(const float x) {
-	return sqrtf(x + 1e-6);
-}
-
-//f(x) = sigm(x)
-inline float __logistic(const float x) {
-	return 1.0f / (1.0f +::expf(-x));
-}
-
-inline float __exponential(const float x) {
-	return expf(x);
-}
+#include <mlnn/nn_utils.h>
 
 mic::types::MatrixXf rectify(mic::types::MatrixXf& x) {
 
@@ -651,4 +626,3 @@ size_t count_correct_predictions(mic::types::MatrixXf& p, mic::types::MatrixXf& 
 	return count_zeros(correct);
 }
 
-#endif

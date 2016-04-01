@@ -14,12 +14,6 @@ Integrate with external MI data importers*/
 #include <deque>
 #include <fstream>
 
-//TODO: integrate with MI Matrix/Vector
-//set Matrix implementation
-/*#include <Eigen/Dense>
-typedef Eigen::VectorXf Vector;
-typedef Eigen::MatrixXf Matrix;*/
-
 #include <types/MatrixTypes.hpp>
 
 typedef struct {

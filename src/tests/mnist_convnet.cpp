@@ -5,16 +5,13 @@
 * @Last Modified time: 2016-03-11 10:31:37
 */
 
-#include <nn/importer.h>
-#include <nn/layers.h>
-#include <nn/nn.h>
 #include <iostream>
-#include <nn/nn_utils.h>
 
-#ifdef OpenBLAS_FOUND
-#include <cblas.h>
-#endif
+#include <mlnn/importer.h>
+#include <mlnn/MultiLayerNeuralNetwork.hpp>
 
+// Using multi layer neural networks
+using namespace mic::mlnn;
 
 int main() {
 
@@ -49,7 +46,7 @@ int main() {
 	double 	learning_rate = 1e-2;
 	double 	weight_decay = 0;
 
-	NN nn(batch_size);
+	MultiLayerNeuralNetwork nn(batch_size);
 
 	//CONV 3x3 -> CONV 3x3 -> POOL 2x
 	nn.layers.push_back(new Convolution(train_data[0].x.rows(), input_channels, filter_size[0], filters[0], batch_size));
