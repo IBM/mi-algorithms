@@ -14,7 +14,7 @@ using namespace mic::data_utils;
 
 #include <data_io/RawTextImporter.hpp>
 
-#include <auto_encoders/DummyCharEncoder.hpp>
+#include <encoders/CharMatrixXfEncoder.hpp>
 
 #include <logger/Log.hpp>
 #include <logger/ConsoleOutput.hpp>
@@ -37,13 +37,19 @@ int main(int argc, char* argv[]) {
 	LOGGER->addOutput(new ConsoleOutput());
 	LOG(LINFO) << "Logger initialized. Starting application";
 
-	mic::auto_encoders::DummyCharEncoder encoder;
-	mic::types::floatSDR sdr;
+	// Manualy set sdr and batch size.
+	size_t sdr_size = 128;
+	size_t batch_size = 5;
+
+	mic::encoders::CharMatrixXfEncoder encoder(sdr_size);
 
 	// Load dataset.
 	mic::data_io::RawTextImporter importer;
-	// Manually set paths. DEPRICATED!
+	// Manually set paths. DEPRICATED! Used here only for simplification of the test.
 	importer.setDataFilename("/Users/tkornut/Documents/workspace/machine-intelligence-core/data/txt/pl/ep-06-01-16-003.txt");
+	importer.setBatchSize(batch_size);
+
+
 	if (!importer.importData())
 		return -1;
 
@@ -59,21 +65,42 @@ int main(int argc, char* argv[]) {
 
 			// Random select image.
 			char_char_pair_t sample = importer.getRandomSample();
-			//LOG(LINFO)<<" Orig = '" << *(sample.first) << "' label = '" << *(sample.second) << "'";
 
 			// Encode the selected image into SDR.
-			encoder.encode(*(sample.first), sdr);
-
-			// Process - change a single element of SDR...
-			//sdr[0]=255;
+			std::shared_ptr<mic::types::MatrixXf> sdr = encoder.encodeSample(sample.first);
 
 			// Decode SDR.
-			char dec_char;
-			encoder.decode(dec_char, sdr);
+			std::shared_ptr<char> dec_char = encoder.decodeSample(sdr);
 
 			// Display result.
-			LOG(LINFO)<<" Orig = '" << *(sample.first) << "' decoded SDR = '" << dec_char << "' label = '" << *(sample.second) << "'";
+			LOG(LINFO)<<" Orig = '" << *(sample.first) << "' decoded SDR = '" << (*dec_char) << "' label = '" << *(sample.second) << "'";
 
+			// Get random batch.
+			char_char_batch_t batch = importer.getNextBatch();
+			LOG(LINFO)<<" Batch: ";
+			for (size_t i=0; i < batch.first.size(); i++ ) {
+				LOG(LINFO)<<" ["<<i<< "] = '" << *(batch.first[i]) <<"'";
+			}//: for
+
+
+			// Encode the whole batch.
+			std::shared_ptr<mic::types::MatrixXf> batch_matrix = encoder.encodeBatch(batch.first);
+			LOG(LDEBUG)<<" Batched matrix: ";
+			LOG(LDEBUG) << *batch_matrix;
+
+			// Decode batch matrix.
+			std::vector<std::shared_ptr<char> > decoded_batch = encoder.decodeBatch(batch_matrix);
+
+
+			LOG(LINFO)<<" Decoded batch: ";
+			for (size_t i=0; i < decoded_batch.size(); i++ ) {
+				LOG(LINFO)<<" ["<<i<< "] = '" << *(decoded_batch[i]) <<"'";
+			}//: for
+
+
+			// Check if the batch was the last one.
+			if (importer.isLastBatch())
+				break;
 		}//: if ! paused
 
 		// Sleep.

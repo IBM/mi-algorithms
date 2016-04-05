@@ -1,39 +1,15 @@
-/*
-* @Author: kmrocki
-* @Date:   2016-02-24 10:47:03
-* @Last Modified by:   kmrocki
-* @Last Modified time: 2016-03-10 12:43:26
-*/
+/*!
+ * \file nn_utils.cpp
+ * \brief 
+ * \author tkornut
+ * \date Mar 31, 2016
+ */
 
-#ifndef __NN_UTILS_H__
-#define __NN_UTILS_H__
+#include <mlnn/nn_utils.h>
 
-#include <iostream>
-#include <iomanip>
-#include <random>
+mic::types::MatrixXf rectify(mic::types::MatrixXf& x) {
 
-//TODO: integrate with MI Matrix/Vector
-//set Matrix implementation
-#include <Eigen/Dense>
-typedef Eigen::VectorXf Vector;
-typedef Eigen::MatrixXf Matrix;
-
-inline float sqrt_eps(const float x) {
-	return sqrtf(x + 1e-6);
-}
-
-//f(x) = sigm(x)
-inline float __logistic(const float x) {
-	return 1.0f / (1.0f +::expf(-x));
-}
-
-inline float __exponential(const float x) {
-	return expf(x);
-}
-
-Matrix rectify(Matrix& x) {
-
-	Matrix y(x.rows(), x.cols());
+	mic::types::MatrixXf y(x.rows(), x.cols());
 
 	for (int i = 0; i < x.rows(); i++) {
 		for (int j = 0; j < x.cols(); j++) {
@@ -48,9 +24,9 @@ Matrix rectify(Matrix& x) {
 
 // Exponential Linear Unit
 // http://arxiv.org/pdf/1511.07289v5.pdf
-Matrix activation_ELU(Matrix& x) {
+mic::types::MatrixXf activation_ELU(mic::types::MatrixXf& x) {
 
-	Matrix y(x.rows(), x.cols());
+	mic::types::MatrixXf y(x.rows(), x.cols());
 
 	for (int i = 0; i < x.rows(); i++) {
 		for (int j = 0; j < x.cols(); j++) {
@@ -64,9 +40,9 @@ Matrix activation_ELU(Matrix& x) {
 
 }
 
-Matrix derivative_ELU(Matrix& x) {
+mic::types::MatrixXf derivative_ELU(mic::types::MatrixXf& x) {
 
-	Matrix y(x.rows(), x.cols());
+	mic::types::MatrixXf y(x.rows(), x.cols());
 
 	for (int i = 0; i < x.rows(); i++) {
 		for (int j = 0; j < x.cols(); j++) {
@@ -79,9 +55,9 @@ Matrix derivative_ELU(Matrix& x) {
 
 }
 
-Matrix derivative_ReLU(Matrix& x) {
+mic::types::MatrixXf derivative_ReLU(mic::types::MatrixXf& x) {
 
-	Matrix y(x.rows(), x.cols());
+	mic::types::MatrixXf y(x.rows(), x.cols());
 
 	for (int i = 0; i < x.rows(); i++) {
 		for (int j = 0; j < x.cols(); j++) {
@@ -94,9 +70,9 @@ Matrix derivative_ReLU(Matrix& x) {
 
 }
 
-Matrix logistic(Matrix& x) {
+mic::types::MatrixXf logistic(mic::types::MatrixXf& x) {
 
-	Matrix y(x.rows(), x.cols());
+	mic::types::MatrixXf y(x.rows(), x.cols());
 
 	for (int i = 0; i < x.rows(); i++) {
 		for (int j = 0; j < x.cols(); j++) {
@@ -108,15 +84,15 @@ Matrix logistic(Matrix& x) {
 	return y;
 }
 
-Matrix softmax(Matrix& x) {
+mic::types::MatrixXf softmax(mic::types::MatrixXf& x) {
 
-	Matrix y(x.rows(), x.cols());
+	mic::types::MatrixXf y(x.rows(), x.cols());
 
 	//probs(class) = exp(x, class)/sum(exp(x, class))
 
-	Matrix e = x.unaryExpr(std::ptr_fun(::expf));
+	mic::types::MatrixXf e = (Eigen::MatrixXf)(x.unaryExpr(std::ptr_fun(::expf)));
 
-	Vector sum = e.colwise().sum();
+	mic::types::VectorXf sum = e.colwise().sum();
 
 	for (int i = 0; i < e.rows(); i++) {
 		for (int j = 0; j < e.cols(); j++) {
@@ -128,10 +104,10 @@ Matrix softmax(Matrix& x) {
 	return y;
 }
 
-float cross_entropy(Matrix& predictions, Matrix& targets) {
+float cross_entropy(mic::types::MatrixXf& predictions, mic::types::MatrixXf& targets) {
 
 	float ce = 0.0;
-	Matrix error(predictions.rows(), predictions.cols());
+	mic::types::MatrixXf error(predictions.rows(), predictions.cols());
 
 	//check what has happened and get information content for that event
 	error.array() = -predictions.unaryExpr(std::ptr_fun(::logf)).array() * targets.array();
@@ -141,7 +117,7 @@ float cross_entropy(Matrix& predictions, Matrix& targets) {
 }
 
 //generate an array of random numbers in range
-void randi(Eigen::VectorXi& m, int range_min, int range_max) {
+void randi(mic::types::VectorXi& m, int range_min, int range_max) {
 
 	std::random_device rd;
 	std::mt19937 mt(rd());
@@ -153,7 +129,7 @@ void randi(Eigen::VectorXi& m, int range_min, int range_max) {
 
 }
 
-void __unpool_disjoint_2D(Matrix& dx, Matrix& cache, Matrix& dy, size_t kernel_size) {
+void __unpool_disjoint_2D(mic::types::MatrixXf& dx, mic::types::MatrixXf& cache, mic::types::MatrixXf& dy, size_t kernel_size) {
 
 	for (size_t xi = 0; xi < dx.rows(); xi++) {
 
@@ -166,7 +142,7 @@ void __unpool_disjoint_2D(Matrix& dx, Matrix& cache, Matrix& dy, size_t kernel_s
 
 }
 
-void __pool_disjoint_2D(Matrix& out, Matrix& cache, Matrix& image, size_t kernel_size) {
+void __pool_disjoint_2D(mic::types::MatrixXf& out, mic::types::MatrixXf& cache, mic::types::MatrixXf& image, size_t kernel_size) {
 
 	for (size_t yi = 0; yi < out.rows(); yi++) {
 
@@ -202,7 +178,7 @@ void __pool_disjoint_2D(Matrix& out, Matrix& cache, Matrix& image, size_t kernel
 #define ADDRESS_2D_TO_1D(i, j, cols) ((j) + (i) * (cols))
 #define ADDRESS_3D_TO_1D(i, j, k, cols, channel_size) ((i) + (j) * (cols) + (k) * (channel_size))
 
-void pad(Matrix& x, Matrix& x_padded, size_t kernel_size, size_t input_channels) {
+void pad(mic::types::MatrixXf& x, mic::types::MatrixXf& x_padded, size_t kernel_size, size_t input_channels) {
 
 	size_t padding = kernel_size / 2;
 	size_t batch_size = x.cols();
@@ -212,9 +188,9 @@ void pad(Matrix& x, Matrix& x_padded, size_t kernel_size, size_t input_channels)
 	#pragma omp parallel for
 	for (size_t b = 0; b < batch_size; b++) {
 
-		Matrix im_channel = Matrix::Zero(image_size, image_size);
-		Matrix im_padded = Matrix::Zero(padded_size, padded_size * input_channels);
-		Matrix image = Matrix::Zero(x.rows(), 1);
+		mic::types::MatrixXf im_channel = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(image_size, image_size);
+		mic::types::MatrixXf im_padded = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size, padded_size * input_channels);
+		mic::types::MatrixXf image = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(x.rows(), 1);
 
 		image = x.col(b);
 		image.resize(image_size, image_size * input_channels);
@@ -222,7 +198,7 @@ void pad(Matrix& x, Matrix& x_padded, size_t kernel_size, size_t input_channels)
 		for (size_t f = 0; f < input_channels; f++) {
 
 			im_channel = image.block(0, f * image_size, image_size, image_size);
-			Matrix padded_channel = Matrix::Ones(padded_size, padded_size) * 0.5;
+			mic::types::MatrixXf padded_channel = (Eigen::MatrixXf)(Eigen::MatrixXf::Ones(padded_size, padded_size) * 0.5);
 			padded_channel.block(padding, padding, image_size, image_size) = im_channel;
 			im_padded.block(0, f * padded_size, padded_size, padded_size) = padded_channel;
 
@@ -236,7 +212,7 @@ void pad(Matrix& x, Matrix& x_padded, size_t kernel_size, size_t input_channels)
 }
 
 //outer loop over image locations, all images processed in parallel
-void convolution_forward_gemm(size_t input_channels, Matrix& out, Matrix& W, Matrix& in, Vector& b) {
+void convolution_forward_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in, mic::types::VectorXf& b) {
 
 	//W is size [kernel_length x filters]
 	//I is size [batch_size x kernel_length]
@@ -259,8 +235,8 @@ void convolution_forward_gemm(size_t input_channels, Matrix& out, Matrix& W, Mat
 	for (size_t x = 0; x < out_image_size; x++) {
 		for (size_t y = 0; y < out_image_size; y++) {
 
-			Matrix O = Matrix::Zero(batch_size, filters);
-			Matrix I = Matrix::Zero(batch_size, kernel_length);
+			mic::types::MatrixXf O = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(batch_size, filters);
+			mic::types::MatrixXf I = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(batch_size, kernel_length);
 
 			//inputs(:, :) = images(:, x, y, :);
 			for (size_t k0 = 0; k0 < kernel_size; k0++) {
@@ -293,7 +269,7 @@ void convolution_forward_gemm(size_t input_channels, Matrix& out, Matrix& W, Mat
 
 }
 
-void convolution_backward_full_gemm(size_t input_channels, Matrix& out, Matrix& W, Matrix& in) {
+void convolution_backward_full_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in) {
 
 	size_t channel_length = in.rows() / input_channels;
 	size_t kernel_size = sqrt(W.cols() / input_channels);
@@ -305,19 +281,19 @@ void convolution_backward_full_gemm(size_t input_channels, Matrix& out, Matrix& 
 
 	//pad matrices
 	size_t padded_size = image_size + kernel_size - 1;
-	Matrix out_padded = Matrix::Zero(padded_size * padded_size * filters, batch_size);
+	mic::types::MatrixXf out_padded = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size * padded_size * filters, batch_size);
 
 	#pragma omp parallel for shared(out_padded)
 	for (size_t b = 0; b < batch_size; b++) {
 
-		Matrix out_resized = out.col(b);
-		Matrix padded_temp = Matrix::Zero(padded_size, padded_size * filters);
+		mic::types::MatrixXf out_resized = (Eigen::MatrixXf)out.col(b);
+		mic::types::MatrixXf padded_temp = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size, padded_size * filters);
 		out_resized.resize(out_image_size, out_image_size * filters);
 
 		for (size_t f = 0; f < filters; f++) {
 
-			Matrix padded_temp2 = Matrix::Zero(padded_size, padded_size);
-			Matrix out_temp2 = Matrix::Zero(out_image_size, out_image_size);
+			mic::types::MatrixXf padded_temp2 = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size, padded_size);
+			mic::types::MatrixXf out_temp2 = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(out_image_size, out_image_size);
 			out_temp2 = out_resized.block(0, f * out_image_size, out_image_size, out_image_size);
 			padded_temp2.block(kernel_size - 1, kernel_size - 1, out_image_size, out_image_size) = out_temp2;
 			padded_temp.block(0, f * padded_size, padded_size, padded_size) = padded_temp2;
@@ -329,14 +305,14 @@ void convolution_backward_full_gemm(size_t input_channels, Matrix& out, Matrix& 
 
 	}
 
-	Matrix W_permuted = Matrix(kernel_size * kernel_size * filters, input_channels);
-	Matrix temp_W2 = Matrix::Zero(1, kernel_size * kernel_size);
+	mic::types::MatrixXf W_permuted = mic::types::MatrixXf(kernel_size * kernel_size * filters, input_channels);
+	mic::types::MatrixXf temp_W2 = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(1, kernel_size * kernel_size);
 
 	for (size_t c = 0; c < input_channels; c++) {
 
 		for (size_t f = 0; f < filters; f++) {
 
-			Matrix temp_W2 = W.block(f, c * kernel_size * kernel_size, 1, kernel_size * kernel_size);
+			mic::types::MatrixXf temp_W2 = (Eigen::MatrixXf)W.block(f, c * kernel_size * kernel_size, 1, kernel_size * kernel_size);
 			temp_W2.reverseInPlace();
 			W_permuted.block(f * kernel_size * kernel_size, c, kernel_size * kernel_size, 1) = temp_W2.transpose().eval();
 		}
@@ -348,8 +324,8 @@ void convolution_backward_full_gemm(size_t input_channels, Matrix& out, Matrix& 
 	for (size_t x = 0; x < image_size; x++) {
 		for (size_t y = 0; y < image_size; y++) {
 
-			Matrix O = Matrix::Zero(batch_size, kernel_size * kernel_size * filters);
-			Matrix I = Matrix::Zero(batch_size, input_channels);
+			mic::types::MatrixXf O = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(batch_size, kernel_size * kernel_size * filters);
+			mic::types::MatrixXf I = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(batch_size, input_channels);
 
 			//inputs(:, :) = images(:, x, y, :);
 			for (size_t k0 = 0; k0 < kernel_size; k0++) {
@@ -380,7 +356,7 @@ void convolution_backward_full_gemm(size_t input_channels, Matrix& out, Matrix& 
 	}
 }
 
-void convolution_backward_gemm(size_t input_channels, Matrix& out, Matrix& W, Matrix& in, Matrix& b) {
+void convolution_backward_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in, mic::types::MatrixXf& b) {
 
 	//W is size [filters x kernel_length]
 	//I is size [batch_size x kernel_length]
@@ -405,10 +381,10 @@ void convolution_backward_gemm(size_t input_channels, Matrix& out, Matrix& W, Ma
 
 		for (size_t y = 0; y < out_image_size; y++) {
 
-			Matrix dW = Matrix::Zero(W.rows(), W.cols());
-			Matrix db = Matrix::Zero(b.rows(), b.cols());
-			Matrix O = Matrix::Zero(batch_size, filters);
-			Matrix I = Matrix::Zero(batch_size, kernel_length);
+			mic::types::MatrixXf dW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
+			mic::types::MatrixXf db = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(b.rows(), b.cols());
+			mic::types::MatrixXf O = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(batch_size, filters);
+			mic::types::MatrixXf I = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(batch_size, kernel_length);
 
 			//inputs(:, : ) = images(:, x, y, : );
 			for (size_t k0 = 0; k0 < kernel_size; k0++) {
@@ -448,23 +424,23 @@ void convolution_backward_gemm(size_t input_channels, Matrix& out, Matrix& W, Ma
 
 }
 
-Matrix pooling_forward_channel(Matrix& x, Matrix& cache, size_t window_size) {
+mic::types::MatrixXf pooling_forward_channel(mic::types::MatrixXf& x, mic::types::MatrixXf& cache, size_t window_size) {
 
 	size_t image_size = sqrt(x.rows());
 	// size_t y_width = image_size - window_size + 1;
 	//disjoint
 	size_t y_width = image_size / window_size;
-	Matrix y = Matrix::Zero(y_width * y_width, x.cols());
+	mic::types::MatrixXf y = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(y_width * y_width, x.cols());
 
 	for (size_t i = 0; i < y.cols(); i++) { //images in a batch
 
-		Matrix image = x.col(i);
-		Matrix local_cache = cache.col(i);
+		mic::types::MatrixXf image = (Eigen::MatrixXf)x.col(i);
+		mic::types::MatrixXf local_cache = (Eigen::MatrixXf)cache.col(i);
 
 		image.resize(image_size, image_size);
 		local_cache.resize(image_size, image_size);
 
-		Matrix out = y.col(i);
+		mic::types::MatrixXf out = (Eigen::MatrixXf)y.col(i);
 		out.resize(sqrt(out.size()), sqrt(out.size()));
 
 		out.setZero();
@@ -484,15 +460,15 @@ Matrix pooling_forward_channel(Matrix& x, Matrix& cache, size_t window_size) {
 
 }
 
-Matrix pooling_backward_channel(Matrix& dy, Matrix& cache, size_t window_size) {
+mic::types::MatrixXf pooling_backward_channel(mic::types::MatrixXf& dy, mic::types::MatrixXf& cache, size_t window_size) {
 
-	Matrix dx = Matrix::Zero(cache.rows(), cache.cols());
+	mic::types::MatrixXf dx = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(cache.rows(), cache.cols());
 
 	for (size_t i = 0; i < dy.cols(); i++) {
 
-		Matrix dy_local = dy.col(i);
-		Matrix cache_local = cache.col(i);
-		Matrix dx_local = Matrix::Zero(cache_local.rows(), cache_local.cols());
+		mic::types::MatrixXf dy_local = (Eigen::MatrixXf)dy.col(i);
+		mic::types::MatrixXf cache_local = (Eigen::MatrixXf)cache.col(i);
+		mic::types::MatrixXf dx_local = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(cache_local.rows(), cache_local.cols());
 		dy_local.resize(sqrt(dy_local.size()), sqrt(dy_local.size()));
 		cache_local.resize(sqrt(cache_local.size()), sqrt(cache_local.size()));
 		dx_local.resize(sqrt(cache_local.size()), sqrt(cache_local.size()));
@@ -507,13 +483,13 @@ Matrix pooling_backward_channel(Matrix& dy, Matrix& cache, size_t window_size) {
 	return dx;
 }
 
-void pooling_forward(size_t channels, Matrix& x, Matrix& y, Matrix& cache, size_t window_size) {
+void pooling_forward(size_t channels, mic::types::MatrixXf& x, mic::types::MatrixXf& y, mic::types::MatrixXf& cache, size_t window_size) {
 
 	#pragma omp parallel for
 	for (size_t k = 0; k < channels; k++) {
-		Matrix y_map = Matrix::Zero(y.rows() / channels, y.cols());
-		Matrix inputs = Matrix::Zero(x.rows() / channels, x.cols());
-		Matrix cache_map = Matrix::Zero(x.rows() / channels, x.cols());
+		mic::types::MatrixXf y_map = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(y.rows() / channels, y.cols());
+		mic::types::MatrixXf inputs = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(x.rows() / channels, x.cols());
+		mic::types::MatrixXf cache_map = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(x.rows() / channels, x.cols());
 		inputs = x.block(inputs.rows() * k, 0, inputs.rows(), inputs.cols());
 		y_map.array() = pooling_forward_channel(inputs, cache_map, window_size).array();
 		y.block(y_map.rows() * k, 0, y_map.rows(), y_map.cols()) = y_map;
@@ -522,13 +498,13 @@ void pooling_forward(size_t channels, Matrix& x, Matrix& y, Matrix& cache, size_
 	}
 }
 
-void pooling_backward(size_t channels, Matrix& dx, Matrix& dy, Matrix& cache, size_t window_size) {
+void pooling_backward(size_t channels, mic::types::MatrixXf& dx, mic::types::MatrixXf& dy, mic::types::MatrixXf& cache, size_t window_size) {
 
 	#pragma omp parallel for
 	for (size_t k = 0; k < channels; k++) {
-		Matrix dy_map = Matrix::Zero(dy.rows() / channels, dy.cols());
-		Matrix dx_map = Matrix::Zero(dx.rows() / channels, dx.cols());
-		Matrix cache_map = Matrix::Zero(dx.rows() / channels, dx.cols());
+		mic::types::MatrixXf dy_map = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(dy.rows() / channels, dy.cols());
+		mic::types::MatrixXf dx_map = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(dx.rows() / channels, dx.cols());
+		mic::types::MatrixXf cache_map = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(dx.rows() / channels, dx.cols());
 		dy_map = dy.block(dy_map.rows() * k, 0, dy_map.rows(), dy_map.cols());
 		cache_map = cache.block(cache_map.rows() * k, 0, cache_map.rows(), cache_map.cols());
 		dx_map = pooling_backward_channel(dy_map, cache_map, window_size).array();
@@ -536,7 +512,7 @@ void pooling_backward(size_t channels, Matrix& dx, Matrix& dy, Matrix& cache, si
 	}
 }
 
-void randn(Matrix& m, float mean, float stddev) {
+void randn(mic::types::MatrixXf& m, float mean, float stddev) {
 
 	std::random_device rd;
 	std::mt19937 mt(rd());
@@ -550,7 +526,7 @@ void randn(Matrix& m, float mean, float stddev) {
 
 }
 
-void rand(Matrix& m, float range_min, float range_max) {
+void rand(mic::types::MatrixXf& m, float range_min, float range_max) {
 
 	std::random_device rd;
 	std::mt19937 mt(rd());
@@ -564,7 +540,7 @@ void rand(Matrix& m, float range_min, float range_max) {
 
 }
 
-void linspace(Eigen::VectorXi& m, int range_min, int range_max) {
+void linspace(mic::types::VectorXi& m, int range_min, int range_max) {
 
 	for (int i = 0; i < m.rows(); i++) {
 		m(i) = (float)(range_min + i);
@@ -572,10 +548,10 @@ void linspace(Eigen::VectorXi& m, int range_min, int range_max) {
 
 }
 
-Matrix make_batch(std::deque<datapoint>& data, Eigen::VectorXi& random_numbers) {
+mic::types::MatrixXf make_batch(std::deque<datapoint>& data, mic::types::VectorXi& random_numbers) {
 
 	size_t batch_size = random_numbers.rows();
-	Matrix batch(data[0].x.rows(), batch_size);
+	mic::types::MatrixXf batch(data[0].x.rows(), batch_size);
 
 	for (size_t i = 0; i < batch_size; i++) {
 
@@ -586,11 +562,11 @@ Matrix make_batch(std::deque<datapoint>& data, Eigen::VectorXi& random_numbers) 
 	return batch;
 }
 
-Matrix make_targets(std::deque<datapoint>& data, Eigen::VectorXi& random_numbers, size_t classes) {
+mic::types::MatrixXf make_targets(std::deque<datapoint>& data, mic::types::VectorXi& random_numbers, size_t classes) {
 
 	size_t batch_size = random_numbers.rows();
-	Matrix encoding = Matrix::Identity(classes, classes);
-	Matrix batch(classes, batch_size);
+	mic::types::MatrixXf encoding = (Eigen::MatrixXf)Eigen::MatrixXf::Identity(classes, classes);
+	mic::types::MatrixXf batch(classes, batch_size);
 
 	for (size_t i = 0; i < batch_size; i++) {
 
@@ -601,9 +577,9 @@ Matrix make_targets(std::deque<datapoint>& data, Eigen::VectorXi& random_numbers
 	return batch;
 }
 
-Eigen::VectorXi colwise_max_index(Matrix& m) {
+mic::types::VectorXi colwise_max_index(mic::types::MatrixXf& m) {
 
-	Eigen::VectorXi indices(m.cols());
+	mic::types::VectorXi indices(m.cols());
 
 	for (size_t i = 0; i < m.cols(); i++) {
 
@@ -626,7 +602,7 @@ Eigen::VectorXi colwise_max_index(Matrix& m) {
 	return indices;
 }
 
-size_t count_zeros(Eigen::VectorXi& m) {
+size_t count_zeros(mic::types::VectorXi& m) {
 
 	size_t zeros = 0;
 
@@ -641,13 +617,12 @@ size_t count_zeros(Eigen::VectorXi& m) {
 
 }
 
-size_t count_correct_predictions(Matrix& p, Matrix& t) {
+size_t count_correct_predictions(mic::types::MatrixXf& p, mic::types::MatrixXf& t) {
 
-	Eigen::VectorXi predicted_classes = colwise_max_index(p);
-	Eigen::VectorXi target_classes = colwise_max_index(t);
-	Eigen::VectorXi correct = (target_classes - predicted_classes);
+	mic::types::VectorXi predicted_classes = colwise_max_index(p);
+	mic::types::VectorXi target_classes = colwise_max_index(t);
+	mic::types::VectorXi correct = (target_classes - predicted_classes);
 
 	return count_zeros(correct);
 }
 
-#endif

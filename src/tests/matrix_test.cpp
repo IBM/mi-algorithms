@@ -16,6 +16,10 @@
 #include <data_utils/functions.h>
 #include <data_utils/Timer.hpp>
 
+#include <fstream>
+// Include headers that implement a archive in simple text format
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
 
 
 #ifdef OpenBLAS_FOUND
@@ -103,18 +107,32 @@ int main(int argc, char* argv[]) {
 	mic::types::Matrix<float> nm(N, M);
 	mic::types::Matrix<float> mk(M, K);
 	mic::types::Matrix<float> nk(N, K);
+	mic::types::MatrixXf nm_zero = (Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>)Eigen::MatrixXf::Zero(N,M);
 
 	// Initialize matrices with random numbers.
 	nm.normRandReal(1, 0.001);
 	mk.normRandReal(1, 0.001);
 	//std::cout <<"nm=\n" << nm <<  std::endl;
 
-	// Adding test.
-	Eigen::VectorXf vect(N);
+	// Initialize vector.
+	mic::types::VectorXf vect(N);
 	vect.setRandom();
+
+	// Examples of mapping from vectors to matrices.
+	mic::types::MatrixXf vect_copy = vect;
+	mic::types::MatrixXf vect_copy2;
+	vect_copy2 = (mic::types::MatrixXf)vect;
+
+	// Adding test.
+	vect_copy2 += vect;
+	std::cout <<"vect_copy=\n" << vect_copy <<  std::endl;
+	std::cout <<"vect_copy2=\n" << vect_copy2 <<  std::endl;
+
 	std::cout <<"vect=\n" << vect <<  std::endl;
 	nm.colwise() += vect;
 	std::cout <<"nm+=vect\n" << nm <<  std::endl;
+
+
 
 	// Elementwise function test.
 	mic::types::MatrixXf nm2(N, M);
@@ -147,6 +165,32 @@ int main(int argc, char* argv[]) {
 	//std::cout <<"nk=\n" << nk <<  std::endl;
 
 	std::cout  <<  "Multiplication time = " << time <<  std::endl;
+
+
+	const char* fileName = "saved.xml";
+
+	// Save data
+	{
+		// Create an output archive
+		std::ofstream ofs(fileName);
+		boost::archive::text_oarchive ar(ofs);
+		// Write data
+		ar & nm;
+		std::cout << "Saved matrix = " << nm << std::endl;
+
+	}
+
+	// Restore data
+	mic::types::MatrixXd restored_mat;
+
+	{
+		// Create and input archive
+		std::ifstream ifs(fileName);
+		boost::archive::text_iarchive ar(ifs);
+		// Load data
+		ar & restored_mat;
+		std::cout << "Restored matrix = " << restored_mat << std::endl;
+	}
 
 }//: main
 

@@ -10,6 +10,9 @@
 
 #include <types/Matrix.hpp>
 
+//#include <types/Pair.hpp>
+
+
 #ifdef OpenBLAS_FOUND
 #include <cblas.h>
 #endif
@@ -86,6 +89,13 @@ typedef std::pair< MatrixXfPtr, std::shared_ptr<char> > MatrixXfCharPair;
  * \author tkornuta
  */
 typedef std::pair< MatrixXfPtr, std::shared_ptr<unsigned int> > MatrixXfUintPair;
+
+/*!
+ * \brief The <single precision float matrix - single precision float matrix> pair.
+ * \author tkornuta
+ */
+typedef std::pair< MatrixXfPtr, MatrixXfPtr > MatrixXfMatrixXfPair;
+
 
 }//: namespace types
 }//: namespace mic

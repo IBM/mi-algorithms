@@ -10,8 +10,21 @@
 
 #include <Eigen/Dense>
 #include <random>
-#include <memory>
+#include <memory> // std::shared_ptr
 
+#include <boost/serialization/serialization.hpp>
+// include this header to serialize vectors
+#include <boost/serialization/vector.hpp>
+// include this header to serialize arrays
+#include <boost/serialization/array.hpp>
+#include <boost/serialization/version.hpp>
+
+// Forward declaration of class boost::serialization::access
+namespace boost {
+namespace serialization {
+class access;
+}//: serialization
+}//: access
 
 namespace mic {
 namespace types {
@@ -19,6 +32,10 @@ namespace types {
 // Forward declaration of a class Tensor.
 template<typename T>
 class Tensor;
+
+// Forward declaration of a class Vector.
+template<typename T>
+class Vector;
 
 /*!
  * \brief Template-typed Matrix of dynamic size.
@@ -29,12 +46,13 @@ class Tensor;
  * \author tkornuta
  */
 template<typename T>
-class Matrix: public Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> {
+class Matrix : public Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> {
 public:
 
 	/*!
 	 * Constructor. Calls default Eigen::MatrixXf constructor.
 	 */
+	EIGEN_STRONG_INLINE
 	Matrix() :
 		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>() {
 	}
@@ -51,14 +69,27 @@ public:
 	}
 
 	/*!
-	 * Overloaded assignment operator - calls base operator.
-	 * @param mat_ Input matrix
-	 * @return An exact copy of the input matrix.
+	 * Copying constructor on the basis of a vector. Sets dimensions to rows = size(), cols = 1.
+	 * @param vector_ Vector
 	 */
 	EIGEN_STRONG_INLINE
-	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& mat_) {
-		// Using base EIGEN operator =
-		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
+	Matrix(const Eigen::Matrix<T, Eigen::Dynamic, 1>& vector_) :
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(vector_.size(), 1)
+	{
+		// Copy the whole vector block.
+		memcpy(this->data(), vector_.data(), vector_.size() * sizeof(T));
+	}
+
+	/*!
+	 * Copying constructor on the basis of another matrix.
+	 * @param matrix_ Matrix to be copied.
+	 */
+	EIGEN_STRONG_INLINE
+	Matrix(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& matrix_) :
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>(matrix_.rows(), matrix_.cols())
+	{
+		// Copy the whole vector block.
+		memcpy(this->data(), matrix_.data(), matrix_.size() * sizeof(T));
 	}
 
 	/*!
@@ -76,16 +107,35 @@ public:
 		memcpy(this->data(), tensor_.data(), tensor_.size() * sizeof(T));
 	}
 
+	/*
+	 * Overloaded assignment operator - calls base operator.
+	 * @param mat_ Input matrix
+	 * @return An exact copy of the input matrix.
+	 */
+/*	EIGEN_STRONG_INLINE
+	const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const mic::types::Matrix<T>& mat_) {
+		// Using base EIGEN operator =
+		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
+	}*/
+
+
+/*	EIGEN_STRONG_INLINE
+	const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const Eigen::Matrix<T, Eigen::Dynamic, 1>& vector_) {
+		// Using base EIGEN operator =
+		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(vector_);
+	}*/
+
 	/*!
 	 * Overloaded assignment operator - calls base operator.
 	 * @param mat_ Input matrix
 	 * @return An exact copy of the input matrix.
 	 */
 	EIGEN_STRONG_INLINE
-	const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const mic::types::Matrix<T>& mat_) {
+	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& mat_) {
 		// Using base EIGEN operator =
 		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
 	}
+
 
 	/*!
 	 * Overloaded multiplication operator.
@@ -280,6 +330,50 @@ public:
 		}//: x
 	}
 
+private:
+
+	// Friend class - required for using boost serialization.
+    friend class boost::serialization::access;
+
+    /*!
+     * Serialization save - saves the matrix object to archive.
+     * @param ar Used archive.
+     * @param version Version of the matrix class (not used currently).
+     */
+	template<class Archive>
+	void save(Archive & ar, const unsigned int version) const {
+    	size_t rows, cols;
+    	rows = this->rows();
+    	cols = this->cols();
+		ar & rows;
+		ar & cols;
+        // Save elements.
+        size_t elements = this->rows() * this->cols();
+		T* data_ptr = (T*)this->data();
+        ar & boost::serialization::make_array<T>(data_ptr, elements);
+     }
+
+    /*!
+     * Serialization load - loads the matrix object to archive.
+     * @param ar Used archive.
+     * @param version Version of the matrix class (not used currently).
+     */
+     template<class Archive>
+     void load(Archive & ar, const unsigned int version) {
+    	size_t rows, cols;
+		ar & rows;
+		ar & cols;
+		// Allocate memory - resize.
+		this->resize(rows, cols);
+		// Load elements
+        size_t elements = this->rows() * this->cols();
+		T* data_ptr = this->data();
+		ar & boost::serialization::make_array<T>(data_ptr, elements);
+     }
+
+     // The serialization must be splited as load requires to allocate the memory.
+     BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 };
 
 
@@ -290,7 +384,17 @@ public:
 template<typename T>
 using MatrixPtr = typename std::shared_ptr< mic::types::Matrix<T> >;
 
-}				//: namespace types
-}				//: namespace mic
+}//: namespace types
+}//: namespace mic
+
+
+
+// Just in case if something important will change in the tensor class - set version.
+BOOST_CLASS_VERSION(mic::types::Matrix<bool>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<short>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<int>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<long>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<float>, 1)
+BOOST_CLASS_VERSION(mic::types::Matrix<double>, 1)
 
 #endif /* SRC_TYPES_MATRIX_HPP_ */

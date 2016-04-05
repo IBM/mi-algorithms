@@ -6,11 +6,11 @@
  */
 
 
-#include <auto_encoders/DummyGrayscaleImageEncoder.hpp>
-
 #include <logger/Log.hpp>
 
 #include <algorithm>    // std::min
+
+#include <auto_encoders/DummyGrayscaleImageEncoder.hpp>
 
 namespace mic {
 namespace auto_encoders {
@@ -20,12 +20,12 @@ using namespace mic::types;
 //using namespace mic::system_utils;
 
 
-void DummyGrayscaleImageEncoder::encode(const image& input_, floatSDR& sdr_, const size_t size_){
+void DummyGrayscaleImageEncoder::encode(const image& input_, floatSDR& sdr_){
 	// Validate if the image contains any data.
 	if (input_.image_data && input_.width > 0 && input_.height > 0) {
 
 		// Check if SDR is capable of encoding the image.
-		if ((input_.width * input_.height) <= size_) {
+		if ((input_.width * input_.height) <= DEFAULT_SDR_LENGTH) {
 
 			// Check input type - now only grayscale images are encoded.
 			if (input_.type == GRAYSCALE)
@@ -42,7 +42,7 @@ void DummyGrayscaleImageEncoder::encode(const image& input_, floatSDR& sdr_, con
 				CHECK(input_.type == GRAYSCALE);
 			}//: else
 		} else {
-			CHECK((input_.width * input_.height) <= size_);
+			CHECK((input_.width * input_.height) <= DEFAULT_SDR_LENGTH);
 		}//: else
 	} else {
 		// Inform that there were some problems with image/data.
@@ -51,12 +51,12 @@ void DummyGrayscaleImageEncoder::encode(const image& input_, floatSDR& sdr_, con
 }
 
 
-void DummyGrayscaleImageEncoder::decode(image& output_, const floatSDR& sdr_, const size_t size_) {
+void DummyGrayscaleImageEncoder::decode(image& output_, const floatSDR& sdr_) {
 	// Validate if the image has assigned memory for data.
 	if (output_.image_data) {
 
 		// Calculate the number of decoded elements.
-		size_t decode_size = std::min(size_, (size_t)(output_.width * output_.height));
+		size_t decode_size = std::min((size_t)DEFAULT_SDR_LENGTH, (size_t)(output_.width * output_.height));
 		// TODO: And what about the elements od SDR that exceed output_.width * output_.height?
 
 		if (output_.type == GRAYSCALE) {

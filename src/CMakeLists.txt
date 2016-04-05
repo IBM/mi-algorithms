@@ -29,8 +29,6 @@ set(BUILD_TEST_TENSOR ON CACHE BOOL "Build the application for testing tensors/e
 
 set(BUILD_TEST_COLLECTOR ON CACHE BOOL "Build the application for testing data collector")
 
-set(BUILD_TEST_CONVNET_MNIST ON CACHE BOOL "Build the application for testing convolutional NN")
-
 # =======================================================================
 # Build MI Algorithms.
 # =======================================================================
@@ -72,13 +70,17 @@ target_link_libraries(data_io types data_utils configuration)
 
 # =======================================================================
 # Install includes related to AUTO ENCODERS used by other libraries.
-FILE(GLOB files auto_encoders/*.hpp)
+FILE(GLOB files encoders/*.hpp )
+install(FILES ${files} DESTINATION include/encoders)
+
+FILE(GLOB files auto_encoders/*.hpp )
 install(FILES ${files} DESTINATION include/auto_encoders)
 
 # Create shared library containing AUTO ENCODERS.
-file(GLOB auto_encoders_src auto_encoders/*.cpp)
+file(GLOB auto_encoders_src encoders/*.cpp auto_encoders/*.cpp)
 add_library(auto_encoders SHARED ${auto_encoders_src})
 target_link_libraries(auto_encoders types )
+
 
 # =======================================================================
 # Install includes related to CLASSIFIERS used by other libraries.
@@ -115,10 +117,21 @@ target_link_libraries(rbm types data_utils)
 
 
 # =======================================================================
+# Install includes related to MLNN used by other libraries.
+FILE(GLOB files mlnn/*.hpp mlnn/*.h)
+install(FILES ${files} DESTINATION include/mlnn)
+
+# Create RBM shared library.
+file(GLOB mlnn_src mlnn/*.cpp )
+add_library(mlnn SHARED ${mlnn_src})
+target_link_libraries(mlnn types)
+
+
+# =======================================================================
 # Install target libraries.
 # =======================================================================
 
-install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm mlnn LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
 
 # =======================================================================
 # Build and install - char encoder test application.
@@ -209,20 +222,23 @@ if(${BUILD_TEST_COLLECTOR})
 endif(${BUILD_TEST_COLLECTOR})
 
 # =======================================================================
-# Build and install - convolutional NN test application.
+# Build and install - MNIST recogntion based on CNNs.
 # =======================================================================
 
-if(${BUILD_TEST_CONVNET_MNIST})
+set(BUILD_TEST_MNIST_CNN_APP ON CACHE BOOL "Build the application using Convolutional Neural Network for recognition of MNIST digits")
+
+if(${BUILD_TEST_MNIST_CNN_APP})
         # Create exeutable.
-        ADD_EXECUTABLE(convnet_mnist tests/convnet_mnist.cc)
+        ADD_EXECUTABLE(convnet_mnist tests/mnist_convnet.cpp)
         # Link it with shared libraries.
         target_link_libraries(convnet_mnist
-		logger
-                types
-		data_io
-                ${Boost_LIBRARIES}
-                ${EIGEN_LIBRARIES}
-                )
+			logger
+	        types
+			data_io
+			mlnn
+		    ${Boost_LIBRARIES}
+		    ${EIGEN_LIBRARIES}
+	    )
         if(OpenBLAS_FOUND)
                 target_link_libraries(convnet_mnist  ${OpenBLAS_LIB} )
         endif(OpenBLAS_FOUND)
@@ -230,5 +246,33 @@ if(${BUILD_TEST_CONVNET_MNIST})
         # install test to bin directory
         install(TARGETS convnet_mnist RUNTIME DESTINATION bin)
 
-endif(${BUILD_TEST_CONVNET_MNIST})
+endif(${BUILD_TEST_MNIST_CNN_APP})
+
+
+# =======================================================================
+# Build and install -  MNIST recogntion based on MLP.
+# =======================================================================
+
+set(BUILD_MNIST_MLP_APP ON CACHE BOOL "Build the application using Multi-Layer Perceptron for recognition of MNIST digits")
+
+if(${BUILD_MNIST_MLP_APP})
+        # Create exeutable.
+        ADD_EXECUTABLE(mnist_simple_mlp_app tests/mnist_simple_mlp.cpp)
+        # Link it with shared libraries.
+        target_link_libraries(mnist_simple_mlp_app
+			logger
+	        types
+			data_io
+			mlnn
+	        ${Boost_LIBRARIES}
+	        ${EIGEN_LIBRARIES}
+	        )
+        if(OpenBLAS_FOUND)
+                target_link_libraries(mnist_simple_mlp_app  ${OpenBLAS_LIB} )
+        endif(OpenBLAS_FOUND)
+
+        # install test to bin directory
+        install(TARGETS mnist_simple_mlp_app RUNTIME DESTINATION bin)
+
+endif(${BUILD_MNIST_MLP_APP})
 
