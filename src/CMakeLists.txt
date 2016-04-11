@@ -18,18 +18,6 @@ endif ()
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}") 
 
 # =======================================================================
-# Add CMAKE variables.
-# =======================================================================
-
-set(BUILD_TEST_CHAR_ENCODER ON CACHE BOOL "Build the 1-of-k Char Encoder test application")
-
-set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
-
-set(BUILD_TEST_TENSOR ON CACHE BOOL "Build the application for testing tensors/eigen map")
-
-set(BUILD_TEST_COLLECTOR ON CACHE BOOL "Build the application for testing data collector")
-
-# =======================================================================
 # Build MI Algorithms.
 # =======================================================================
 
@@ -133,9 +121,16 @@ target_link_libraries(mlnn types)
 
 install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm mlnn LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
 
+
+# Build tests.
+#add_subdirectory(tests)
+
+
 # =======================================================================
 # Build and install - char encoder test application.
 # =======================================================================
+
+set(BUILD_TEST_CHAR_ENCODER ON CACHE BOOL "Build the 1-of-k Char Encoder test application")
 
 if(${BUILD_TEST_CHAR_ENCODER})
 	# Create exeutable.
@@ -161,6 +156,8 @@ endif(${BUILD_TEST_CHAR_ENCODER})
 # Build and install - matrix test application.
 # =======================================================================
 
+set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
+
 if(${BUILD_TEST_MATRIX})
 	# Create exeutable.
 	ADD_EXECUTABLE(matrix_test tests/matrix_test.cpp)
@@ -182,6 +179,8 @@ endif(${BUILD_TEST_MATRIX})
 # =======================================================================
 # Build and install - tensor test application.
 # =======================================================================
+
+set(BUILD_TEST_TENSOR ON CACHE BOOL "Build the application for testing tensors/eigen map")
 
 if(${BUILD_TEST_TENSOR})
 	# Create exeutable.
@@ -205,6 +204,8 @@ endif(${BUILD_TEST_TENSOR})
 # Build and install - data collector test application.
 # =======================================================================
 
+set(BUILD_TEST_COLLECTOR ON CACHE BOOL "Build the application for testing data collector")
+
 if(${BUILD_TEST_COLLECTOR})
 	# Create exeutable.
 	ADD_EXECUTABLE(data_collector_test tests/data_collector_test.cpp)
@@ -220,6 +221,30 @@ if(${BUILD_TEST_COLLECTOR})
 	install(TARGETS data_collector_test RUNTIME DESTINATION bin)
 
 endif(${BUILD_TEST_COLLECTOR})
+
+
+# =======================================================================
+# Build and install - data collector test application.
+# =======================================================================
+
+set(BUILD_TEST_MLNN ON CACHE BOOL "Build the application for testing creation/serialization of multi-layer neural networks")
+
+if(${BUILD_TEST_MLNN})
+	# Create exeutable.
+	ADD_EXECUTABLE(mlnn_test tests/mlnn_test.cpp)
+	# Link it with shared libraries.
+	target_link_libraries(mlnn_test 
+		configuration
+		types
+		data_io
+		mlnn
+		${Boost_LIBRARIES}
+		)
+
+	# install test to bin directory
+	install(TARGETS mlnn_test RUNTIME DESTINATION bin)
+
+endif(${BUILD_TEST_MLNN})
 
 # =======================================================================
 # Build and install - MNIST recogntion based on CNNs.

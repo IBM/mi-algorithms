@@ -583,7 +583,7 @@ public:
 	}
 
 	/*!
-	 * Concatenates a set tensors - attaches the tensors passed as argument "to the back" of a given tensor.
+	 * Concatenates a set of tensors - attaches the tensors passed as argument "to the back" of a given tensor.
 	 * Note: both tensors must have exactly the same dimensions except the 0th dimension.
 	 * @param objs_ A list of tensors to be attached.
 	 */

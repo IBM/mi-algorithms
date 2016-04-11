@@ -15,7 +15,7 @@ namespace encoders {
 
 /*!
  * \brief Encoder responsible for encoding single channel (float) matrices (e.g. grayscale images) into SDRs.
- * There is no learning (auto-encoding), instead it simply transforms floats from matrix to vector.
+ * There is no learning (auto-encoding), instead it simply transforms matrix of floats into a vector.
  * \author tkornuta
  */
 class MatrixXfMatrixXfEncoder : public mic::encoders::MatrixXfSDREncoder<mic::types::MatrixXf> {
