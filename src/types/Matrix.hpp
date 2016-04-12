@@ -389,7 +389,7 @@ using MatrixPtr = typename std::shared_ptr< mic::types::Matrix<T> >;
 
 
 
-// Just in case if something important will change in the matrix class - set version.
+// Just in the case that something important will change in the matrix class - set version.
 BOOST_CLASS_VERSION(mic::types::Matrix<bool>, 1)
 BOOST_CLASS_VERSION(mic::types::Matrix<short>, 1)
 BOOST_CLASS_VERSION(mic::types::Matrix<int>, 1)

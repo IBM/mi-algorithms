@@ -73,8 +73,11 @@ public:
 
 	/*!
 	 * The main constructor. Adds parameters.
+	 * @param name_ Name of the array.
+	 * @param args_ Vector of tuples containing <id, width, height>.
+	 * @param id_ Id (optional, as defalut set to "")
 	 */
-	MatrixArray ( std::string name_, std::initializer_list<std::tuple<std::string, size_t, size_t> > args_, std::string id_ ) : name ( name_ + "_" + id_ ) {
+	MatrixArray ( std::string name_, std::initializer_list<std::tuple<std::string, size_t, size_t> > args_, std::string id_ = "") : name ( name_ + "_" + id_ ) {
 
 		add ( args_ );
 
@@ -123,6 +126,7 @@ public:
 	 * @return Pointer to a matrix.
 	 */
 	mic::types::MatrixPtr<T>& operator[] ( size_t number_ ) {
+		// TODO: throw exception when out of the scope?
 
 		return matrices[number_];
 
@@ -134,6 +138,7 @@ public:
 	 * @return Pointer to a matrix.
 	 */
 	mic::types::MatrixPtr<T>& operator[] ( char key_ ) {
+		// TODO: throw exception when out of the scope?
 
 		return ( *this ) [std::string ( 1, key_ )];
 
@@ -149,6 +154,8 @@ public:
 		if ( namemap.find ( key ) == namemap.end() )
 			std::cout << "Warning !!! " << name <<
 					  "::[] - key not found:" << key << std::endl;
+
+		// TODO: throw exception when out of the scope?
 
 		return matrices[namemap[key]];
 
@@ -258,6 +265,14 @@ private:
 
 }//: namespace types
 }//: namespace mic
+
+// Just in the case that something important will change in the MatrixArray class - set version.
+BOOST_CLASS_VERSION(mic::types::MatrixArray<bool>, 1)
+BOOST_CLASS_VERSION(mic::types::MatrixArray<short>, 1)
+BOOST_CLASS_VERSION(mic::types::MatrixArray<int>, 1)
+BOOST_CLASS_VERSION(mic::types::MatrixArray<long>, 1)
+BOOST_CLASS_VERSION(mic::types::MatrixArray<float>, 1)
+BOOST_CLASS_VERSION(mic::types::MatrixArray<double>, 1)
 
 
 

@@ -50,8 +50,12 @@ int main() {
 
 	nn.train(train_data, learning_rate, weight_decay, iterations);
 
-	std::cout << "After training..." << std::endl;
+	std::cout << "Training finished. Calculating performance for both datasets..." << std::endl;
 
-	nn.test(test_data);
+	double train_acc = nn.test(train_data);
+	double test_acc = nn.test(test_data);
+
+	std::cout << std::setprecision(2) << "Train : " << 100.0 * train_acc << " %" <<  std::endl;
+	std::cout << std::setprecision(2) << "Test  : " << 100.0 * test_acc << " %" << std::endl;
 
 }

@@ -81,10 +81,11 @@ int main() {
 
 		nn.save_to_files("out/mnist_conv");
 
+		std::cout << "Training finished. Calculating performance for both datasets..." << std::endl;
+
 		double train_acc = nn.test(train_data);
 		double test_acc = nn.test(test_data);
 
-		// std::cout << std::endl;
 		std::cout << std::setprecision(2) << "Train : " << 100.0 * train_acc << " %" <<  std::endl;
 		std::cout << std::setprecision(2) << "Test  : " << 100.0 * test_acc << " %" << std::endl;
 

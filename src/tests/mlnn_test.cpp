@@ -26,18 +26,7 @@ int main() {
 	const size_t M = 3;
 	const size_t B = 4;
 
-	/*
-	size_t batch_size = 100;
-	MultiLayerNeuralNetwork nn(batch_size);
-
-	nn.layers.push_back(new Linear(28 * 28, 256, batch_size));
-	nn.layers.push_back(new ReLU(256, 256, batch_size));
-	nn.layers.push_back(new Linear(256, 100, batch_size));
-	nn.layers.push_back(new ReLU(100, 100, batch_size));
-	nn.layers.push_back(new Linear(100, 10, batch_size));
-	nn.layers.push_back(new Softmax(10, 10, batch_size));
-	*/
-
+	// Test MatrixArray operations.
 	mic::types::MatrixArray<double> ma1("test_array");
 
 	ma1.add (
@@ -78,6 +67,20 @@ int main() {
 		ar & restored_ma;
 		std::cout << "Restored MatrixArray = " << restored_ma << std::endl;
 	}
+
+
+	/*
+	size_t batch_size = 100;
+	MultiLayerNeuralNetwork nn(batch_size);
+
+	nn.layers.push_back(new Linear(28 * 28, 256, batch_size));
+	nn.layers.push_back(new ReLU(256, 256, batch_size));
+	nn.layers.push_back(new Linear(256, 100, batch_size));
+	nn.layers.push_back(new ReLU(100, 100, batch_size));
+	nn.layers.push_back(new Linear(100, 10, batch_size));
+	nn.layers.push_back(new Softmax(10, 10, batch_size));
+	*/
+
 
 
 }
