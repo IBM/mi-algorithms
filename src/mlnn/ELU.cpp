@@ -10,6 +10,11 @@
 namespace mic {
 namespace mlnn {
 
+ELU::ELU(size_t inputs, size_t outputs, size_t batch_size) :
+	Layer(inputs, outputs, batch_size, "elu") {
+
+}
+
 void ELU::forward(bool apply_dropout) {
 
 	y = activation_ELU(x);
@@ -19,11 +24,6 @@ void ELU::forward(bool apply_dropout) {
 void ELU::backward() {
 
 	dx.array() = derivative_ELU(y).array() * dy.array();
-
-}
-
-ELU::ELU(size_t inputs, size_t outputs, size_t batch_size) :
-	Layer(inputs, outputs, batch_size, "elu") {
 
 }
 

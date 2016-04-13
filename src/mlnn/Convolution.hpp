@@ -17,36 +17,38 @@ namespace mlnn {
  * \author krocki
  */
 class Convolution : public mic::mlnn::Layer {
-	public:
+public:
 
-		mic::types::MatrixXf W;
-		mic::types::VectorXf b;
+	Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size);
 
-		mic::types::MatrixXf dW;
-		mic::types::MatrixXf db;
+	virtual ~Convolution() {};
 
-		mic::types::MatrixXf mW;
-		mic::types::MatrixXf mb;
+	void forward(bool test = false);
 
-		const size_t input_channels;
-		const size_t output_channels;
-		const size_t kernel_size;
-		const size_t output_map_size;
+	void backward();
 
-		void forward(bool apply_dropout = false);
+	void resetGrads();
 
-		void backward();
+	void applyGrads(double alpha, double decay = 0);
 
-		//this is mainly for debugging - TODO: proper serialization of layers
-		void save_to_files(std::string prefix);
+	//this is mainly for debugging - TODO: proper serialization of layers
+	void save_to_files(std::string prefix);
 
-		Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size);
+protected:
+	mic::types::MatrixXf W;
+	mic::types::VectorXf b;
 
-		void resetGrads();
+	mic::types::MatrixXf dW;
+	mic::types::MatrixXf db;
 
-		void applyGrads(double alpha, double decay = 0);
+	mic::types::MatrixXf mW;
+	mic::types::MatrixXf mb;
 
-		virtual ~Convolution() {};
+	const size_t input_channels;
+	const size_t output_channels;
+	const size_t kernel_size;
+	const size_t output_map_size;
+
 
 };
 

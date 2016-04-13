@@ -24,4 +24,9 @@
 
 #include <mlnn/Softmax.hpp>
 
+#include <mlnn/Dropout.hpp>
+
+#include <mlnn/Padding.hpp>
+
+
 #endif /* SRC_MLNN_LAYERTYPES_HPP_ */

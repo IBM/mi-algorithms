@@ -17,16 +17,15 @@ namespace mlnn {
  * \author krocki
  */
 class Softmax : public mic::mlnn::Layer {
+public:
 
-	public:
+	Softmax(size_t inputs, size_t outputs, size_t batch_size);
 
-		void forward(bool apply_dropout = false);
+	~Softmax() {};
 
-		void backward();
+	void forward(bool test = false);
 
-		Softmax(size_t inputs, size_t outputs, size_t batch_size);
-
-		~Softmax() {};
+	void backward();
 
 };
 

@@ -10,24 +10,8 @@
 namespace mic {
 namespace mlnn {
 
-void Linear::forward(bool apply_dropout) {
-
-	y = W * x + b.replicate(1, x.cols());
-
-	if (apply_dropout)
-		applyDropout();
-}
-
-void Linear::backward() {
-
-	dW = dy * x.transpose();
-	db = dy.rowwise().sum();
-	dx = W.transpose() * dy;
-
-}
-
-Linear::Linear(size_t inputs, size_t outputs, size_t batch_size, float _dropout) :
-	Layer(inputs, outputs, batch_size, "fc", _dropout) {
+Linear::Linear(size_t inputs, size_t outputs, size_t batch_size) :
+	Layer(inputs, outputs, batch_size, "fc") {
 
 	W = mic::types::MatrixXf(outputs, inputs);
 	b = (Eigen::VectorXf)Eigen::VectorXf::Zero(outputs);
@@ -39,6 +23,20 @@ Linear::Linear(size_t inputs, size_t outputs, size_t batch_size, float _dropout)
 	mb = mic::types::VectorXf::Zero(b.rows());
 
 };
+
+void Linear::forward(bool test) {
+
+	y = W * x + b.replicate(1, x.cols());
+
+}
+
+void Linear::backward() {
+
+	dW = dy * x.transpose();
+	db = dy.rowwise().sum();
+	dx = W.transpose() * dy;
+
+}
 
 void Linear::resetGrads() {
 

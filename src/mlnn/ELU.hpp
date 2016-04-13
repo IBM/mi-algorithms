@@ -19,16 +19,16 @@ namespace mlnn {
  * \author krocki
  */
 class ELU : public mic::mlnn::Layer {
+public:
 
-	public:
+	ELU(size_t inputs, size_t outputs, size_t batch_size);
 
-		void forward(bool apply_dropout = false);
+	virtual ~ELU() {};
 
-		void backward();
+	void forward(bool test = false);
 
-		ELU(size_t inputs, size_t outputs, size_t batch_size);
+	void backward();
 
-		virtual ~ELU() {};
 };
 
 } /* namespace mlnn */

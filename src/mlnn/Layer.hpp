@@ -16,48 +16,52 @@
 namespace mic {
 namespace mlnn {
 
+/// Forward declaration of MultiLayerNeuralNetwork
+class MultiLayerNeuralNetwork;
+
 /*!
  * abstract
  * \author krocki
  */
 class Layer {
+public:
+	Layer(size_t inputs, size_t outputs, size_t batch_size, std::string _label = "layer");
 
-	public:
+	//need to override these
 
-		const std::string name;
+	/*		TODO: allow 2 versions of forward (with 0 and 1 params),
+			currently you must override version with 1 				*/
 
-		//used in forward pass
-		mic::types::MatrixXf x; //inputs
-		mic::types::MatrixXf y; //outputs
+	virtual void forward(bool test = false) = 0;
+	virtual void backward() = 0;
 
-		//grads, used in backward pass
-		mic::types::MatrixXf dx;
-		mic::types::MatrixXf dy;
+	//this is mainly for debugging - TODO: proper serialization of layers and object NN
+	virtual void save_to_files(std::string prefix);
 
-		const float dropout;
-		mic::types::MatrixXf dropout_mask;
+	virtual void resetGrads() {};
+	virtual void applyGrads(double alpha, double decay) {};
 
-		Layer(size_t inputs, size_t outputs, size_t batch_size, std::string _label = "layer", float _dropout = 1.0f);
+	virtual ~Layer() {};
 
-		// Dropout paper - http://arxiv.org/pdf/1207.0580.pdf
-		void applyDropout();
+	// Duplicated entries fix, TO BE REMOVED when "proper serialization" will be implemented.
+	void save_matrix_to_file(Eigen::MatrixXf& m, std::string filename);
 
-		//need to override these
-		virtual void forward(bool apply_dropout) = 0;
+//protected:
 
-		virtual void backward() = 0;
+	/// Name (identifier of the type) of the layer.
+	const std::string name;
 
-		//this is mainly for debugging - TODO: proper serialization of layers and object NN
-		virtual void save_to_files(std::string prefix) {};
+	//used in forward pass
+	mic::types::MatrixXf x; //inputs
+	mic::types::MatrixXf y; //outputs
 
-		virtual void resetGrads() {};
+	//grads, used in backward pass
+	mic::types::MatrixXf dx;
+	mic::types::MatrixXf dy;
 
-		virtual void applyGrads(double alpha, double decay) {};
+	// Add access to protected fields to the nn class.
+	friend class MultiLayerNeuralNetwork;
 
-		virtual ~Layer() {};
-
-		// Duplicated entries fix, TO BE REMOVED when "proper serialization" will be implemented.
-		void save_matrix_to_file(Eigen::MatrixXf& m, std::string filename);
 };
 
 

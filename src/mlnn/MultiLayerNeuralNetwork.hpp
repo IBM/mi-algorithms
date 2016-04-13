@@ -28,8 +28,7 @@ public:
 
 	const size_t batch_size;
 
-	void forward(mic::types::MatrixXf& input_data, bool apply_dropout = false);
-
+	void forward(mic::types::MatrixXf& input_data, bool skip_dropout = false);
 
 	void backward(mic::types::MatrixXf& t);
 
@@ -37,14 +36,11 @@ public:
 	void update(float alpha, float decay);
 
 
-	void train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, bool apply_dropout = false);
+	void train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, size_t classes);
 
 
-	/*****	TODO	*****/
-	/*		Eigen::MatrixXf compute_numerical_gradients(void) { }*/
-	float test(std::deque<datapoint>& data);
+	float test(std::deque<datapoint>& data, size_t classes);
 
-	/*TODO: serialization*/
 	void save_to_files(std::string prefix);
 
 };

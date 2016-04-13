@@ -11,7 +11,12 @@ namespace mic {
 namespace mlnn {
 
 
-void Identity::forward(bool apply_dropout) {
+Identity::Identity(size_t inputs, size_t outputs, size_t batch_size) :
+	Layer(inputs, outputs, batch_size, "identity") {
+
+}
+
+void Identity::forward(bool test) {
 
 	y = x;
 
@@ -20,11 +25,6 @@ void Identity::forward(bool apply_dropout) {
 void Identity::backward() {
 
 	dx = dy;
-
-}
-
-Identity::Identity(size_t inputs, size_t outputs, size_t batch_size) :
-	Layer(inputs, outputs, batch_size, "noop") {
 
 }
 

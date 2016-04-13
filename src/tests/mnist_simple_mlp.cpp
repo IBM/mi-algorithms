@@ -36,6 +36,7 @@ int main() {
 	std::deque<datapoint> test_data =
 		MNISTImporter::importFromFile("../../../data/mnist/t10k-images-idx3-ubyte",
 									  "../../../data/mnist/t10k-labels-idx1-ubyte");
+	size_t classes = 10;
 
 	// std::cout << "Before training..." << std::endl;
 
@@ -48,12 +49,12 @@ int main() {
 	double 	weight_decay = 0;
 	size_t iterations = 500;
 
-	nn.train(train_data, learning_rate, weight_decay, iterations);
+	nn.train(train_data, learning_rate, weight_decay, iterations, classes);
 
 	std::cout << "Training finished. Calculating performance for both datasets..." << std::endl;
 
-	double train_acc = nn.test(train_data);
-	double test_acc = nn.test(test_data);
+	double train_acc = nn.test(train_data, classes);
+	double test_acc = nn.test(test_data, classes);
 
 	std::cout << std::setprecision(2) << "Train : " << 100.0 * train_acc << " %" <<  std::endl;
 	std::cout << std::setprecision(2) << "Test  : " << 100.0 * test_acc << " %" << std::endl;

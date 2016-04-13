@@ -10,19 +10,18 @@
 namespace mic {
 namespace mlnn {
 
-MultiLayerNeuralNetwork::MultiLayerNeuralNetwork(size_t minibatch_size) : batch_size(minibatch_size) {
-
-}
+MultiLayerNeuralNetwork::MultiLayerNeuralNetwork(size_t minibatch_size) : batch_size(minibatch_size) { }
 
 MultiLayerNeuralNetwork::~MultiLayerNeuralNetwork() {
+
 	for (size_t i = 0; i < layers.size(); i++) {
 
 		delete(layers[i]);
 	}
+
 }
 
-
-void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool apply_dropout) {
+void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool skip_dropout) {
 
 	//copy inputs to the lowest point in the network
 	layers[0]->x = input_data;
@@ -31,7 +30,7 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool app
 	for (size_t i = 0; i < layers.size(); i++) {
 
 		//y = f(x)
-		layers[i]->forward(apply_dropout);
+		layers[i]->forward(skip_dropout);
 
 		//x(next layer) = y(current layer)
 		if (i + 1 < layers.size())
@@ -55,6 +54,7 @@ void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& t) {
 		if (i > 0) {
 
 			layers[i - 1]->dy = layers[i]->dx;
+
 		}
 
 	}
@@ -72,7 +72,7 @@ void MultiLayerNeuralNetwork::update(float alpha, float decay) {
 
 }
 
-void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, bool apply_dropout) {
+void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, size_t classes) {
 
 	//get random examples of size batch_size from data
 	mic::types::VectorXi random_numbers(batch_size);
@@ -80,10 +80,8 @@ void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, fl
 	float loss, smooth_loss;
 	float damping_factor = 0.99;
 
-	/*
-				TODO: change it to an external param
-	*/
-	size_t classes = 10;
+	/* TODO: change it to an external param */
+
 	size_t correct;
 
 	for (size_t ii = 0; ii < iterations; ii++) {
@@ -97,18 +95,19 @@ void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, fl
 		targets = make_targets(data, random_numbers, classes);
 
 		//forward activations
-		forward(batch, apply_dropout);
+		forward(batch);
 
 		correct += count_correct_predictions(layers[layers.size() - 1]->y, targets);
 
 		loss = cross_entropy(layers[layers.size() - 1]->y, targets);
+
 		smooth_loss = ii == 0 ? loss : damping_factor * smooth_loss + (1 - damping_factor) * loss;
 		std::cout << std::setprecision(1) << std::setw(5) << "[" << std::setw(3) << ii + 1 << "/"
 				  << std::setw(3) << iterations
 				  << "] Loss = " << std::setw(5) << loss << ", Smooth loss = "
 				  << std::setw(5) << smooth_loss << ", " << std::setw(5)
 				  << std::fixed << 100.0 * (float)correct / (float)batch_size
-				  << "% batch correct" << "      \r" << std::flush;
+				  << "% batch correct" << std::endl <<  std::flush;
 
 		//backprogagation
 		backward(targets);
@@ -119,12 +118,14 @@ void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, fl
 
 }
 
-float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data) {
+
+/* TDOO: mic::types::mic::types::MatrixXfXf compute_numerical_gradients(void) { } */
+
+float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data, size_t classes) {
 
 	mic::types::VectorXi numbers(batch_size);
 	mic::types::MatrixXf batch, targets;
 
-	size_t classes = 10;
 	size_t correct = 0;
 
 	for (size_t ii = 0; ii < data.size(); ii += batch_size) {
@@ -134,7 +135,10 @@ float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data) {
 		batch = make_batch(data, numbers);
 		targets = make_targets(data, numbers, classes);
 
-		forward(batch);
+		//skip dropout layers at test time
+		bool skip_dropout = true;
+
+		forward(batch, skip_dropout);
 
 		correct += count_correct_predictions(layers[layers.size() - 1]->y, targets);
 
@@ -144,11 +148,15 @@ float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data) {
 
 }
 
-/*TODO: serialization*/
+/* TODO: serialization */
+
 void MultiLayerNeuralNetwork::save_to_files(std::string prefix) {
 
 	for (size_t i = 0; i < layers.size(); i++) {
-		layers[i]->save_to_files(prefix + "_" + layers[i]->name + std::to_string(i + 1));
+
+		std::ostringstream ss;
+		ss << std::setw(3) << std::setfill('0') << i + 1;
+		layers[i]->save_to_files(prefix + "_" + ss.str() + "_" + layers[i]->name);
 	}
 
 }
