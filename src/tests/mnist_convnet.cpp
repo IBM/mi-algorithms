@@ -52,33 +52,33 @@ int main() {
 
 	//CONV 3x3 -> CONV 3x3 -> POOL 2x
 	nn.layers.push_back(new Convolution(train_data[0].x.rows(), input_channels, filter_size[0], filters[0], batch_size));
-	nn.layers.push_back(new ReLU(nn.layers.back()->y.rows(), nn.layers.back()->y.rows(), batch_size));
-	nn.layers.push_back(new Convolution(nn.layers.back()->y.rows() / filters[0], filters[0], filter_size[1], filters[1], batch_size));
-	nn.layers.push_back(new ReLU(nn.layers.back()->y.rows(), nn.layers.back()->y.rows(), batch_size));
-	nn.layers.push_back(new Pooling(nn.layers.back()->y.rows(), pooling_window, filters[2], batch_size));
+	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.layers.push_back(new Convolution(nn.lastLayerOutputsSize() / filters[0], filters[0], filter_size[1], filters[1], batch_size));
+	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.layers.push_back(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[2], batch_size));
 
 	//CONV 3x3 -> CONV 3x3 -> POOL 2x
-	nn.layers.push_back(new Convolution(nn.layers.back()->y.rows() / filters[1], filters[1], filter_size[2], filters[2], batch_size));
-	nn.layers.push_back(new ReLU(nn.layers.back()->y.rows(), nn.layers.back()->y.rows(), batch_size));
-	nn.layers.push_back(new Convolution(nn.layers.back()->y.rows() / filters[2], filters[2], filter_size[3], filters[3], batch_size));
-	nn.layers.push_back(new ReLU(nn.layers.back()->y.rows(), nn.layers.back()->y.rows(), batch_size));
-	nn.layers.push_back(new Pooling(nn.layers.back()->y.rows(), pooling_window, filters[3], batch_size));
+	nn.layers.push_back(new Convolution(nn.lastLayerOutputsSize() / filters[1], filters[1], filter_size[2], filters[2], batch_size));
+	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.layers.push_back(new Convolution(nn.lastLayerOutputsSize() / filters[2], filters[2], filter_size[3], filters[3], batch_size));
+	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.layers.push_back(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[3], batch_size));
 
 	//CONV 3x3 -> POOL 2x
-	nn.layers.push_back(new Convolution(nn.layers.back()->y.rows() / filters[3], filters[3], filter_size[4], filters[4], batch_size));
-	nn.layers.push_back(new Pooling(nn.layers.back()->y.rows(), pooling_window, filters[4], batch_size));
+	nn.layers.push_back(new Convolution(nn.lastLayerOutputsSize() / filters[3], filters[3], filter_size[4], filters[4], batch_size));
+	nn.layers.push_back(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[4], batch_size));
 
 	//FULLY CONNECTED
-//	nn.layers.push_back(new Linear(nn.layers.back()->y.rows(), 256, batch_size, dropout));
+//	nn.layers.push_back(new Linear(nn.lastLayerOutputsSize(), 256, batch_size, dropout));
 //	nn.layers.push_back(new ReLU(256, 256, batch_size));
 
 	//FULLY CONNECTED
-	nn.layers.push_back(new Linear(nn.layers.back()->y.rows(), fully_connected_size, batch_size));
-	nn.layers.push_back(new ReLU(nn.layers.back()->y.rows(), nn.layers.back()->y.rows(), batch_size));
-	nn.layers.push_back(new Dropout(nn.layers.back()->y.rows(), nn.layers.back()->y.rows(), batch_size, dropout));
+	nn.layers.push_back(new Linear(nn.lastLayerOutputsSize(), fully_connected_size, batch_size));
+	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.layers.push_back(new Dropout(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size, dropout));
 
 	//SOFTMAX
-	nn.layers.push_back(new Linear(nn.layers.back()->y.rows(), 10, batch_size));
+	nn.layers.push_back(new Linear(nn.lastLayerOutputsSize(), 10, batch_size));
 	nn.layers.push_back(new Softmax(10, 10, batch_size));
 
 	for (size_t e = 0; e < epochs; e++) {

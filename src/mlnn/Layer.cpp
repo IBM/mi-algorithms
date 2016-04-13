@@ -10,22 +10,56 @@
 namespace mic {
 namespace mlnn {
 
-Layer::Layer(size_t inputs, size_t outputs, size_t batch_size, std::string _label) : name(_label) {
+Layer::Layer(size_t inputs_size_, size_t outputs_size_, size_t batch_size_, std::string label_) :
+		name(label_),
+		inputs_size(inputs_size_),
+		outputs_size(outputs_size_),
+		batch_size(batch_size_),
+		s("state"),
+		g("gradients")
 
-	x = mic::types::MatrixXf(inputs, batch_size);
-	y = mic::types::MatrixXf(outputs, batch_size);
-	dx = mic::types::MatrixXf(inputs, batch_size);
-	dy = mic::types::MatrixXf(outputs, batch_size);
+{
+	s.add (
+				{
+					std::make_tuple ( "x", inputs_size, batch_size ), 	// inputs
+					std::make_tuple ( "y", outputs_size, batch_size ) 	// outputs
+				} );
 
+	g.add (
+				{
+					std::make_tuple ( "x", inputs_size, batch_size ), 	// inputs
+					std::make_tuple ( "y", outputs_size, batch_size ) 	// outputs
+				} );
+/*
+	x = mic::types::MatrixXf(inputs_size, batch_size);
+	y = mic::types::MatrixXf(outputs_size, batch_size);
+	dx = mic::types::MatrixXf(inputs_size, batch_size);
+	dy = mic::types::MatrixXf(outputs_size, batch_size);
+*/
 };
+
+
+size_t Layer::inputsSize() {
+	return inputs_size;
+}
+
+size_t Layer::outputsSize() {
+	return outputs_size;
+}
+
+size_t Layer::batchSize() {
+	return batch_size;
+}
+
+
 
 //this is mainly for debugging - TODO: proper serialization of layers and object NN
 void Layer::save_to_files(std::string prefix) {
 
-	save_matrix_to_file(x, prefix + "_x");
-	save_matrix_to_file(y, prefix + "_y");
-	save_matrix_to_file(dx, prefix + "_dx");
-	save_matrix_to_file(dy, prefix + "_dy");
+	save_matrix_to_file((*s['x']), prefix + "_x");
+	save_matrix_to_file((*s['y']), prefix + "_y");
+	save_matrix_to_file((*g['x']), prefix + "_dx");
+	save_matrix_to_file((*g['y']), prefix + "_dy");
 
 };
 

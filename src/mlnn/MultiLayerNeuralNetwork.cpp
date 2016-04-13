@@ -24,17 +24,19 @@ MultiLayerNeuralNetwork::~MultiLayerNeuralNetwork() {
 void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool skip_dropout) {
 
 	//copy inputs to the lowest point in the network
-	layers[0]->x = input_data;
+	(*(layers[0]->s['x'])) = input_data;
 
 	//compute forward activations
 	for (size_t i = 0; i < layers.size(); i++) {
+		//std::cout << "layer i =  " << i << " name = " << layers[i]->id() << std::endl;
 
 		//y = f(x)
 		layers[i]->forward(skip_dropout);
 
 		//x(next layer) = y(current layer)
 		if (i + 1 < layers.size())
-			layers[i + 1]->x = layers[i]->y;
+			(*(layers[i+1]->s['x'])) = (*(layers[i]->s['y']));
+			//layers[i + 1]->x = layers[i]->y;
 	}
 
 }
@@ -42,10 +44,12 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& t) {
 
 	//set targets at the top
-	layers[layers.size() - 1]->dy = t;
+	//layers[layers.size() - 1]->dy = t;
+	(*(layers[layers.size() - 1]->g['y'])) = t;
 
 	//propagate error backward
 	for (int i = layers.size() - 1; i >= 0; i--) {
+		//std::cout << "layer i =  " << i << " name = " << layers[i]->id() << std::endl;
 
 		layers[i]->resetGrads();
 		layers[i]->backward();
@@ -53,7 +57,8 @@ void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& t) {
 		//dy(previous layer) = dx(current layer)
 		if (i > 0) {
 
-			layers[i - 1]->dy = layers[i]->dx;
+//			layers[i - 1]->dy = layers[i]->dx;
+			(*(layers[i - 1]->g['y'])) = (*(layers[i]->g['x']));
 
 		}
 
@@ -65,6 +70,7 @@ void MultiLayerNeuralNetwork::update(float alpha, float decay) {
 
 	//update all layers according to gradients
 	for (size_t i = 0; i < layers.size(); i++) {
+		//std::cout << "layer i =  " << i << " name = " << layers[i]->id() << std::endl;
 
 		layers[i]->applyGrads(alpha, decay);
 
@@ -97,9 +103,11 @@ void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, fl
 		//forward activations
 		forward(batch);
 
-		correct += count_correct_predictions(layers[layers.size() - 1]->y, targets);
+		//correct += count_correct_predictions(layers[layers.size() - 1]->y, targets);
+		correct += count_correct_predictions(*(layers[layers.size() - 1]->s['y']), targets);
 
-		loss = cross_entropy(layers[layers.size() - 1]->y, targets);
+		//loss = cross_entropy(layers[layers.size() - 1]->y, targets);
+		loss = cross_entropy(*(layers[layers.size() - 1]->s['y']), targets);
 
 		smooth_loss = ii == 0 ? loss : damping_factor * smooth_loss + (1 - damping_factor) * loss;
 		std::cout << std::setprecision(1) << std::setw(5) << "[" << std::setw(3) << ii + 1 << "/"
@@ -114,6 +122,7 @@ void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, fl
 
 		//apply changes
 		update(alpha, decay);
+
 	}
 
 }
@@ -140,7 +149,8 @@ float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data, size_t classes)
 
 		forward(batch, skip_dropout);
 
-		correct += count_correct_predictions(layers[layers.size() - 1]->y, targets);
+		//correct += count_correct_predictions(layers[layers.size() - 1]->y, targets);
+		correct += count_correct_predictions(*(layers[layers.size() - 1]->s['y']), targets);
 
 	}
 
@@ -160,6 +170,19 @@ void MultiLayerNeuralNetwork::save_to_files(std::string prefix) {
 	}
 
 }
+
+size_t MultiLayerNeuralNetwork::lastLayerInputsSize() {
+	return layers.back()->inputsSize();
+}
+
+size_t MultiLayerNeuralNetwork::lastLayerOutputsSize() {
+	return layers.back()->outputsSize();
+}
+
+size_t MultiLayerNeuralNetwork::lastLayerBatchSize() {
+	return layers.back()->batchSize();
+}
+
 
 
 } /* namespace mlnn */

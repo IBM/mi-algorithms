@@ -65,9 +65,9 @@ public:
 	/*!
 	 * Simple constructor. Stores the name.
 	 * @param name_ Name of the array.
-	 * @param id_ Id (optional, as defalut set to "")
+	 * @param id_ Id (optional, as default set to "")
 	 */
-	MatrixArray(std::string name_, std::string id_="")  : name ( name_ + "_" + id_ ) {
+	MatrixArray(std::string name_, std::string id_="")  : name ( name_ +  "_" + id_ ) {
 	}
 
 
@@ -75,7 +75,7 @@ public:
 	 * The main constructor. Adds parameters.
 	 * @param name_ Name of the array.
 	 * @param args_ Vector of tuples containing <id, width, height>.
-	 * @param id_ Id (optional, as defalut set to "")
+	 * @param id_ Id (optional, as default set to "")
 	 */
 	MatrixArray ( std::string name_, std::initializer_list<std::tuple<std::string, size_t, size_t> > args_, std::string id_ = "") : name ( name_ + "_" + id_ ) {
 

@@ -19,11 +19,11 @@ namespace mlnn {
 class Softmax : public mic::mlnn::Layer {
 public:
 
-	Softmax(size_t inputs, size_t outputs, size_t batch_size);
+	Softmax(size_t inputs_, size_t outputs_, size_t batch_size_);
 
 	~Softmax() {};
 
-	void forward(bool test = false);
+	void forward(bool test_ = false);
 
 	void backward();
 

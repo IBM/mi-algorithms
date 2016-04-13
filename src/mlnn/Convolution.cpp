@@ -34,17 +34,17 @@ Convolution::Convolution(size_t inputs, size_t channels, size_t filter_size, siz
 void Convolution::forward(bool apply_dropout) {
 
 	//pad(x, x_padded, kernel_size, input_channels);
-	convolution_forward_gemm(input_channels, y, W, x, b);
+	convolution_forward_gemm(input_channels, (*s['y']), W, (*s['x']), b);
 
 }
 
 void Convolution::backward() {
 
-	dx.setZero();
+	(*g['x']).setZero();
 	//dW
-	convolution_backward_gemm(input_channels, dy, dW, x, db);
+	convolution_backward_gemm(input_channels, (*g['y']), dW, (*s['x']), db);
 	//dx
-	convolution_backward_full_gemm(input_channels, dy, W, dx);
+	convolution_backward_full_gemm(input_channels, (*g['y']), W, (*g['x']));
 }
 
 void Convolution::resetGrads() {

@@ -18,17 +18,17 @@ namespace mlnn {
  */
 class Linear : public mic::mlnn::Layer {
 public:
-	Linear(size_t inputs, size_t outputs, size_t batch_size);
+	Linear(size_t inputs_, size_t outputs_, size_t batch_size_);
 
 	virtual ~Linear() {};
 
-	void forward(bool test = false);
+	void forward(bool test_ = false);
 
 	void backward();
 
 	void resetGrads();
 
-	void applyGrads(double alpha, double decay = 0);
+	void applyGrads(double alpha_, double decay_ = 0);
 
 protected:
 	mic::types::MatrixXf W;

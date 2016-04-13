@@ -18,13 +18,15 @@ Identity::Identity(size_t inputs, size_t outputs, size_t batch_size) :
 
 void Identity::forward(bool test) {
 
-	y = x;
+	// y = x;
+	(*s['y']) = (*s['x']);
 
 }
 
 void Identity::backward() {
 
-	dx = dy;
+	// dx = dy;
+	(*g['x']) = (*g['y']);
 
 }
 

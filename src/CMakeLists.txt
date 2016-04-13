@@ -254,9 +254,9 @@ set(BUILD_TEST_MNIST_CNN_APP ON CACHE BOOL "Build the application using Convolut
 
 if(${BUILD_TEST_MNIST_CNN_APP})
         # Create exeutable.
-        ADD_EXECUTABLE(convnet_mnist tests/mnist_convnet.cpp)
+        ADD_EXECUTABLE(mnist_convnet tests/mnist_convnet.cpp)
         # Link it with shared libraries.
-        target_link_libraries(convnet_mnist
+        target_link_libraries(mnist_convnet
 			logger
 	        types
 			data_io
@@ -265,11 +265,11 @@ if(${BUILD_TEST_MNIST_CNN_APP})
 		    ${EIGEN_LIBRARIES}
 	    )
         if(OpenBLAS_FOUND)
-                target_link_libraries(convnet_mnist  ${OpenBLAS_LIB} )
+                target_link_libraries(mnist_convnet  ${OpenBLAS_LIB} )
         endif(OpenBLAS_FOUND)
 
         # install test to bin directory
-        install(TARGETS convnet_mnist RUNTIME DESTINATION bin)
+        install(TARGETS mnist_convnet RUNTIME DESTINATION bin)
 
 endif(${BUILD_TEST_MNIST_CNN_APP})
 

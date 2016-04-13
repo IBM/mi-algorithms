@@ -28,7 +28,7 @@ class MultiLayerNeuralNetwork;
  */
 class Layer {
 public:
-	Layer(size_t inputs, size_t outputs, size_t batch_size, std::string _label = "layer");
+	Layer(size_t inputs_size_, size_t outputs_size_, size_t batch_size_, std::string label_ = "layer");
 
 	//need to override these
 
@@ -42,32 +42,61 @@ public:
 	virtual void save_to_files(std::string prefix);
 
 	virtual void resetGrads() {};
-	virtual void applyGrads(double alpha, double decay) {};
+	virtual void applyGrads(double alpha_, double decay_) {};
 
 	virtual ~Layer() {};
 
 	// Duplicated entries fix, TO BE REMOVED when "proper serialization" will be implemented.
 	void save_matrix_to_file(Eigen::MatrixXf& m, std::string filename);
 
-//protected:
+	/// Returns size (length) of inputs.
+	size_t inputsSize();
 
-	/// Name (identifier of the type) of the layer.
-	const std::string name;
+	/// Returns size (length) of outputs.
+	size_t outputsSize();
 
-	//used in forward pass
+	/// Returns size (length) of (mini)batch.
+	size_t batchSize();
+
+	/// Returns Id (name) of the layer.
+	std::string id() {
+		return name;
+	}
+
+protected:
+
+/*	//used in forward pass
 	mic::types::MatrixXf x; //inputs
 	mic::types::MatrixXf y; //outputs
 
 	//grads, used in backward pass
 	mic::types::MatrixXf dx;
 	mic::types::MatrixXf dy;
+*/
 
-	/// State - contains input [x] and output [y] matrices.
+	/// Name (identifier of the type) of the layer.
+	const std::string name;
+
+	/// Size (length) of inputs.
+	const size_t inputs_size;
+
+	/// Size (length) of outputs.
+	const size_t outputs_size;
+
+	/// Size (length) of (mini)batch.
+	const size_t batch_size;
+
+	/// States - contains input [x] and output [y] matrices.
 	mic::types::MatrixArray<float> s;
 
-	/// Gradient - contains input [x] and output [y] matrices.
+	/// Gradients - contains input [x] and output [y] matrices.
 	mic::types::MatrixArray<float> g;
 
+	/// Parameters - parameters of the layer, to be used by the derived classes.
+	mic::types::MatrixArray<float> p;
+
+	/// Memory - a list of temporal parameters, to be used by the derived classes.
+	mic::types::MatrixArray<float> m;
 
 	// Add access to protected fields to the nn class.
 	friend class MultiLayerNeuralNetwork;

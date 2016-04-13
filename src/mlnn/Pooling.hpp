@@ -19,11 +19,11 @@ namespace mlnn {
 class Pooling : public mic::mlnn::Layer {
 public:
 
-	Pooling(size_t inputs, size_t _window_size, size_t _channels, size_t batch_size);
+	Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_);
 
 	virtual ~Pooling() {};
 
-	void forward(bool test = false);
+	void forward(bool test_ = false);
 
 	void backward();
 
