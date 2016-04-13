@@ -11,7 +11,10 @@
 #include <string>
 
 #include<types/MatrixTypes.hpp>
-#include <mlnn/nn_utils.h>
+#include<types/MatrixArray.hpp>
+
+
+#include <mlnn/nn_utils.h> // TODO: dispatch and destroy!
 
 namespace mic {
 namespace mlnn {
@@ -58,6 +61,13 @@ public:
 	//grads, used in backward pass
 	mic::types::MatrixXf dx;
 	mic::types::MatrixXf dy;
+
+	/// State - contains input [x] and output [y] matrices.
+	mic::types::MatrixArray<float> s;
+
+	/// Gradient - contains input [x] and output [y] matrices.
+	mic::types::MatrixArray<float> g;
+
 
 	// Add access to protected fields to the nn class.
 	friend class MultiLayerNeuralNetwork;

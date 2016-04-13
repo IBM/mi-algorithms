@@ -41,6 +41,8 @@ int main() {
 	ma1["w"]->normRandReal(1, 0.00001);
 
 
+	mic::types::MatrixArray<double> ma2 = ma1;
+
 	std::cout<<"Saved MatrixArray = " << ma1;
 
 	const char* fileName = "saved.txt";
@@ -53,9 +55,10 @@ int main() {
 		ar & ma1;
 	}
 
-	std::cout<<"Calculated MatrixArray = " << ma1;
 	(*ma1["y"]) = (*ma1["w"]) * (*ma1["x"]);
+	std::cout<<"Calculated MatrixArray = " << ma1;
 
+	std::cout<<"Copied MatrixArray = " << ma2;
 
 	// Restore data
 	mic::types::MatrixArray<double> restored_ma;

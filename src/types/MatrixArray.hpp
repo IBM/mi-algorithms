@@ -84,18 +84,38 @@ public:
 	}
 
 	MatrixArray ( const MatrixArray& other ) {
-
-		namemap = other.namemap;
+		// Copy name.
 		name = other.name;
-		matrices = other.matrices;
+
+		namemap.clear();
+		matrices.clear();
+		// Copy data.
+		for (auto& i: other.namemap) {
+			std::string tmp_name = i.first;
+			mic::types::MatrixPtr<T> tmp_mat_ptr =  other.matrices[i.second];
+
+			// Add tuple to array.
+ 			namemap[ tmp_name ] = matrices.size();
+ 			matrices.push_back ( std::make_shared<mic::types::Matrix<T> > (mic::types::Matrix<T> (*tmp_mat_ptr) ) );
+		}//: for
 
 	}
 
 	MatrixArray& operator= ( const MatrixArray& other ) {
-
-		namemap = other.namemap;
+		// Copy name.
 		name = other.name;
-		matrices = other.matrices;
+
+		namemap.clear();
+		matrices.clear();
+		// Copy data.
+		for (auto& i: other.namemap) {
+			std::string tmp_name = i.first;
+			mic::types::MatrixPtr<T> tmp_mat_ptr =  other.matrices[i.second];
+
+			// Add tuple to array.
+ 			namemap[ tmp_name ] = matrices.size();
+ 			matrices.push_back ( std::make_shared<mic::types::Matrix<T> > (mic::types::Matrix<T> (*tmp_mat_ptr) ) );
+		}//: for
 
 		return *this;
 	}
