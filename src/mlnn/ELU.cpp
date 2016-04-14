@@ -10,20 +10,41 @@
 namespace mic {
 namespace mlnn {
 
+ELU::ELU(size_t inputs, size_t outputs, size_t batch_size) :
+	Layer(inputs, outputs, batch_size, "elu") {
+
+}
+
 void ELU::forward(bool apply_dropout) {
 
-	y = activation_ELU(x);
+	// y = activation_ELU(x);
 
+	// Access the data of both matrices.
+	float* x = s['x']->data();
+	float* y = s['y']->data();
+
+	for (int i = 0; i < s['x']->rows() * s['x']->cols(); i++) {
+		y[i] = x[i] > 0.0f ? x[i] : (expf(x[i]) - 1.0f);
+	}//: for
 }
 
 void ELU::backward() {
 
-	dx.array() = derivative_ELU(y).array() * dy.array();
+	// dx.array() = derivative_ELU(y).array() * dy.array();
 
-}
+	// Access the data of matrices.
+	float* gx = g['x']->data();
+	float* gy = g['y']->data();
+	float* y = s['y']->data();
 
-ELU::ELU(size_t inputs, size_t outputs, size_t batch_size) :
-	Layer(inputs, outputs, batch_size, "elu") {
+	for (int i = 0; i < g['x']->rows() * g['x']->cols(); i++) {
+
+		// Calculate the ELU y derivative.
+		float dy = y[i] > 0.0f ? 1.0f : expf(y[i]);
+		// Calculate the gradient.
+		gx[i] = dy * gy[i];
+
+	}//: for
 
 }
 

@@ -17,16 +17,15 @@ namespace mlnn {
  * \author krocki
  */
 class Identity : public mic::mlnn::Layer {
+public:
 
-	public:
+	Identity(size_t inputs, size_t outputs, size_t batch_size);
 
-		void forward(bool apply_dropout = false);
+	virtual ~Identity() {};
 
-		void backward();
+	void forward(bool test = false);
 
-		Identity(size_t inputs, size_t outputs, size_t batch_size);
-
-		virtual ~Identity() {};
+	void backward();
 
 };
 } /* namespace mlnn */

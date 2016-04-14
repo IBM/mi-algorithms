@@ -338,7 +338,7 @@ private:
     /*!
      * Serialization save - saves the matrix object to archive.
      * @param ar Used archive.
-     * @param version Version of the matrix class (not used currently).
+     * @param version Version of the matrix class.
      */
 	template<class Archive>
 	void save(Archive & ar, const unsigned int version) const {
@@ -356,7 +356,7 @@ private:
     /*!
      * Serialization load - loads the matrix object to archive.
      * @param ar Used archive.
-     * @param version Version of the matrix class (not used currently).
+     * @param version Version of the matrix class.
      */
      template<class Archive>
      void load(Archive & ar, const unsigned int version) {
@@ -378,7 +378,7 @@ private:
 
 
 /*!
- * \brief Typedef for shared pointer to template-typed dynamic matrices.
+ * \brief Typedef for a shared pointer to template-typed dynamic matrices.
  * \author tkornuta
  */
 template<typename T>
@@ -389,7 +389,7 @@ using MatrixPtr = typename std::shared_ptr< mic::types::Matrix<T> >;
 
 
 
-// Just in case if something important will change in the tensor class - set version.
+// Just in the case that something important will change in the matrix class - set version.
 BOOST_CLASS_VERSION(mic::types::Matrix<bool>, 1)
 BOOST_CLASS_VERSION(mic::types::Matrix<short>, 1)
 BOOST_CLASS_VERSION(mic::types::Matrix<int>, 1)

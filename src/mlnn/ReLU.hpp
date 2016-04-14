@@ -17,19 +17,15 @@ namespace mlnn {
  * \author krocki
  */
 class ReLU : public mic::mlnn::Layer {
+public:
 
-	public:
+	ReLU(size_t inputs, size_t outputs, size_t batch_size);
 
-		void forward(bool apply_dropout = false);
+	virtual ~ReLU() {};
 
-		void save_to_files(std::string prefix);
+	void forward(bool apply_dropout = false);
 
-		void backward();
-
-		ReLU(size_t inputs, size_t outputs, size_t batch_size);
-
-		virtual ~ReLU() {};
-
+	void backward();
 };
 
 } /* namespace mlnn */

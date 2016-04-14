@@ -17,30 +17,28 @@ namespace mlnn {
  * \author krocki
  */
 class Linear : public mic::mlnn::Layer {
+public:
+	Linear(size_t inputs_, size_t outputs_, size_t batch_size_);
 
-	public:
+	virtual ~Linear() {};
 
-		mic::types::MatrixXf W;
-		mic::types::VectorXf b;
+	void forward(bool test_ = false);
 
-		mic::types::MatrixXf dW;
-		mic::types::MatrixXf db;
+	void backward();
 
-		mic::types::MatrixXf mW;
-		mic::types::MatrixXf mb;
+	void resetGrads();
 
-		void forward(bool apply_dropout = false);
+	void applyGrads(double alpha_, double decay_ = 0);
 
-		void backward();
+protected:
+	mic::types::MatrixXf W;
+	mic::types::VectorXf b;
 
-		Linear(size_t inputs, size_t outputs, size_t batch_size, float _dropout = 1.0f);
+	mic::types::MatrixXf dW;
+	mic::types::MatrixXf db;
 
-		void resetGrads();
-
-		void applyGrads(double alpha, double decay = 0);
-
-		virtual ~Linear() {};
-
+	mic::types::MatrixXf mW;
+	mic::types::MatrixXf mb;
 };
 
 } /* namespace mlnn */

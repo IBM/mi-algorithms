@@ -7,7 +7,7 @@
 
 #include <mlnn/nn_utils.h>
 
-mic::types::MatrixXf rectify(mic::types::MatrixXf& x) {
+/*mic::types::MatrixXf rectify(mic::types::MatrixXf& x) {
 
 	mic::types::MatrixXf y(x.rows(), x.cols());
 
@@ -20,11 +20,11 @@ mic::types::MatrixXf rectify(mic::types::MatrixXf& x) {
 
 	return y;
 
-}
+}*/
 
 // Exponential Linear Unit
 // http://arxiv.org/pdf/1511.07289v5.pdf
-mic::types::MatrixXf activation_ELU(mic::types::MatrixXf& x) {
+/*mic::types::MatrixXf activation_ELU(mic::types::MatrixXf& x) {
 
 	mic::types::MatrixXf y(x.rows(), x.cols());
 
@@ -38,9 +38,9 @@ mic::types::MatrixXf activation_ELU(mic::types::MatrixXf& x) {
 
 	return y;
 
-}
+}*/
 
-mic::types::MatrixXf derivative_ELU(mic::types::MatrixXf& x) {
+/*mic::types::MatrixXf derivative_ELU(mic::types::MatrixXf& x) {
 
 	mic::types::MatrixXf y(x.rows(), x.cols());
 
@@ -53,9 +53,9 @@ mic::types::MatrixXf derivative_ELU(mic::types::MatrixXf& x) {
 
 	return y;
 
-}
+}*/
 
-mic::types::MatrixXf derivative_ReLU(mic::types::MatrixXf& x) {
+/*mic::types::MatrixXf derivative_ReLU(mic::types::MatrixXf& x) {
 
 	mic::types::MatrixXf y(x.rows(), x.cols());
 
@@ -68,9 +68,9 @@ mic::types::MatrixXf derivative_ReLU(mic::types::MatrixXf& x) {
 
 	return y;
 
-}
+}*/
 
-mic::types::MatrixXf logistic(mic::types::MatrixXf& x) {
+/*mic::types::MatrixXf logistic(mic::types::MatrixXf& x) {
 
 	mic::types::MatrixXf y(x.rows(), x.cols());
 
@@ -82,9 +82,9 @@ mic::types::MatrixXf logistic(mic::types::MatrixXf& x) {
 	}
 
 	return y;
-}
+}*/
 
-mic::types::MatrixXf softmax(mic::types::MatrixXf& x) {
+/*mic::types::MatrixXf softmax(mic::types::MatrixXf& x) {
 
 	mic::types::MatrixXf y(x.rows(), x.cols());
 
@@ -102,7 +102,7 @@ mic::types::MatrixXf softmax(mic::types::MatrixXf& x) {
 	}
 
 	return y;
-}
+}*/
 
 float cross_entropy(mic::types::MatrixXf& predictions, mic::types::MatrixXf& targets) {
 

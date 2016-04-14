@@ -21,27 +21,27 @@ inline float sqrt_eps(const float x) {
 }
 
 //f(x) = sigm(x)
-inline float __logistic(const float x) {
+/*inline float __logistic(const float x) {
 	return 1.0f / (1.0f +::expf(-x));
-}
+}*/
 
-inline float __exponential(const float x) {
+/*inline float __exponential(const float x) {
 	return expf(x);
-}
+}*/
 
-mic::types::MatrixXf rectify(mic::types::MatrixXf& x);
+//mic::types::MatrixXf rectify(mic::types::MatrixXf& x);
 
 // Exponential Linear Unit
 // http://arxiv.org/pdf/1511.07289v5.pdf
-mic::types::MatrixXf activation_ELU(mic::types::MatrixXf& x);
+//mic::types::MatrixXf activation_ELU(mic::types::MatrixXf& x);
 
-mic::types::MatrixXf derivative_ELU(mic::types::MatrixXf& x);
+//mic::types::MatrixXf derivative_ELU(mic::types::MatrixXf& x);
 
-mic::types::MatrixXf derivative_ReLU(mic::types::MatrixXf& x);
+//mic::types::MatrixXf derivative_ReLU(mic::types::MatrixXf& x);
 
-mic::types::MatrixXf logistic(mic::types::MatrixXf& x);
+//mic::types::MatrixXf logistic(mic::types::MatrixXf& x);
 
-mic::types::MatrixXf softmax(mic::types::MatrixXf& x);
+//mic::types::MatrixXf softmax(mic::types::MatrixXf& x);
 
 float cross_entropy(mic::types::MatrixXf& predictions, mic::types::MatrixXf& targets);
 

@@ -17,15 +17,14 @@ namespace mlnn {
  * \author krocki
  */
 class Sigmoid : public mic::mlnn::Layer {
-	public:
+public:
+	Sigmoid(size_t inputs, size_t outputs, size_t batch_size);
 
-		void forward(bool apply_dropout = false);
+	virtual ~Sigmoid() {};
 
-		void backward();
+	void forward(bool test = false);
 
-		Sigmoid(size_t inputs, size_t outputs, size_t batch_size);
-
-		virtual ~Sigmoid() {};
+	void backward();
 
 };
 

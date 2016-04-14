@@ -17,24 +17,26 @@ namespace mlnn {
  * \author krocki
  */
 class Pooling : public mic::mlnn::Layer {
+public:
 
-	public:
+	Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_);
 
-		void forward(bool apply_dropout = false);
+	virtual ~Pooling() {};
 
-		void backward();
+	void forward(bool test_ = false);
 
-		//this is mainly for debugging - TODO: proper serialization of layers
-		void save_to_files(std::string prefix);
+	void backward();
 
-		Pooling(size_t inputs, size_t _window_size, size_t _channels, size_t batch_size);
+	//this is mainly for debugging - TODO: proper serialization of layers
+	void save_to_files(std::string prefix);
 
-		virtual ~Pooling() {};
+protected:
 
-		mic::types::MatrixXf cache;
+	mic::types::MatrixXf cache;
 
-		const size_t channels;
-		const size_t window_size;
+	const size_t channels;
+
+	const size_t window_size;
 };
 
 } /* namespace mlnn */

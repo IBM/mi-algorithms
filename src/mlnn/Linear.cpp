@@ -10,28 +10,12 @@
 namespace mic {
 namespace mlnn {
 
-void Linear::forward(bool apply_dropout) {
+Linear::Linear(size_t inputs_, size_t outputs_, size_t batch_size_) :
+	Layer(inputs_, outputs_, batch_size_, "linear") {
 
-	y = W * x + b.replicate(1, x.cols());
-
-	if (apply_dropout)
-		applyDropout();
-}
-
-void Linear::backward() {
-
-	dW = dy * x.transpose();
-	db = dy.rowwise().sum();
-	dx = W.transpose() * dy;
-
-}
-
-Linear::Linear(size_t inputs, size_t outputs, size_t batch_size, float _dropout) :
-	Layer(inputs, outputs, batch_size, "fc", _dropout) {
-
-	W = mic::types::MatrixXf(outputs, inputs);
-	b = (Eigen::VectorXf)Eigen::VectorXf::Zero(outputs);
-	double range = sqrt(6.0 / double(inputs + outputs));
+	W = mic::types::MatrixXf(outputs_, inputs_);
+	b = (Eigen::VectorXf)Eigen::VectorXf::Zero(outputs_);
+	double range = sqrt(6.0 / double(inputs_ + outputs_));
 
 	rand(W, -range, range);
 
@@ -40,20 +24,38 @@ Linear::Linear(size_t inputs, size_t outputs, size_t batch_size, float _dropout)
 
 };
 
+void Linear::forward(bool test_) {
+	// y = W * x + b.replicate(1, x.cols());
+	(*s['y']) = W * (*s['x']) + b.replicate(1, (*s['x']).cols());
+
+}
+
+void Linear::backward() {
+
+	/*dW = dy * x.transpose();
+	db = dy.rowwise().sum();
+	dx = W.transpose() * dy;*/
+
+	dW = (*g['y']) * ((*s['x']).transpose());
+	db = (*g['y']).rowwise().sum();
+	(*g['x']) = W.transpose() * (*g['y']);
+
+}
+
 void Linear::resetGrads() {
 
 	dW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
 	db = mic::types::VectorXf::Zero(b.rows());
 }
 
-void Linear::applyGrads(double alpha, double decay) {
+void Linear::applyGrads(double alpha_, double decay_) {
 
 	//adagrad
 	mW += dW.cwiseProduct(dW);
 	mb += db.cwiseProduct(db);
 
-	W = (1 - decay) * W + alpha * dW.cwiseQuotient(mW.unaryExpr(std::ptr_fun(sqrt_eps)));
-	b += alpha * db.cwiseQuotient(mb.unaryExpr(std::ptr_fun(sqrt_eps)));
+	W = (1 - decay_) * W + alpha_ * dW.cwiseQuotient(mW.unaryExpr(std::ptr_fun(sqrt_eps)));
+	b += alpha_ * db.cwiseQuotient(mb.unaryExpr(std::ptr_fun(sqrt_eps)));
 
 	// 'plain' fixed learning rate update
 	// b += alpha * db;

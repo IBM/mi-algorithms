@@ -10,36 +10,33 @@
 namespace mic {
 namespace mlnn {
 
-void Pooling::forward(bool apply_dropout) {
+Pooling::Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_) :
+	Layer(inputs_, channels_ * (sqrt(inputs_ / channels_) / window_size_) * (sqrt(inputs_ / channels_) / window_size_), batch_size_, "pool"),
+	channels(channels_), window_size(window_size_) {
 
+	// cache = mic::types::MatrixXf::Zero(x.rows(), x.cols());
+	cache = mic::types::MatrixXf::Zero(inputs_size, batch_size);
 
-	pooling_forward(channels, x, y, cache, window_size);
+};
+
+void Pooling::forward(bool test_) {
+
+	pooling_forward(channels, *(s['x']), *(s['y']), cache, window_size);
 
 }
 
 void Pooling::backward() {
 
-	pooling_backward(channels, dx, dy, cache, window_size);
+	pooling_backward(channels, *(g['x']), *(g['y']), cache, window_size);
 
 }
 
 void Pooling::save_to_files(std::string prefix) {
 
-	save_matrix_to_file(x, prefix + "_x.txt");
-	save_matrix_to_file(y, prefix + "_y.txt");
+	Layer::save_to_files(prefix);
 	save_matrix_to_file(cache, prefix + "_cache.txt");
-	save_matrix_to_file(dx, prefix + "_dx.txt");
-	save_matrix_to_file(dy, prefix + "_dy.txt");
 
 }
-
-Pooling::Pooling(size_t inputs, size_t _window_size, size_t _channels, size_t batch_size) :
-	Layer(inputs, _channels * (sqrt(inputs / _channels) / _window_size) * (sqrt(inputs / _channels) / _window_size), batch_size, "pool"),
-	channels(_channels), window_size(_window_size) {
-
-	cache = mic::types::MatrixXf::Zero(x.rows(), x.cols());
-
-};
 
 } /* namespace mlnn */
 } /* namespace mic */
