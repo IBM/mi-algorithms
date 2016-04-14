@@ -25,7 +25,18 @@ public:
 
 	void forward(bool test = false);
 
+	/*!
+	 * Outer loop over image locations, all images processed in parallel
+	 * @param out
+	 * @param in
+	 */
+	void forwardGemm(mic::types::MatrixXf& out, mic::types::MatrixXf& in);
+
 	void backward();
+
+	void backwardGemm(mic::types::MatrixXf& out, mic::types::MatrixXf& in);
+
+	void backwardFullGemm(mic::types::MatrixXf& out, mic::types::MatrixXf& in);
 
 	void resetGrads();
 

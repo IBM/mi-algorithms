@@ -32,14 +32,30 @@ public:
 
 	void backward(mic::types::MatrixXf& t);
 
-
 	void update(float alpha, float decay);
-
 
 	void train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, size_t classes);
 
-
 	float test(std::deque<datapoint>& data, size_t classes);
+
+	/*!
+	 * Calculates the cross entropy.
+	 * @param predictions_ Predictions in the form of a matrix of answers, each encoded as SDR.
+	 * @param targets_ Desired results (targets) in the form of a matrix of answers, each encoded as SDR.
+	 * @return
+	 */
+	float calculateCrossEntropy(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_);
+
+	/*!
+	 * Calculated difference between the predicted and target classes.
+	 * Assumes 1-ouf-of-k encoding of classes.
+	 *
+	 * @param predictions_ Predictions in the form of a matrix of answers, each encoded as SDR.
+	 * @param targets_ Desired results (targets) in the form of a matrix of answers, each encoded as SDR.
+	 * @return
+	 */
+	size_t countCorrectPredictions(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_);
+
 
 	void save_to_files(std::string prefix);
 

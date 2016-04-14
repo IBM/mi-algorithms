@@ -34,8 +34,8 @@ template<typename T>
 class Tensor;
 
 // Forward declaration of a class Vector.
-template<typename T>
-class Vector;
+//template<typename T>
+//class Vector;
 
 /*!
  * \brief Template-typed Matrix of dynamic size.
@@ -328,6 +328,35 @@ public:
 				(*this)(y, x) = in(y);
 			}//: y
 		}//: x
+	}
+
+	/*!
+	 * Returns a vector of indices indicating maximal elements in consecutive matrix columns (colwise).
+	 * @return Vector of indices.
+	 */
+	Eigen::Matrix<T, Eigen::Dynamic, 1> colwiseReturnMaxIndices() {
+
+		Eigen::Matrix<T, Eigen::Dynamic, 1> indices((*this).cols());
+
+		for (size_t i = 0; i < (*this).cols(); i++) {
+
+			T current_max_val;
+			T index;
+
+			for (size_t j = 0; j < (*this).rows(); j++) {
+
+				if (j == 0 || (*this)(j, i) > current_max_val) {
+
+					index = j;
+					current_max_val = (*this)(j, i);
+				}
+
+				indices(i) = index;
+
+			}
+		}
+
+		return indices;
 	}
 
 private:

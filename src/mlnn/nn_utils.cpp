@@ -104,7 +104,7 @@
 	return y;
 }*/
 
-float cross_entropy(mic::types::MatrixXf& predictions, mic::types::MatrixXf& targets) {
+/*float cross_entropy(mic::types::MatrixXf& predictions, mic::types::MatrixXf& targets) {
 
 	float ce = 0.0;
 	mic::types::MatrixXf error(predictions.rows(), predictions.cols());
@@ -114,7 +114,7 @@ float cross_entropy(mic::types::MatrixXf& predictions, mic::types::MatrixXf& tar
 	ce = error.sum();
 
 	return ce;
-}
+}*/
 
 //generate an array of random numbers in range
 void randi(mic::types::VectorXi& m, int range_min, int range_max) {
@@ -175,10 +175,10 @@ void randi(mic::types::VectorXi& m, int range_min, int range_max) {
 	}
 }*/
 
-#define ADDRESS_2D_TO_1D(i, j, cols) ((j) + (i) * (cols))
-#define ADDRESS_3D_TO_1D(i, j, k, cols, channel_size) ((i) + (j) * (cols) + (k) * (channel_size))
+//#define ADDRESS_2D_TO_1D(i, j, cols) ((j) + (i) * (cols))
+//#define ADDRESS_3D_TO_1D(i, j, k, cols, channel_size) ((i) + (j) * (cols) + (k) * (channel_size))
 
-void pad(mic::types::MatrixXf& x, mic::types::MatrixXf& x_padded, size_t kernel_size, size_t input_channels) {
+/*void pad(mic::types::MatrixXf& x, mic::types::MatrixXf& x_padded, size_t kernel_size, size_t input_channels) {
 
 	size_t padding = kernel_size / 2;
 	size_t batch_size = x.cols();
@@ -209,9 +209,9 @@ void pad(mic::types::MatrixXf& x, mic::types::MatrixXf& x_padded, size_t kernel_
 
 	}
 
-}
+}*/
 
-//outer loop over image locations, all images processed in parallel
+/*//outer loop over image locations, all images processed in parallel
 void convolution_forward_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in, mic::types::VectorXf& b) {
 
 	//W is size [kernel_length x filters]
@@ -422,7 +422,7 @@ void convolution_backward_gemm(size_t input_channels, mic::types::MatrixXf& out,
 		} 	// y loop
 	}	// x loop
 
-}
+}*/
 
 /*mic::types::MatrixXf pooling_forward_channel(mic::types::MatrixXf& x, mic::types::MatrixXf& cache, size_t window_size) {
 
@@ -577,7 +577,7 @@ mic::types::MatrixXf make_targets(std::deque<datapoint>& data, mic::types::Vecto
 	return batch;
 }
 
-mic::types::VectorXi colwise_max_index(mic::types::MatrixXf& m) {
+/*mic::types::VectorXi colwise_max_index(mic::types::MatrixXf& m) {
 
 	mic::types::VectorXi indices(m.cols());
 
@@ -624,5 +624,5 @@ size_t count_correct_predictions(mic::types::MatrixXf& p, mic::types::MatrixXf& 
 	mic::types::VectorXi correct = (target_classes - predicted_classes);
 
 	return count_zeros(correct);
-}
+}*/
 

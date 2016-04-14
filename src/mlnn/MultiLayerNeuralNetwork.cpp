@@ -104,10 +104,10 @@ void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, fl
 		forward(batch);
 
 		//correct += count_correct_predictions(layers[layers.size() - 1]->y, targets);
-		correct += count_correct_predictions(*(layers[layers.size() - 1]->s['y']), targets);
+		 correct += countCorrectPredictions(*(layers[layers.size() - 1]->s['y']), targets);
 
 		//loss = cross_entropy(layers[layers.size() - 1]->y, targets);
-		loss = cross_entropy(*(layers[layers.size() - 1]->s['y']), targets);
+		loss = calculateCrossEntropy(*(layers[layers.size() - 1]->s['y']), targets);
 
 		smooth_loss = ii == 0 ? loss : damping_factor * smooth_loss + (1 - damping_factor) * loss;
 		std::cout << std::setprecision(1) << std::setw(5) << "[" << std::setw(3) << ii + 1 << "/"
@@ -150,13 +150,55 @@ float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data, size_t classes)
 		forward(batch, skip_dropout);
 
 		//correct += count_correct_predictions(layers[layers.size() - 1]->y, targets);
-		correct += count_correct_predictions(*(layers[layers.size() - 1]->s['y']), targets);
+		correct += countCorrectPredictions(*(layers[layers.size() - 1]->s['y']), targets);
 
 	}
 
 	return (float)correct / (float)(data.size());
 
 }
+
+size_t MultiLayerNeuralNetwork::countCorrectPredictions(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_) {
+
+	// Get vectors of indices denoting classes (type of 1-ouf-of-k dencoding).
+	mic::types::VectorXf predicted_classes = predictions_.colwiseReturnMaxIndices();
+	mic::types::VectorXf target_classes = targets_.colwiseReturnMaxIndices();
+
+	// Get direct pointers to data.
+	float *p = predicted_classes.data();
+	float *t = target_classes.data();
+
+	size_t correct=0;
+	size_t i;
+
+#pragma omp parallel for private(i) shared(correct)
+	for(i=0; i<predicted_classes.size(); i++) {
+		if (p[i] == t[i]) {
+#pragma omp atomic
+			correct++;
+		}// if
+	}//: for
+
+	return correct;
+}
+
+
+
+float MultiLayerNeuralNetwork::calculateCrossEntropy(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_) {
+
+	float ce = 0.0;
+	mic::types::MatrixXf error(predictions_.rows(), predictions_.cols());
+
+	//check what has happened and get information content for that event
+	error.array() = -predictions_.unaryExpr(std::ptr_fun(::logf)).array() * targets_.array();
+
+	// Sum the errors.
+	ce = error.sum();
+
+	return ce;
+}
+
+
 
 /* TODO: serialization */
 

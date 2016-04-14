@@ -43,7 +43,7 @@ inline float sqrt_eps(const float x) {
 
 //mic::types::MatrixXf softmax(mic::types::MatrixXf& x);
 
-float cross_entropy(mic::types::MatrixXf& predictions, mic::types::MatrixXf& targets);
+//float cross_entropy(mic::types::MatrixXf& predictions, mic::types::MatrixXf& targets);
 
 //generate an array of random numbers in range
 void randi(mic::types::VectorXi& m, int range_min, int range_max);
@@ -52,14 +52,14 @@ void randi(mic::types::VectorXi& m, int range_min, int range_max);
 
 //void __pool_disjoint_2D(mic::types::MatrixXf& out, mic::types::MatrixXf& cache, mic::types::MatrixXf& image, size_t kernel_size);
 
-void pad(mic::types::MatrixXf& x, mic::types::MatrixXf& x_padded, size_t kernel_size, size_t input_channels);
+//void pad(mic::types::MatrixXf& x, mic::types::MatrixXf& x_padded, size_t kernel_size, size_t input_channels);
 
 //outer loop over image locations, all images processed in parallel
-void convolution_forward_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in, mic::types::VectorXf& b);
+//void convolution_forward_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in, mic::types::VectorXf& b);
 
-void convolution_backward_full_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in);
+//void convolution_backward_full_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in);
 
-void convolution_backward_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in, mic::types::MatrixXf& b);
+//void convolution_backward_gemm(size_t input_channels, mic::types::MatrixXf& out, mic::types::MatrixXf& W, mic::types::MatrixXf& in, mic::types::MatrixXf& b);
 
 //mic::types::MatrixXf pooling_forward_channel(mic::types::MatrixXf& x, mic::types::MatrixXf& cache, size_t window_size);
 
@@ -79,10 +79,10 @@ mic::types::MatrixXf make_batch(std::deque<datapoint>& data, mic::types::VectorX
 
 mic::types::MatrixXf make_targets(std::deque<datapoint>& data, mic::types::VectorXi& random_numbers, size_t classes);
 
-mic::types::VectorXi colwise_max_index(mic::types::MatrixXf& m);
+/*mic::types::VectorXi colwise_max_index(mic::types::MatrixXf& m);
 
 size_t count_zeros(mic::types::VectorXi& m);
 
-size_t count_correct_predictions(mic::types::MatrixXf& p, mic::types::MatrixXf& t);
+size_t count_correct_predictions(mic::types::MatrixXf& p, mic::types::MatrixXf& t);*/
 
 #endif

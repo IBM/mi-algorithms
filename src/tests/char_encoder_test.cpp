@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 			// Display result.
 			LOG(LINFO)<<" Orig = '" << *(sample.first) << "' decoded SDR = '" << (*dec_char) << "' label = '" << *(sample.second) << "'";
 
-			// Get random batch.
+			// Get next batch.
 			char_char_batch_t batch = importer.getNextBatch();
 			LOG(LINFO)<<" Batch: ";
 			for (size_t i=0; i < batch.first.size(); i++ ) {
