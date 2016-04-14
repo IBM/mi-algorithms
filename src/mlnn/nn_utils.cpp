@@ -129,7 +129,7 @@ void randi(mic::types::VectorXi& m, int range_min, int range_max) {
 
 }
 
-void __unpool_disjoint_2D(mic::types::MatrixXf& dx, mic::types::MatrixXf& cache, mic::types::MatrixXf& dy, size_t kernel_size) {
+/*void __unpool_disjoint_2D(mic::types::MatrixXf& dx, mic::types::MatrixXf& cache, mic::types::MatrixXf& dy, size_t kernel_size) {
 
 	for (size_t xi = 0; xi < dx.rows(); xi++) {
 
@@ -140,9 +140,9 @@ void __unpool_disjoint_2D(mic::types::MatrixXf& dx, mic::types::MatrixXf& cache,
 		}
 	}
 
-}
+}*/
 
-void __pool_disjoint_2D(mic::types::MatrixXf& out, mic::types::MatrixXf& cache, mic::types::MatrixXf& image, size_t kernel_size) {
+/*void __pool_disjoint_2D(mic::types::MatrixXf& out, mic::types::MatrixXf& cache, mic::types::MatrixXf& image, size_t kernel_size) {
 
 	for (size_t yi = 0; yi < out.rows(); yi++) {
 
@@ -173,7 +173,7 @@ void __pool_disjoint_2D(mic::types::MatrixXf& out, mic::types::MatrixXf& cache, 
 			cache(yj * kernel_size + idx_j, yi * kernel_size + idx_i) = 1;
 		}
 	}
-}
+}*/
 
 #define ADDRESS_2D_TO_1D(i, j, cols) ((j) + (i) * (cols))
 #define ADDRESS_3D_TO_1D(i, j, k, cols, channel_size) ((i) + (j) * (cols) + (k) * (channel_size))
@@ -424,7 +424,7 @@ void convolution_backward_gemm(size_t input_channels, mic::types::MatrixXf& out,
 
 }
 
-mic::types::MatrixXf pooling_forward_channel(mic::types::MatrixXf& x, mic::types::MatrixXf& cache, size_t window_size) {
+/*mic::types::MatrixXf pooling_forward_channel(mic::types::MatrixXf& x, mic::types::MatrixXf& cache, size_t window_size) {
 
 	size_t image_size = sqrt(x.rows());
 	// size_t y_width = image_size - window_size + 1;
@@ -458,9 +458,9 @@ mic::types::MatrixXf pooling_forward_channel(mic::types::MatrixXf& x, mic::types
 
 	return y;
 
-}
+}*/
 
-mic::types::MatrixXf pooling_backward_channel(mic::types::MatrixXf& dy, mic::types::MatrixXf& cache, size_t window_size) {
+/*mic::types::MatrixXf pooling_backward_channel(mic::types::MatrixXf& dy, mic::types::MatrixXf& cache, size_t window_size) {
 
 	mic::types::MatrixXf dx = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(cache.rows(), cache.cols());
 
@@ -481,9 +481,9 @@ mic::types::MatrixXf pooling_backward_channel(mic::types::MatrixXf& dy, mic::typ
 	}
 
 	return dx;
-}
+}*/
 
-void pooling_forward(size_t channels, mic::types::MatrixXf& x, mic::types::MatrixXf& y, mic::types::MatrixXf& cache, size_t window_size) {
+/*void pooling_forward(size_t channels, mic::types::MatrixXf& x, mic::types::MatrixXf& y, mic::types::MatrixXf& cache, size_t window_size) {
 
 	#pragma omp parallel for
 	for (size_t k = 0; k < channels; k++) {
@@ -496,9 +496,9 @@ void pooling_forward(size_t channels, mic::types::MatrixXf& x, mic::types::Matri
 		cache.block(cache_map.rows() * k, 0, cache_map.rows(), cache_map.cols()) = cache_map;
 
 	}
-}
+}*/
 
-void pooling_backward(size_t channels, mic::types::MatrixXf& dx, mic::types::MatrixXf& dy, mic::types::MatrixXf& cache, size_t window_size) {
+/*void pooling_backward(size_t channels, mic::types::MatrixXf& dx, mic::types::MatrixXf& dy, mic::types::MatrixXf& cache, size_t window_size) {
 
 	#pragma omp parallel for
 	for (size_t k = 0; k < channels; k++) {
@@ -510,7 +510,7 @@ void pooling_backward(size_t channels, mic::types::MatrixXf& dx, mic::types::Mat
 		dx_map = pooling_backward_channel(dy_map, cache_map, window_size).array();
 		dx.block(dx_map.rows() * k, 0, dx_map.rows(), dx_map.cols()) = dx_map;
 	}
-}
+}*/
 
 void randn(mic::types::MatrixXf& m, float mean, float stddev) {
 

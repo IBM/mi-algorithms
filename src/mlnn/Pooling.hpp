@@ -25,7 +25,40 @@ public:
 
 	void forward(bool test_ = false);
 
+	/*!
+	 * Processes forwards data for a single channel.
+	 * @param x Channel
+	 * @param cache
+	 * @param window_size
+	 * @return
+	 */
+	mic::types::MatrixXf forwardChannel(mic::types::MatrixXf& x, mic::types::MatrixXf& cache);
+
+	/*!
+	 *
+	 * @param out
+	 * @param cache
+	 * @param image
+	 */
+	void poolDisjoint2D(mic::types::MatrixXf& out, mic::types::MatrixXf& cache, mic::types::MatrixXf& image);
+
 	void backward();
+
+	/*!
+	 * Processes backwards data for a single channel.
+	 * @param dy
+	 * @param cache_
+	 * @return
+	 */
+	mic::types::MatrixXf backwardChannel(mic::types::MatrixXf& dy, mic::types::MatrixXf& cache_);
+
+	/*!
+	 *
+	 * @param dx
+	 * @param cache
+	 * @param dy
+	 */
+	void unpoolDisjoint2D(mic::types::MatrixXf& dx, mic::types::MatrixXf& cache, mic::types::MatrixXf& dy);
 
 	//this is mainly for debugging - TODO: proper serialization of layers
 	void save_to_files(std::string prefix);
