@@ -13,9 +13,9 @@
 namespace mic {
 namespace data_io {
 
-MNISTMatrixImporter::MNISTMatrixImporter(std::string node_name_) : Importer (node_name_),
-		data_filename("data_filename","images-idx3-ubyte"),
-		labels_filename("labels_filename", "labels-idx1-ubyte")
+MNISTMatrixImporter::MNISTMatrixImporter(std::string data_filename_, std::string labels_filename_, std::string node_name_) : Importer (node_name_),
+		data_filename("data_filename",data_filename_),
+		labels_filename("labels_filename", labels_filename_)
 {
 	// Register properties - so their values can be overridden (read from the configuration file).
 	registerProperty(data_filename);
@@ -26,9 +26,16 @@ MNISTMatrixImporter::MNISTMatrixImporter(std::string node_name_) : Importer (nod
 	image_height = 28;
 }
 
+void MNISTMatrixImporter::setDataFilename(std::string data_filename_) {
+	data_filename = data_filename_;
+}
+
+void MNISTMatrixImporter::setLabelsFilename(std::string labels_filename_) {
+	labels_filename = labels_filename_;
+}
 
 
-int ReverseInt (int i)
+/*int ReverseInt (int i)
 {
     unsigned char ch1, ch2, ch3, ch4;
     ch1=i&255;
@@ -36,44 +43,11 @@ int ReverseInt (int i)
     ch3=(i>>16)&255;
     ch4=(i>>24)&255;
     return((int)ch1<<24)+((int)ch2<<16)+((int)ch3<<8)+ch4;
-}
-/*void ReadMNIST(int NumberOfImages, int DataOfAnImage,vector<vector<double>> &arr)
-{
-    arr.resize(NumberOfImages,vector<double>(DataOfAnImage));
-    ifstream file ("C:\\t10k-images.idx3-ubyte",ios::binary);
-    if (file.is_open())
-    {
-        int magic_number=0;
-        int number_of_images=0;
-        int n_rows=0;
-        int n_cols=0;
-        file.read((char*)&magic_number,sizeof(magic_number));
-        magic_number= ReverseInt(magic_number);
-        file.read((char*)&number_of_images,sizeof(number_of_images));
-        number_of_images= ReverseInt(number_of_images);
-        file.read((char*)&n_rows,sizeof(n_rows));
-        n_rows= ReverseInt(n_rows);
-        file.read((char*)&n_cols,sizeof(n_cols));
-        n_cols= ReverseInt(n_cols);
-        for(int i=0;i<number_of_images;++i)
-        {
-            for(int r=0;r<n_rows;++r)
-            {
-                for(int c=0;c<n_cols;++c)
-                {
-                    unsigned char temp=0;
-                    file.read((char*)&temp,sizeof(temp));
-                    arr[i][(n_rows*r)+c]= (double)temp;
-                }
-            }
-        }
-    }
 }*/
 
 
 bool MNISTMatrixImporter::importData(){
 
-//	std::ifstream infile(data_filename, std::ios::in | std::ios::binary);
 	std::ifstream labels_file(labels_filename, std::ios::in | std::ios::binary);
 
 	char buffer[28*28];
@@ -172,6 +146,10 @@ bool MNISTMatrixImporter::importData(){
 		// Fill the indices table(!)
 		for (size_t i=0; i < sample_data.size(); i++ )
 			sample_indices.push_back(i);
+
+		// Count the classes.
+		//countClasses();
+		number_of_classes = 10;
 
 		LOG(LINFO) << "Data import finished";
 

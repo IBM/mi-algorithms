@@ -113,6 +113,10 @@ bool MNISTImageImporter::importData(){
 		for (size_t i=0; i < sample_data.size(); i++ )
 			sample_indices.push_back(i);
 
+		// Count the classes.
+		//countClasses();
+		number_of_classes = 10;
+
 	} else {
 		LOG(LFATAL) << "Oops! Couldn't find file: " << data_filename;
 		return false;

@@ -68,7 +68,7 @@ namespace types {
 typedef mic::types::Sample<char, char> CharSample;
 
 /*!
- * \brief The <char-char> pair type used by e.g. RawTextImporter.
+ * \brief The <char-char> batch type used by e.g. RawTextImporter.
  * \author tkornuta
  */
 typedef mic::types::Batch<char, char> CharBatch;

@@ -13,9 +13,9 @@ namespace encoders {
 using namespace mic::types;
 
 
-std::shared_ptr<mic::types::MatrixXf> MatrixXfMatrixXfEncoder::encodeSample(const std::shared_ptr<mic::types::MatrixXf>& sample_) {
+mic::types::MatrixXfPtr MatrixXfMatrixXfEncoder::encodeSample(const mic::types::MatrixXfPtr& sample_) {
 	// Create new matrix.
-	std::shared_ptr<mic::types::MatrixXf> sdr (new mic::types::MatrixXf(sample_->cols(), sample_->rows()));
+	mic::types::MatrixXfPtr sdr (new mic::types::MatrixXf(sample_->cols(), sample_->rows()));
 	// Copy data.
 	(*sdr) = (*sample_);
 	// Resize.
@@ -24,9 +24,9 @@ std::shared_ptr<mic::types::MatrixXf> MatrixXfMatrixXfEncoder::encodeSample(cons
 }
 
 
-std::shared_ptr<mic::types::MatrixXf> MatrixXfMatrixXfEncoder::decodeSample(const std::shared_ptr<mic::types::MatrixXf>& sdr_) {
+mic::types::MatrixXfPtr MatrixXfMatrixXfEncoder::decodeSample(const mic::types::MatrixXfPtr& sdr_) {
 	// Create new matrix.
-	std::shared_ptr<mic::types::MatrixXf> decoded (new mic::types::MatrixXf(sdr_->cols(), sdr_->rows()));
+	mic::types::MatrixXfPtr decoded (new mic::types::MatrixXf(sdr_->cols(), sdr_->rows()));
 	// Copy data.
 	(*decoded) = (*sdr_);
 	// Resize.

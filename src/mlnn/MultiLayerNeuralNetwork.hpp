@@ -10,9 +10,12 @@
 
 //#include <iomanip>
 
+#include <types/MatrixTypes.hpp>
+
 #include <mlnn/LayerTypes.hpp>
 
 #include <mlnn/importer.h> // TO BE REMOVED, now required for datapoint type :]
+
 
 namespace mic {
 namespace mlnn {
@@ -20,13 +23,11 @@ namespace mlnn {
 class MultiLayerNeuralNetwork {
 public:
 
-	MultiLayerNeuralNetwork(size_t minibatch_size);
+	MultiLayerNeuralNetwork();
 
 	virtual ~MultiLayerNeuralNetwork();
 
 	std::deque<mic::mlnn::Layer*> layers;
-
-	const size_t batch_size;
 
 	void forward(mic::types::MatrixXf& input_data, bool skip_dropout = false);
 
@@ -34,9 +35,34 @@ public:
 
 	void update(float alpha, float decay);
 
-	void train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, size_t classes);
+	void train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, size_t classes, size_t batch_size);
 
-	float test(std::deque<datapoint>& data, size_t classes);
+	float test(std::deque<datapoint>& data, size_t classes, size_t batch_size);
+
+
+	/*!
+	 * Trains the neural network with a given batch.
+	 * @param encoded_batch_ Batch encoded in the form of matrix of size [sample_size x batch_size].
+	 * @param encoded_targets_ Targets (labels) encoded in the form of matrix of size [label_size x batch_size].
+	 * @param learning_rate_ The learning rate.
+	 * @param weight_decay_ Weight decay.
+	 */
+	void train(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_, float learning_rate_, float weight_decay_);
+
+	/*!
+	 * Tests the neural network with a given batch.
+	 * @param encoded_batch_ Batch encoded in the form of matrix of size [sample_size x batch_size].
+	 * @param encoded_targets_ Targets (labels) encoded in the form of matrix of size [label_size x batch_size].
+	 * @return
+	 */
+	float test(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_);
+
+	/*!
+	 * Returns the predictions (output of the forward processing).
+	 * @param predictions_ Predictions in the form of a matrix of size [label_size x batch_size].
+	 */
+	mic::types::MatrixXfPtr getPredictions();
+
 
 	/*!
 	 * Calculates the cross entropy.
@@ -57,8 +83,6 @@ public:
 	size_t countCorrectPredictions(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_);
 
 
-	void save_to_files(std::string prefix);
-
 	/// Returns size (length) of inputs of the last (i.e. previously added) layer.
 	size_t lastLayerInputsSize();
 
@@ -67,6 +91,9 @@ public:
 
 	/// Returns size (length) of (mini)batch of the last (i.e. previously added) layer.
 	size_t lastLayerBatchSize();
+
+	void save_to_files(std::string prefix);
+
 
 };
 

@@ -17,9 +17,9 @@
 namespace mic {
 namespace encoders {
 
-std::shared_ptr<mic::types::MatrixXf> CharMatrixXfEncoder::encodeSample(const std::shared_ptr<char>& sample_) {
+mic::types::MatrixXfPtr CharMatrixXfEncoder::encodeSample(const std::shared_ptr<char>& sample_) {
 	// Create returned SDR - a vector, i.e. a matrix with number of columns equal to 1.
-	std::shared_ptr<mic::types::MatrixXf> sdr (new mic::types::MatrixXf(sdr_length,1));
+	mic::types::MatrixXfPtr sdr (new mic::types::MatrixXf(sdr_length,1));
 	// Set all zeros.
 	sdr->setZero();
 
@@ -36,7 +36,7 @@ std::shared_ptr<mic::types::MatrixXf> CharMatrixXfEncoder::encodeSample(const st
 	return sdr;
 }
 
-std::shared_ptr<char> CharMatrixXfEncoder::decodeSample(const std::shared_ptr<mic::types::MatrixXf>& sdr_) {
+std::shared_ptr<char> CharMatrixXfEncoder::decodeSample(const mic::types::MatrixXfPtr& sdr_) {
 	// SDR must be in fact a vector, with number of columns equal to 1.
 	assert(sdr_->cols() == 1);
 

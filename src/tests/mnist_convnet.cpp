@@ -48,7 +48,7 @@ int main() {
 
 	size_t  fully_connected_size = 256;
 
-	MultiLayerNeuralNetwork nn(batch_size);
+	MultiLayerNeuralNetwork nn;
 
 	//CONV 3x3 -> CONV 3x3 -> POOL 2x
 	nn.layers.push_back(new Convolution(train_data[0].x.rows(), input_channels, filter_size[0], filters[0], batch_size));
@@ -84,14 +84,14 @@ int main() {
 	for (size_t e = 0; e < epochs; e++) {
 
 		std::cout << "Epoch " << e + 1 << std::endl << std::endl;
-		nn.train(train_data, learning_rate, weight_decay, train_data.size() / batch_size, classes);
+		nn.train(train_data, learning_rate, weight_decay, train_data.size() / batch_size, classes, batch_size);
 
 		nn.save_to_files("out/mnist_conv");
 
 		std::cout << "Training finished. Calculating performance for both datasets..." << std::endl;
 
-		double train_acc = nn.test(train_data, classes);
-		double test_acc = nn.test(test_data, classes);
+		double train_acc = nn.test(train_data, classes, batch_size);
+		double test_acc = nn.test(test_data, classes, batch_size);
 
 		std::cout << std::setprecision(2) << "Train : " << 100.0 * train_acc << " %" <<  std::endl;
 		std::cout << std::setprecision(2) << "Test  : " << 100.0 * test_acc << " %" << std::endl;

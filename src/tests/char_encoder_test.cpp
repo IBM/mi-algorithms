@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 
 	// Manualy set sdr and batch size.
 	size_t sdr_size = 128;
-	size_t batch_size = 5;
+	size_t batch_size = 2;
 
 	mic::encoders::CharMatrixXfEncoder encoder(sdr_size);
 
@@ -49,9 +49,10 @@ int main(int argc, char* argv[]) {
 	importer.setDataFilename("/Users/tkornut/Documents/workspace/machine-intelligence-core/data/txt/pl/ep-06-01-16-003.txt");
 	importer.setBatchSize(batch_size);
 
-
 	if (!importer.importData())
 		return -1;
+
+	LOG(LINFO)<<"There were " << importer.classes() << " distinctive classes imported";
 
  	// Main application loop.
 	while (!APP_STATE->Quit()) {
@@ -86,7 +87,7 @@ int main(int argc, char* argv[]) {
 			// Encode the whole batch.
 			std::shared_ptr<mic::types::MatrixXf> batch_matrix = encoder.encodeBatch(batch.data());
 			LOG(LDEBUG)<<" Batched matrix: ";
-			LOG(LDEBUG) << *batch_matrix;
+			LOG(LDEBUG) << (*batch_matrix);
 
 			// Decode batch matrix.
 			std::vector<std::shared_ptr<char> > decoded_batch = encoder.decodeBatch(batch_matrix);

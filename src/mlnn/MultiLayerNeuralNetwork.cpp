@@ -10,7 +10,7 @@
 namespace mic {
 namespace mlnn {
 
-MultiLayerNeuralNetwork::MultiLayerNeuralNetwork(size_t minibatch_size) : batch_size(minibatch_size) { }
+MultiLayerNeuralNetwork::MultiLayerNeuralNetwork() { }
 
 MultiLayerNeuralNetwork::~MultiLayerNeuralNetwork() {
 
@@ -78,7 +78,7 @@ void MultiLayerNeuralNetwork::update(float alpha, float decay) {
 
 }
 
-void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, size_t classes) {
+void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, size_t classes, size_t batch_size) {
 
 	//get random examples of size batch_size from data
 	mic::types::VectorXi random_numbers(batch_size);
@@ -130,7 +130,7 @@ void MultiLayerNeuralNetwork::train(std::deque<datapoint>& data, float alpha, fl
 
 /* TDOO: mic::types::mic::types::MatrixXfXf compute_numerical_gradients(void) { } */
 
-float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data, size_t classes) {
+float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data, size_t classes, size_t batch_size) {
 
 	mic::types::VectorXi numbers(batch_size);
 	mic::types::MatrixXf batch, targets;
@@ -157,6 +157,40 @@ float MultiLayerNeuralNetwork::test(std::deque<datapoint>& data, size_t classes)
 	return (float)correct / (float)(data.size());
 
 }
+
+
+void MultiLayerNeuralNetwork::train(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_, float learning_rate_, float weight_decay_) {
+
+	// Forward activations.
+	forward(*encoded_batch_);
+
+	// Get predictions.
+	mic::types::MatrixXfPtr encoded_predictions = getPredictions();
+
+	// Backprogagation
+	backward(*encoded_targets_);
+
+	// Apply changes
+	update(learning_rate_, weight_decay_);
+
+	// Calculate the statistics.
+	size_t correct = countCorrectPredictions(*encoded_predictions, *encoded_targets_);
+	float loss = calculateCrossEntropy( *encoded_predictions, *encoded_targets_);
+	std::cout << " Loss = " << std::setprecision(2) << std::setw(6) << loss << " | " << std::setprecision(1) << std::setw(4) << std::fixed << 100.0 * (float)correct / (float)encoded_batch_->cols() << "% batch correct" << std::endl;
+
+}
+
+
+float MultiLayerNeuralNetwork::test(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_) {
+	// skip dropout layers at test time
+	bool skip_dropout = true;
+
+	forward(*encoded_batch_, skip_dropout);
+
+	return countCorrectPredictions(*(getPredictions()), *encoded_targets_);
+
+}
+
 
 size_t MultiLayerNeuralNetwork::countCorrectPredictions(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_) {
 
@@ -223,6 +257,10 @@ size_t MultiLayerNeuralNetwork::lastLayerOutputsSize() {
 
 size_t MultiLayerNeuralNetwork::lastLayerBatchSize() {
 	return layers.back()->batchSize();
+}
+
+mic::types::MatrixXfPtr MultiLayerNeuralNetwork::getPredictions() {
+	return layers[layers.size() - 1]->s['y'];
 }
 
 

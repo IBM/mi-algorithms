@@ -260,6 +260,7 @@ if(${BUILD_TEST_MNIST_CNN_APP})
 			logger
 	        types
 			data_io
+			auto_encoders
 			mlnn
 		    ${Boost_LIBRARIES}
 		    ${EIGEN_LIBRARIES}
@@ -288,6 +289,7 @@ if(${BUILD_MNIST_MLP_APP})
 			logger
 	        types
 			data_io
+			auto_encoders
 			mlnn
 	        ${Boost_LIBRARIES}
 	        ${EIGEN_LIBRARIES}

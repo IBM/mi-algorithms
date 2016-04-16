@@ -37,6 +37,8 @@ public:
 		this->sample_data = batch_.sample_data;
 		this->sample_labels = batch_.sample_labels;
 		this->sample_indices = batch_.sample_indices;
+		// And number of classes.
+		this->number_of_classes = batch_.number_of_classes;
 	}
 
 	/*!
@@ -49,7 +51,9 @@ public:
 		this->sample_data = batch_.sample_data;
 		this->sample_labels = batch_.sample_labels;
 		this->sample_indices = batch_.sample_indices;
-		// Return object.
+		// And number of classes.
+		this->number_of_classes = batch_.number_of_classes;
+		// Return the object.
 		return *this;
 	}
 
@@ -148,6 +152,8 @@ public:
 
 		// New empty batch.
 		mic::types::Batch<DataType, LabelType> batch;
+		// Set number of classes.
+		batch.number_of_classes = number_of_classes;
 
 		// For all indices.
 		for (size_t local_index: indices_) {
@@ -228,6 +234,13 @@ public:
 		sample_indices.push_back(index_);
 	}
 
+	/*!
+	 * Returns the number of distinctive classes.
+	 * @return Number of classes.
+	 */
+	size_t classes() {
+		return number_of_classes;
+	}
 protected:
 
 	/// Stores the data.
@@ -238,6 +251,12 @@ protected:
 
 	/// Stores sample indices (sample "positions" in original dataset).
 	std::vector <size_t> sample_indices;
+
+	/*!
+	 * Number of distinctive classes in the (main) dataset.
+	 */
+	size_t number_of_classes;
+
 };
 
 

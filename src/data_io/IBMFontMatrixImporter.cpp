@@ -68,6 +68,9 @@ bool IBMFontMatrixImporter::importData(){
 	for (size_t i=0; i < sample_data.size(); i++ )
 		sample_indices.push_back(i);
 
+	// Count the classes.
+	countClasses();
+
 	LOG(LINFO) << "Data import finished";
 
 	return true;
