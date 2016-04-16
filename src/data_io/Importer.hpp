@@ -16,6 +16,8 @@
 #include <logger/Log.hpp>
 #include <configuration/PropertyTree.hpp>
 
+#include <types/Batch.hpp>
+
 namespace mic {
 
 /**
@@ -29,23 +31,23 @@ namespace data_io {
  * @brief Parent class for all data importers.
  *
  * @author tkornuta
- * @tparam dataType Template parameter defining the imported datatype.
- * @tparam labelType Template parameters defining the datatype of label.
+ * @tparam DataType Template parameter defining the imported datatype.
+ * @tparam LabelType Template parameters defining the datatype of label.
  */
-template <typename dataType, typename labelType>
-class Importer : public configuration::PropertyTree {
+template <typename DataType, typename LabelType>
+class Importer : public mic::types::Batch<DataType, LabelType>, public mic::configuration::PropertyTree {
 public:
 	/*!
 	 * Constructor. Initializes random generator and sets index to zero. Registers index property.
 	 * @param node_name_ Name of the node in configuration file.
 	 */
-	Importer(std::string node_name_, size_t batch_size_ = 1) : PropertyTree(node_name_),
-		index("index",0),
+	Importer(std::string node_name_, size_t batch_size_ = 1) : mic::types::Batch<DataType, LabelType>::Batch(), PropertyTree(node_name_),
+		next_sample_index("next_sample_index",0),
 		batch_size("batch_size", batch_size_),
 		rng_mt19937_64(rd())
 	{
 		// Register properties - so their values can be overridden (read from the configuration file).
-		registerProperty(index);
+		registerProperty(next_sample_index);
 		registerProperty(batch_size);
 	}
 
@@ -56,68 +58,68 @@ public:
 	}
 
 	/*!
-	 * Abstract method responsible for importing/loading the data.
+	 * Abstract method responsible for importing/loading the samples.
 	 * @return TRUE if data loaded successfully, FALSE otherwise.
 	 */
 	virtual bool importData() = 0;
 
-	/*!
+	/*
 	 * Returns the imported data.
 	 */
-	std::vector< std::shared_ptr<dataType> > & getData() {
+/*	std::vector< std::shared_ptr<DataType> > & getData() {
 		return data;
-	}
+	}*/
 
-	/*!
+	/*
 	 * Returns the imported labels.
 	 */
-	std::vector< std::shared_ptr<labelType> > & getLabels() {
+/*	std::vector< std::shared_ptr<LabelType> > & getLabels() {
 		return labels;
-	}
+	}*/
 
 	/*!
 	 * Picks a random sample from the dataset (the same sample can be selected many times - n-tuples).
-	 * @return Sample - a pair of <shared pointers to samples and labels>.
+	 * @return Sample containing shared pointer to sample data, its label and sample number.
 	 */
-	std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > getRandomSample() {
+	mic::types::Sample<DataType, LabelType> getRandomSample() {
 
 		// Initialize uniform index distribution - integers.
-		std::uniform_int_distribution<> index_dist(0, data.size()-1);
+		std::uniform_int_distribution<> index_dist(0, this->sample_data.size()-1);
 
 		// Pick an index.
 		unsigned int tmp_index= index_dist(rng_mt19937_64);
 
-		LOG(LDEBUG) << "data size = " << data.size() << " labels size = " << labels.size() << " index = " << tmp_index;
+		LOG(LDEBUG) << "data size = " << this->sample_data.size() << " labels size = " << this->sample_labels.size() << " index = " << tmp_index;
 
 		// Return data.
-		return getSample(tmp_index);
+		return this->getSampleDirect(tmp_index);
 	}
 
 	/*!
 	 * Iterates through samples and returns them one by one.
 	 * After returning the last element from the dataset the procedure starts from the beginning.
 	 * This behaviour can be avoided by manualy calling the isLastSample() method.
-	 * @return Sample - a pair of <shared pointers to samples and labels>.
+	 * @return Sample containing shared pointer to sample data, its label and sample number.
 	 */
-	std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > getNextSample() {
+	mic::types::Sample<DataType, LabelType> getNextSample() {
 
 		// Check index.
-		if(index >= data.size()){
+		if(next_sample_index >= this->sample_data.size()){
 			// Reset index.
-			index = 0;
+			next_sample_index = 0;
 		}
 		// Return given sample and increment index afterwards.
-		std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > sample = getSample(index);
-		index += 1; 
-		return getSample(sample);
+		mic::types::Sample<DataType, LabelType > sample = this->getSampleDirect(next_sample_index);
+		next_sample_index += 1;
+		return sample;
 	}
 
-	/*!
+	/*
 	 * Returns sample with given index. If index is out of dataset range throws an "std::out_of_range" exception.
 	 * @param index_ Sample index.
-	 * @return Sample - a pair of <shared pointers to samples and labels>.
+	 * @return Sample containing shared pointer to sample data, its label and sample number.
 	 */
-	std::pair<std::shared_ptr<dataType>, std::shared_ptr<labelType> > getSample(size_t index_) {
+	/*mic::types::Sample<DataType, LabelType> getSample(size_t index_) {
 
 		// Check index.
 		if ((index_ < 0) || (index_ >= data.size())){
@@ -126,33 +128,33 @@ public:
 		}//: if
 
 		// Get data
-		std::shared_ptr<dataType> data_ptr = data[index_];
-		std::shared_ptr<labelType> label_ptr = labels[index_];
+		std::shared_ptr<DataType> data_ptr = data[index_];
+		std::shared_ptr<LabelType> label_ptr = labels[index_];
 
 		// Return data.
-		return std::make_pair (data_ptr, label_ptr);
+		return mic::types::Sample<DataType, LabelType> (data_ptr, label_ptr, index_);
 
-	}
+	}*/
 
 
 	/*!
 	 * Returns a batch of random samples.
-	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>.
+	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
 	 */
-	std::pair< std::vector< std::shared_ptr<dataType> >, std::vector< std::shared_ptr<labelType> > > getRandomBatch() {
+	mic::types::Batch<DataType, LabelType> getRandomBatch() {
 
 		// Initialize uniform index distribution - integers.
-		std::uniform_int_distribution<> index_dist(0, data.size()-1);
+		std::uniform_int_distribution<> index_dist(0, this->sample_data.size()-1);
 
-		std::vector<size_t> indices;
+		std::vector<size_t> tmp_indices;
 		for (size_t i=0; i<batch_size; i++) {
 			// Pick an index.
-			indices.push_back((size_t)index_dist(rng_mt19937_64));
+			tmp_indices.push_back((size_t)index_dist(rng_mt19937_64));
 
 		}//: batch_size
 
 		// Return data.
-		return getBatch(indices);
+		return this->getBatchDirect(tmp_indices);
 	}
 
 
@@ -160,41 +162,40 @@ public:
 	 * Iterates through samples and returns them batch by batch.
 	 * After returning the last possible batch from the dataset the procedure starts from the beginning.
 	 * This behaviour can be avoided by manualy calling the isLastBatch() method.
-	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>.
+	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
 	 */
-	std::pair< std::vector< std::shared_ptr<dataType> >, std::vector< std::shared_ptr<labelType> > > getNextBatch() {
+	mic::types::Batch<DataType, LabelType> getNextBatch() {
 
 		// Check index.
-		if((index+batch_size) >= data.size()){
+		if((next_sample_index+batch_size) >= this->sample_data.size()){
 			// Reset index.
-			index = 0;
+			next_sample_index = 0;
 		}
 		// Generate list of indices.
 		std::vector<size_t> indices;
 		for (size_t i=0; i<batch_size; i++) {
 			// Pick an index.
-			indices.push_back((size_t)(index+i));
+			indices.push_back((size_t)(next_sample_index+i));
 
 		}//: batch_size
 
 		// Increment index.
-		index = (size_t)index + (size_t)batch_size;
+		next_sample_index = (size_t)next_sample_index + (size_t)batch_size;
 		// Return data.
-		return getBatch(indices);
+		return this->getBatchDirect(indices);
 	}
 
 
-	/*!
+	/*
 	 * Returns batch of samples with given indices.
 	 * If any of the indices is out of dataset range throws an "std::out_of_range" exception.
 	 * @param indices_ Vector of indices
-	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>.
+	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
 	 */
-	std::pair< std::vector< std::shared_ptr<dataType> >, std::vector< std::shared_ptr<labelType> > > getBatch(std::vector<size_t> indices_) {
+/*	mic::types::Batch<DataType, LabelType> getBatch(std::vector<size_t> indices_) {
 
-		// Empty two vectors that will be combined into batch at the end.
-		std::vector< std::shared_ptr<dataType> > batch_data;
-		std::vector< std::shared_ptr<labelType> > batch_labels;
+		// New empty batch.
+		mic::types::Batch<DataType, LabelType> batch;
 
 		// For all indices.
 		for (size_t local_index: indices_) {
@@ -205,23 +206,22 @@ public:
 			}//: if
 
 			// Get data
-			std::shared_ptr<dataType> data_ptr = data[local_index];
-			std::shared_ptr<labelType> label_ptr = labels[local_index];
+			std::shared_ptr<DataType> data_ptr = data[local_index];
+			std::shared_ptr<LabelType> label_ptr = labels[local_index];
 
-			// Add sample to vectors.
-			batch_data.push_back(data_ptr);
-			batch_labels.push_back(label_ptr);
+			// Add sample to batch.
+			batch.add(data_ptr, label_ptr, local_index);
 		}
 		// Return batch.
-		return std::make_pair (batch_data, batch_labels);
-	}
+		return batch;
+	}*/
 
 	/*!
 	 * Sets the index of the next returned sample.
 	 * @param index_ Sample index.
 	 */
-	void setSampleIndex(size_t index_ = 0) {
-		index = index_;
+	void setNextSampleIndex(size_t index_ = 0) {
+		next_sample_index = index_;
 	}
 
 	/*!
@@ -237,7 +237,7 @@ public:
 	 * @return True if the sample was the last one.
 	 */
 	bool isLastSample() {
-		return (index >= data.size());
+		return (next_sample_index >= this->sample_data.size());
 	}
 
 	/*!
@@ -245,24 +245,25 @@ public:
 	 * @return True if the batch was the last one.
 	 */
 	bool isLastBatch() {
-		return ((index+batch_size) >= data.size());
+		return ((next_sample_index+batch_size) >= this->sample_data.size());
 	}
 
 protected:
-	/*!
+	/*
 	 * Contains the imported data.
 	 */
-	std::vector< std::shared_ptr<dataType> > data;
+	//std::vector< std::shared_ptr<DataType> > sample_data;
 
-	/*!
+	/*
 	 * Contains the imported labels.
 	 */
-	std::vector< std::shared_ptr<labelType> > labels;
+	//std::vector< std::shared_ptr<LabelType> > sample_labels;
+	//std::vector< size_t > sample_indices;
 
-	/*!
+	/*
 	 * Property: index of the returned sample - it is used ONLY in getNextSample (i.e. iterative, not random sampling) method.
 	 */
-	mic::configuration::Property<size_t> index;
+	mic::configuration::Property<size_t> next_sample_index;
 
 	/*!
 	 * Batch size. As defaults set to one.

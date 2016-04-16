@@ -63,28 +63,28 @@ int main(int argc, char* argv[]) {
 			if (APP_STATE->isSingleStepModeOn())
 				APP_STATE->pressPause();
 
-			// Random select image.
-			char_char_pair_t sample = importer.getRandomSample();
+			// Random select sample.
+			CharSample sample = importer.getRandomSample();
 
-			// Encode the selected image into SDR.
-			std::shared_ptr<mic::types::MatrixXf> sdr = encoder.encodeSample(sample.first);
+			// Encode the selected sample into SDR.
+			std::shared_ptr<mic::types::MatrixXf> sdr = encoder.encodeSample(sample.data());
 
 			// Decode SDR.
 			std::shared_ptr<char> dec_char = encoder.decodeSample(sdr);
 
 			// Display result.
-			LOG(LINFO)<<" Orig = '" << *(sample.first) << "' decoded SDR = '" << (*dec_char) << "' label = '" << *(sample.second) << "'";
+			LOG(LINFO)<<" Orig = '" << *(sample.data()) << "' decoded SDR = '" << (*dec_char) << "' label = '" << *(sample.label()) << "'";
 
 			// Get next batch.
-			char_char_batch_t batch = importer.getNextBatch();
+			CharBatch batch = importer.getNextBatch();
 			LOG(LINFO)<<" Batch: ";
-			for (size_t i=0; i < batch.first.size(); i++ ) {
-				LOG(LINFO)<<" ["<<i<< "] = '" << *(batch.first[i]) <<"'";
+			for (size_t i=0; i < batch.size(); i++ ) {
+				LOG(LINFO)<<" ["<<i<< "] = '" << *(batch.data(i)) <<"'";
 			}//: for
 
 
 			// Encode the whole batch.
-			std::shared_ptr<mic::types::MatrixXf> batch_matrix = encoder.encodeBatch(batch.first);
+			std::shared_ptr<mic::types::MatrixXf> batch_matrix = encoder.encodeBatch(batch.data());
 			LOG(LDEBUG)<<" Batched matrix: ";
 			LOG(LDEBUG) << *batch_matrix;
 

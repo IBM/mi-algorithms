@@ -96,7 +96,7 @@ bool MNISTMatrixImporter::importData(){
 
 					unsigned int temp_label = (unsigned int)buffer[0];
 
-					labels.push_back(std::make_shared <unsigned int> (temp_label) );
+					sample_labels.push_back(std::make_shared <unsigned int> (temp_label) );
 
 				}//: if !eof
 			}//: while !eof
@@ -109,7 +109,7 @@ bool MNISTMatrixImporter::importData(){
 		return false;
 	}
 
-	LOG(LINFO) << "Imported " << labels.size() << " labels";
+	LOG(LINFO) << "Imported " << sample_labels.size() << " labels";
 
 	offset_bytes = 16;
 
@@ -161,14 +161,19 @@ bool MNISTMatrixImporter::importData(){
 
 				}//: for
 
-				data.push_back(mat);
+				sample_data.push_back(mat);
 			}//: if !eof
 
 		}//: while !eof
 
-		LOG(LINFO) << "Imported " << data.size() << " MNIST images";
-		LOG(LINFO) << "Data import finished";
+		LOG(LINFO) << "Imported " << sample_data.size() << " MNIST images";
 		data_file.close();
+
+		// Fill the indices table(!)
+		for (size_t i=0; i < sample_data.size(); i++ )
+			sample_indices.push_back(i);
+
+		LOG(LINFO) << "Data import finished";
 
 	} else {
 		LOG(LFATAL) << "Oops! Couldn't find file: " << data_filename;

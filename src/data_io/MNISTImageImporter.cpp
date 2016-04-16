@@ -52,7 +52,8 @@ bool MNISTImageImporter::importData(){
 				if (!labels_file.eof()) {
 					unsigned int temp_label = (unsigned int)buffer[0];
 
-					labels.push_back(std::make_shared <unsigned int> (temp_label) );
+					sample_labels.push_back(std::make_shared <unsigned int> (temp_label) );
+
 				}//: if !eof
 			}//: while !eof
 
@@ -63,7 +64,7 @@ bool MNISTImageImporter::importData(){
 		LOG(LFATAL) << "Oops! Couldn't find file: " << labels_filename;
 		return false;
 	}//: else
-	LOG(LINFO) << "Imported " << labels.size() << " labels";
+	LOG(LINFO) << "Imported " << sample_labels.size() << " labels";
 
 	LOG(LSTATUS) << "Importing MNIST images from file: " << data_filename;
 	// Read file containing images (binary format).
@@ -86,7 +87,7 @@ bool MNISTImageImporter::importData(){
 				std::shared_ptr<mic::types::image> img_ptr (new mic::types::image());
 
 				// Set image label ID - DEPRICATED.
-				img_ptr->label_id = *labels[(unsigned int)count++];
+				img_ptr->label_id = *sample_labels[(unsigned int)count++];
 
 				// Alloc image data.
 				mic::data_utils::alloc_image( img_ptr.get(), mic::types::GRAYSCALE, image_width, image_height);
@@ -100,13 +101,17 @@ bool MNISTImageImporter::importData(){
 					set_color_float( img_ptr.get(), mic::types::GRAY, row, col, (float)(uint8_t)buffer[i]/255.0f);
 				}//: for
 				// Add image to data vector.
-				data.push_back( img_ptr );
+				sample_data.push_back( img_ptr );
 			}//: if !eof
 
 		}//: while !eof
 
-		LOG(LINFO) << "Imported " << data.size() << " MNIST images";
+		LOG(LINFO) << "Imported " << sample_data.size() << " MNIST images";
 		data_file.close();
+
+		// Fill the indices table(!)
+		for (size_t i=0; i < sample_data.size(); i++ )
+			sample_indices.push_back(i);
 
 	} else {
 		LOG(LFATAL) << "Oops! Couldn't find file: " << data_filename;

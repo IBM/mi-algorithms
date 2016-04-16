@@ -1,53 +1,85 @@
 /*!
- * \file DataLabelPair.hpp
+ * \file Sample.hpp
  * \brief 
- * \author tkornut
+ * \author tkornuta
  * \date Mar 30, 2016
  */
 
 #ifndef SRC_TYPES_SAMPLE_HPP_
 #define SRC_TYPES_SAMPLE_HPP_
 
+#include <memory>
+
 namespace mic {
 namespace types {
 
 /*!
- * \brief Structure for storing the data-label pairs. Additionally stores the number of sample.
+ * \brief Template class storing the data-label pairs. Additionally it stores the the index of the sample (mainly for debug purposes).
+ * @tparam DataType Template parameter defining the sample data type.
+ * @tparam LabelType Template parameters defining the sample label label.
  * \author tkornuta
  */
-template<typename DATA, typename LABEL>
-struct Sample {
+template<typename DataType, typename LabelType>
+class Sample {
 public:
 	/*!
 	 * Constructor.
-	 * @param data_
-	 * @param label_
+	 * @param data_ The sample itself (data).
+	 * @param label_ Sample label.
+	 * @param index_ Sample index.
 	 */
-	Sample(DATA data_, LABEL label_, size_t number_= -1) : data(data_), label(label_), sample_number(number_) { }
+	Sample(std::shared_ptr<DataType> data_, std::shared_ptr<LabelType> label_, size_t index_= -1) : sample_data(data_), sample_label(label_), sample_index(index_) { }
 
+	/*!
+	 * Copy constructor.
+	 * @param sample_ Sample to be copied.
+	 */
+	Sample(const mic::types::Sample<DataType, LabelType>& sample_) : sample_data(sample_.data()), sample_label(sample_.label()), sample_index(sample_.index()) { }
+
+	/*!
+	 * Assignment operator - sets pointers and number.
+	 * @param sample_ Sample to be copied.
+	 * @return An exact copy of the input sample.
+	 */
+	mic::types::Sample<DataType, LabelType>& operator =(const mic::types::Sample<DataType, LabelType>& sample_) {
+		// Copy sample data.
+		this->sample_data = sample_.sample_data;
+		this->sample_label = sample_.sample_label;
+		this->sample_index = sample_.sample_index;
+		// Return object.
+		return *this;
+	}
+
+	/*!
+	 * Destructor. Empty for now.
+	 */
 	virtual ~Sample() { };
 
+	/// Returns the sample data.
+	std::shared_ptr<DataType> data() const {
+		return sample_data;
+	}
+
+	/// Returns the returns the sample label.
+	std::shared_ptr<LabelType> label() const {
+		return sample_label;
+	}
+
+	/// Returns the sample number (the sample "position" in original dataset).
+	size_t index() const {
+		return sample_index;
+	}
+
+private:
 	/// Stores the data.
-	DATA data;
+	std::shared_ptr<DataType> sample_data;
 
 	/// Stores the label.
-	LABEL label;
+	std::shared_ptr<LabelType> sample_label;
 
-	/// The sample number (thr position in original dataset).
-	size_t sample_number;
+	/// The sample index (the sample "position" in original dataset).
+	size_t sample_index;
 };
-
-/*!
- * A function returning the DataLabelPair for given sample (analog to std::make_pair).
- * @param data_
- * @param label_
- * @param number_
- * @return
- */
-template<typename DATA, typename LABEL>
-mic::types::Sample<DATA, LABEL> makeSample(DATA data_, LABEL label_, size_t number_ = -1) {
-	return Sample<DATA, LABEL>(data_, label_, number_);
-}
 
 
 } /* namespace types */
