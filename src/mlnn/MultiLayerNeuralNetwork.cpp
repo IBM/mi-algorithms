@@ -260,7 +260,7 @@ size_t MultiLayerNeuralNetwork::lastLayerBatchSize() {
 }
 
 mic::types::MatrixXfPtr MultiLayerNeuralNetwork::getPredictions() {
-	return layers[layers.size() - 1]->s['y'];
+	return layers.back()->s['y'];
 }
 
 

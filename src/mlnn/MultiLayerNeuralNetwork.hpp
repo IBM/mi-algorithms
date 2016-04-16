@@ -83,13 +83,13 @@ public:
 	size_t countCorrectPredictions(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_);
 
 
-	/// Returns size (length) of inputs of the last (i.e. previously added) layer.
+	/// Returns the size (length) of inputs of the last (i.e. previously added) layer.
 	size_t lastLayerInputsSize();
 
-	/// Returns size (length) of outputs of the last (i.e. previously added) layer.
+	/// Returns the size (length) of outputs of the last (i.e. previously added) layer.
 	size_t lastLayerOutputsSize();
 
-	/// Returns size (length) of (mini)batch of the last (i.e. previously added) layer.
+	/// Returns the size (length) of (mini)batch of the last (i.e. previously added) layer.
 	size_t lastLayerBatchSize();
 
 	void save_to_files(std::string prefix);

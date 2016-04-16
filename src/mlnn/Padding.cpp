@@ -20,50 +20,77 @@ void Padding::forward(bool test) {
 
 	//pad((*s['x']), (*s['y']), channels, padding);
 
-	std::cout<<"ERROR! pad not implemented\n";
-	(*s['y']) =  (*s['x']);
+	size_t batch_size = (*s['x']).cols();
+	size_t image_size = sqrt((*s['x']).rows() / channels);
+	size_t padded_size = sqrt((*s['y']).rows() / channels);
 
-}
-
-/*void pad(mic::types::MatrixXf& x, mic::types::MatrixXf& x_padded, size_t kernel_size, size_t input_channels) {
-
-	size_t padding = kernel_size / 2;
-	size_t batch_size = x.cols();
-	size_t image_size = sqrt(x.rows() / input_channels);
-	size_t padded_size = sqrt(x_padded.rows() / input_channels);
+	(*s['y']).setZero();
 
 	#pragma omp parallel for
 	for (size_t b = 0; b < batch_size; b++) {
 
 		mic::types::MatrixXf im_channel = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(image_size, image_size);
-		mic::types::MatrixXf im_padded = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size, padded_size * input_channels);
-		mic::types::MatrixXf image = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(x.rows(), 1);
+		mic::types::MatrixXf im_padded = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size, padded_size * channels);
+		mic::types::MatrixXf image = (Eigen::MatrixXf)Eigen::MatrixXf::Zero((*s['x']).rows(), 1);
 
-		image = x.col(b);
-		image.resize(image_size, image_size * input_channels);
+		image = (*s['x']).col(b);
+		image.resize(image_size, image_size * channels);
 
-		for (size_t f = 0; f < input_channels; f++) {
+		mic::types::MatrixXf padded_channel = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size, padded_size);
+
+		for (size_t f = 0; f < channels; f++) {
 
 			im_channel = image.block(0, f * image_size, image_size, image_size);
-			mic::types::MatrixXf padded_channel = (Eigen::MatrixXf)(Eigen::MatrixXf::Ones(padded_size, padded_size) * 0.5);
+			padded_channel.setZero();
 			padded_channel.block(padding, padding, image_size, image_size) = im_channel;
 			im_padded.block(0, f * padded_size, padded_size, padded_size) = padded_channel;
 
 		}
 
-		im_padded.resize(padded_size * padded_size * input_channels, 1);
-		x_padded.col(b) = im_padded;
+		im_padded.resize(padded_size * padded_size * channels, 1);
+		(*s['y']).col(b) = im_padded;
 
 	}
 
-}*/
+}
+
+
 
 void Padding::backward() {
 
 	//unpad((*g['x']), (*g['y']), channels, padding);
 
-	std::cout<<"ERROR! unpad not implemented\n";
-	(*g['x']) =  (*g['y']);
+	size_t batch_size = (*g['x']).cols();
+	size_t image_size = sqrt((*g['x']).rows() / channels);
+	size_t padded_size = sqrt((*g['y']).rows() / channels);
+
+	(*g['x']).setZero();
+
+	#pragma omp parallel for
+	for (size_t b = 0; b < batch_size; b++) {
+
+		mic::types::MatrixXf im_channel_padded = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size, padded_size);
+		mic::types::MatrixXf im = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(image_size, image_size * channels);
+		mic::types::MatrixXf im_channel = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(image_size, image_size);
+		mic::types::MatrixXf image_padded = (Eigen::MatrixXf)Eigen::MatrixXf::Zero((*g['y']).rows(), 1);
+
+		image_padded = (*g['y']).col(b);
+		image_padded.resize(padded_size, padded_size * channels);
+
+		mic::types::MatrixXf padded_channel = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(padded_size, padded_size);
+
+		for (size_t f = 0; f < channels; f++) {
+
+			im_channel_padded = image_padded.block(0, f * padded_size, padded_size, padded_size);
+			im_channel = im_channel_padded.block(padding, padding, image_size, image_size);
+			im.block(0, f * image_size, image_size, image_size) = im_channel;
+
+		}
+
+		im.resize(image_size * image_size * channels, 1);
+		(*g['x']).col(b) = im;
+
+	}
 }
 
 
