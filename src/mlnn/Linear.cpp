@@ -17,7 +17,7 @@ Linear::Linear(size_t inputs_, size_t outputs_, size_t batch_size_) :
 	b = (Eigen::VectorXf)Eigen::VectorXf::Zero(outputs_);
 	double range = sqrt(6.0 / double(inputs_ + outputs_));
 
-	rand(W, -range, range);
+	W.rand(-range, range);
 
 	mW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
 	mb = mic::types::VectorXf::Zero(b.rows());

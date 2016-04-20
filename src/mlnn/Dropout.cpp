@@ -25,7 +25,8 @@ void Dropout::forward(bool test) {
 	} else {
 
 		mic::types::MatrixXf rands = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(s['y']->rows(), s['y']->cols());
-		rand(rands, 0.0f, 1.0f);
+		//rand(rands, 0.0f, 1.0f);
+		rands.rand(0.0f, 1.0f);
 
 		//dropout mask - 1s - preserved elements
 		dropout_mask = (rands.array() < keep_ratio).cast <float> ();

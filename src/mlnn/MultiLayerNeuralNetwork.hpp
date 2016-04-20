@@ -8,13 +8,9 @@
 #ifndef SRC_MLNN_MULTILAYERNEURALNETWORK_HPP_
 #define SRC_MLNN_MULTILAYERNEURALNETWORK_HPP_
 
-//#include <iomanip>
-
 #include <types/MatrixTypes.hpp>
 
 #include <mlnn/LayerTypes.hpp>
-
-#include <mlnn/importer.h> // TO BE REMOVED, now required for datapoint type :]
 
 
 namespace mic {
@@ -34,11 +30,6 @@ public:
 	void backward(mic::types::MatrixXf& t);
 
 	void update(float alpha, float decay);
-
-	void train(std::deque<datapoint>& data, float alpha, float decay, size_t iterations, size_t classes, size_t batch_size);
-
-	float test(std::deque<datapoint>& data, size_t classes, size_t batch_size);
-
 
 	/*!
 	 * Trains the neural network with a given batch.

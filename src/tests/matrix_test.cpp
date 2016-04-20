@@ -110,8 +110,8 @@ int main(int argc, char* argv[]) {
 	mic::types::MatrixXf nm_zero = (Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>)Eigen::MatrixXf::Zero(N,M);
 
 	// Initialize matrices with random numbers.
-	nm.normRandReal(1, 0.001);
-	mk.normRandReal(1, 0.001);
+	nm.randn(1, 0.001);
+	mk.randn(1, 0.001);
 	//std::cout <<"nm=\n" << nm <<  std::endl;
 
 	// Initialize vector.
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
 
 	// Elementwise function test.
 	mic::types::MatrixXf nm2(N, M);
-	nm2.normRandReal(1, 0.00001);
+	nm2.randn(1, 0.00001);
 	std::cout <<"nm2=\n" << nm2 <<  std::endl;
 	nm.elementwiseFunctionMatrix(&_add, nm2);
 	std::cout <<"nm+=nm2\n" << nm <<  std::endl;

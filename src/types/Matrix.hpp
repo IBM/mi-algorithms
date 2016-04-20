@@ -168,41 +168,41 @@ public:
 	 * @param mean Mean
 	 * @param stddev Variance
 	 */
-	void normRandReal(T mean = 0, T stddev = 1) {
+	void randn(T mean = 0, T stddev = 1) {
 
 		// Initialize random number generator with normal distribution.
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::normal_distribution<> dist(mean, stddev);
+		std::normal_distribution<double> dist(mean, stddev);
 
 		// Get access to data.
 		T* data_ptr = this->data();
 
 #pragma omp parallel for
 		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
-			data_ptr[i] = dist(mt);
+			data_ptr[i] = (T)dist(mt);
 		}
 	}
 
 	/*!
-	 * Set values of all matrix elements to random real numbers from range <min, max> - uniform distribution.
+	 * Set values of all matrix elements to random numbers from range <min, max> - uniform distribution.
 	 * @param min Min value.
 	 * @param max Max value.
 	 * @return Random real value.
 	 */
-	void uniRandReal(T min = 0, T max = 1) {
+	void rand(T min = 0, T max = 1) {
 
 		// Initialize random number generator with normal distribution.
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::uniform_real_distribution<> dist(min, max);
+		std::uniform_real_distribution<double> dist(min, max);
 
 		// Get access to data.
-		float* data_ptr = this->data();
+		T* data_ptr = this->data();
 
 #pragma omp parallel for
 		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
-			data_ptr[i] = dist(rd);
+			data_ptr[i] = (T)dist(rd);
 		}
 	}
 

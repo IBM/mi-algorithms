@@ -29,17 +29,6 @@ int main() {
 	LOGGER->addOutput(co);
 
 
-	MultiLayerNeuralNetwork nn;
-
-	// Create a simple NN for classification (should give around 95.3% accuracy)
-	//MNIST - 28x28 -> 256 -> 100 -> 10
-	nn.layers.push_back(new Linear(28 * 28, 256, batch_size));
-	nn.layers.push_back(new ReLU(256, 256, batch_size));
-	nn.layers.push_back(new Linear(256, 100, batch_size));
-	nn.layers.push_back(new ReLU(100, 100, batch_size));
-	nn.layers.push_back(new Linear(100, 10, batch_size));
-	nn.layers.push_back(new Softmax(10, 10, batch_size));
-
 	//[60000, 784]
 	// Load the MNIST training...
 	mic::data_io::MNISTMatrixImporter training;
@@ -64,6 +53,17 @@ int main() {
 	// Initialize the encoders.
 	mic::encoders::MatrixXfMatrixXfEncoder mnist_encoder(28, 28);
 	mic::encoders::UIntMatrixXfEncoder label_encoder(10);
+
+	// Create a simple NN for classification (should give around 95.3% accuracy)
+	//MNIST - 28x28 -> 256 -> 100 -> 10
+	MultiLayerNeuralNetwork nn;
+	nn.layers.push_back(new Linear(28 * 28, 256, batch_size));
+	nn.layers.push_back(new ReLU(256, 256, batch_size));
+	nn.layers.push_back(new Linear(256, 100, batch_size));
+	nn.layers.push_back(new ReLU(100, 100, batch_size));
+	nn.layers.push_back(new Linear(100, 10, batch_size));
+	nn.layers.push_back(new Softmax(10, 10, batch_size));
+
 
 	// std::cout << "Before training..." << std::endl;
 	// nn.test(test_data);

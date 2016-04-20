@@ -26,7 +26,7 @@ Convolution::Convolution(size_t inputs, size_t channels, size_t filter_size, siz
 	size_t fan_out = filters * filter_size * filter_size;
 	double range = sqrt(6.0 / double(fan_in + fan_out));
 
-	rand(W, -range, range);
+	W.rand(-range, range);
 
 	mW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
 	mb = mic::types::VectorXf::Zero(b.rows());

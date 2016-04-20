@@ -37,8 +37,8 @@ int main() {
 
 	ma1.add (std::make_tuple ( "w", M, N ));
 
-	ma1["x"]->normRandReal(1, 0.00001);
-	ma1["w"]->normRandReal(1, 0.00001);
+	ma1["x"]->randn(1, 0.00001);
+	ma1["w"]->randn(1, 0.00001);
 
 
 	mic::types::MatrixArray<double> ma2 = ma1;
