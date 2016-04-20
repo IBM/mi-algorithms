@@ -10,16 +10,17 @@
 namespace mic {
 namespace mlnn {
 
-MultiLayerNeuralNetwork::MultiLayerNeuralNetwork() { }
+MultiLayerNeuralNetwork::MultiLayerNeuralNetwork(std::string name_ ) : name(name_) { }
 
 MultiLayerNeuralNetwork::~MultiLayerNeuralNetwork() {
 
-	for (size_t i = 0; i < layers.size(); i++) {
+/*	for (size_t i = 0; i < layers.size(); i++) {
 
 		delete(layers[i]);
-	}
+	}*/
 
 }
+
 
 void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool skip_dropout) {
 
@@ -41,11 +42,11 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 
 }
 
-void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& t) {
+void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& targets_) {
 
 	//set targets at the top
 	//layers[layers.size() - 1]->dy = t;
-	(*(layers[layers.size() - 1]->g['y'])) = t;
+	(*(layers.back()->g['y'])) = targets_;
 
 	//propagate error backward
 	for (int i = layers.size() - 1; i >= 0; i--) {
@@ -68,9 +69,8 @@ void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& t) {
 
 void MultiLayerNeuralNetwork::update(float alpha, float decay) {
 
-	//update all layers according to gradients
+	// update all layers according to gradients
 	for (size_t i = 0; i < layers.size(); i++) {
-		//std::cout << "layer i =  " << i << " name = " << layers[i]->id() << std::endl;
 
 		layers[i]->applyGrads(alpha, decay);
 
@@ -95,7 +95,7 @@ void MultiLayerNeuralNetwork::train(mic::types::MatrixXfPtr encoded_batch_, mic:
 
 	// Calculate the statistics.
 	size_t correct = countCorrectPredictions(*encoded_predictions, *encoded_targets_);
-	float loss = calculateCrossEntropy( *encoded_predictions, *encoded_targets_);
+	float loss = encoded_predictions->calculateCrossEntropy(*encoded_targets_);
 	std::cout << " Loss = " << std::setprecision(2) << std::setw(6) << loss << " | " << std::setprecision(1) << std::setw(4) << std::fixed << 100.0 * (float)correct / (float)encoded_batch_->cols() << "% batch correct" << std::endl;
 
 }
@@ -134,22 +134,6 @@ size_t MultiLayerNeuralNetwork::countCorrectPredictions(mic::types::MatrixXf& pr
 	}//: for
 
 	return correct;
-}
-
-
-
-float MultiLayerNeuralNetwork::calculateCrossEntropy(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_) {
-
-	float ce = 0.0;
-	mic::types::MatrixXf error(predictions_.rows(), predictions_.cols());
-
-	//check what has happened and get information content for that event
-	error.array() = -predictions_.unaryExpr(std::ptr_fun(::logf)).array() * targets_.array();
-
-	// Sum the errors.
-	ce = error.sum();
-
-	return ce;
 }
 
 

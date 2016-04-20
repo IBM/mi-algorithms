@@ -57,18 +57,18 @@ int main() {
 	// Create a simple NN for classification (should give around 95.3% accuracy)
 	//MNIST - 28x28 -> 256 -> 100 -> 10
 	MultiLayerNeuralNetwork nn;
-	nn.layers.push_back(new Linear(28 * 28, 256, batch_size));
-	nn.layers.push_back(new ReLU(256, 256, batch_size));
-	nn.layers.push_back(new Linear(256, 100, batch_size));
-	nn.layers.push_back(new ReLU(100, 100, batch_size));
-	nn.layers.push_back(new Linear(100, 10, batch_size));
-	nn.layers.push_back(new Softmax(10, 10, batch_size));
+	nn.addLayer(new Linear(28 * 28, 256, batch_size));
+	nn.addLayer(new ReLU(256, 256, batch_size));
+	nn.addLayer(new Linear(256, 100, batch_size));
+	nn.addLayer(new ReLU(100, 100, batch_size));
+	nn.addLayer(new Linear(100, 10, batch_size));
+	nn.addLayer(new Softmax(10, 10, batch_size));
 
 
-	// std::cout << "Before training..." << std::endl;
+	// LOG(LSTATUS) << "Before training..." << std::endl;
 	// nn.test(test_data);
 
-	std::cout << "Training..." << std::endl;
+	LOG(LSTATUS) << "Starting the training of neural network...";
 	double 	learning_rate = 0.005;
 	double 	weight_decay = 0;
 	MatrixXfPtr encoded_batch, encoded_targets;
@@ -86,9 +86,10 @@ int main() {
 		nn.train (encoded_batch, encoded_targets, learning_rate, weight_decay);
 
 	}//: for
-	std::cout << "Training finished. Calculating performance for both datasets..." << std::endl;
+	LOG(LSTATUS) << "Training finished";
 
 	// Check performance on the test dataset.
+	LOG(LSTATUS) << "Calculating performance for test dataset...";
 	size_t correct = 0;
 	test.setNextSampleIndex(0);
 	while(!test.isLastBatch()) {
@@ -100,12 +101,12 @@ int main() {
 
 		// Test network response.
 		correct += nn.test(encoded_batch, encoded_targets);
-
-	}
+	}//: while
 	double test_acc = (double)correct / (double)(test.size());
-	std::cout << "Test  : " << std::setprecision(3) << 100.0 * test_acc << " %" << std::endl;
+	LOG(LINFO) << "Test  : " << std::setprecision(3) << 100.0 * test_acc << " %";
 
 	// Check performance on the training dataset.
+	LOG(LSTATUS) << "Calculating performance for the training dataset...";
 	correct = 0;
 	training.setNextSampleIndex(0);
 	while(!training.isLastBatch()) {
@@ -120,6 +121,6 @@ int main() {
 
 	}
 	double train_acc = (double)correct / (double)(training.size());
-	std::cout << "Train : " << std::setprecision(3) << 100.0 * train_acc << " %" <<  std::endl;
+	LOG(LINFO) << "Train : " << std::setprecision(3) << 100.0 * train_acc << " %";
 
 }

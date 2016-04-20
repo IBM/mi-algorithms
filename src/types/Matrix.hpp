@@ -206,6 +206,7 @@ public:
 		}
 	}
 
+
 	/*!
 	 * Applies elementwise function to all matrix elements.
 	 * @param func Function to be applied.
@@ -358,6 +359,27 @@ public:
 
 		return indices;
 	}
+
+	/*!
+	 * Calculates the cross entropy as measure of how accurate given matrix (treated as prediction) fits to the desired (target) matrix.
+	 * @param targets_ Desired results (targets) in the form of a matrix of answers.
+	 * @return
+	 */
+	T calculateCrossEntropy(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& targets_) {
+
+		T ce = 0.0;
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> error(this->rows(), this->cols());
+
+		//check what has happened and get information content for that event
+		error.array() = - (this->unaryExpr(std::ptr_fun(::logf)).array() * targets_.array());
+
+		// Sum the errors.
+		ce = error.sum();
+
+		return ce;
+	}
+
+
 
 private:
 

@@ -71,44 +71,41 @@ int main() {
 	MultiLayerNeuralNetwork nn;
 
 	//CONV 3x3 -> CONV 3x3 -> POOL 2x
-	nn.layers.push_back(new Convolution(28*28, input_channels, filter_size[0], filters[0], batch_size));
-	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
-	nn.layers.push_back(new Convolution(nn.lastLayerOutputsSize() / filters[0], filters[0], filter_size[1], filters[1], batch_size));
-	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
-	nn.layers.push_back(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[2], batch_size));
+	nn.addLayer(new Convolution(28*28, input_channels, filter_size[0], filters[0], batch_size));
+	nn.addLayer(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.addLayer(new Convolution(nn.lastLayerOutputsSize() / filters[0], filters[0], filter_size[1], filters[1], batch_size));
+	nn.addLayer(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.addLayer(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[2], batch_size));
 
 	//CONV 3x3 -> CONV 3x3 -> POOL 2x
-	nn.layers.push_back(new Convolution(nn.lastLayerOutputsSize() / filters[1], filters[1], filter_size[2], filters[2], batch_size));
-	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
-	nn.layers.push_back(new Convolution(nn.lastLayerOutputsSize() / filters[2], filters[2], filter_size[3], filters[3], batch_size));
-	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
-	nn.layers.push_back(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[3], batch_size));
+	nn.addLayer(new Convolution(nn.lastLayerOutputsSize() / filters[1], filters[1], filter_size[2], filters[2], batch_size));
+	nn.addLayer(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.addLayer(new Convolution(nn.lastLayerOutputsSize() / filters[2], filters[2], filter_size[3], filters[3], batch_size));
+	nn.addLayer(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.addLayer(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[3], batch_size));
 
 	//CONV 3x3 -> POOL 2x
-	nn.layers.push_back(new Convolution(nn.lastLayerOutputsSize() / filters[3], filters[3], filter_size[4], filters[4], batch_size));
-	nn.layers.push_back(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[4], batch_size));
+	nn.addLayer(new Convolution(nn.lastLayerOutputsSize() / filters[3], filters[3], filter_size[4], filters[4], batch_size));
+	nn.addLayer(new Pooling(nn.lastLayerOutputsSize(), pooling_window, filters[4], batch_size));
 
 	//FULLY CONNECTED
-	nn.layers.push_back(new Linear(nn.lastLayerOutputsSize(), fully_connected_size, batch_size));
-	nn.layers.push_back(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
-	nn.layers.push_back(new Dropout(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size, dropout));
+	nn.addLayer(new Linear(nn.lastLayerOutputsSize(), fully_connected_size, batch_size));
+	nn.addLayer(new ReLU(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size));
+	nn.addLayer(new Dropout(nn.lastLayerOutputsSize(), nn.lastLayerOutputsSize(), batch_size, dropout));
 
 	//SOFTMAX
-	nn.layers.push_back(new Linear(nn.lastLayerOutputsSize(), 10, batch_size));
-	nn.layers.push_back(new Softmax(10, 10, batch_size));
+	nn.addLayer(new Linear(nn.lastLayerOutputsSize(), 10, batch_size));
+	nn.addLayer(new Softmax(10, 10, batch_size));
 
-	std::cout << "Training..." << std::endl;
 	// Set training parameters.
 	double 	learning_rate = 1e-2;
 	double 	weight_decay = 0;
 	size_t iterations = training.size() / batch_size;
 
 	MatrixXfPtr encoded_batch, encoded_targets;
-
 	// For all epochs.
 	for (size_t e = 0; e < epochs; e++) {
-		std::cout << "Epoch " << e + 1 << std::endl << std::endl;
-
+		LOG(LSTATUS) << "Epoch " << e + 1 << ": starting the training of neural network...";
 		// Perform the training.
 		for (size_t ii = 0; ii < iterations; ii++) {
 			std::cout<< "[" << std::setw(4) << ii << "/" << std::setw(4) << iterations << "] ";
@@ -126,8 +123,10 @@ int main() {
 		// Save results to file.
 		nn.save_to_files("out/mnist_conv");
 
-		std::cout << "Training finished. Calculating performance for both datasets..." << std::endl;
+		LOG(LSTATUS) << "Training finished";
+
 		// Check performance on the test dataset.
+		LOG(LSTATUS) << "Calculating performance for test dataset...";
 		size_t correct = 0;
 		test.setNextSampleIndex(0);
 		while(!test.isLastBatch()) {
@@ -142,9 +141,10 @@ int main() {
 
 		}
 		double test_acc = (double)correct / (double)(test.size());
-		std::cout << "Test  : " << std::setprecision(3) << 100.0 * test_acc << " %" << std::endl;
+		LOG(LINFO) << "Test  : " << std::setprecision(3) << 100.0 * test_acc << " %";
 
 		// Check performance on the training dataset.
+		LOG(LSTATUS) << "Calculating performance for the training dataset...";
 		correct = 0;
 		training.setNextSampleIndex(0);
 		while(!training.isLastBatch()) {
@@ -159,7 +159,7 @@ int main() {
 
 		}
 		double train_acc = (double)correct / (double)(training.size());
-		std::cout << "Train : " << std::setprecision(3) << 100.0 * train_acc << " %" <<  std::endl;
+		LOG(LINFO) << "Train : " << std::setprecision(3) << 100.0 * train_acc << " %";
 
 	}//: for epoch
 
