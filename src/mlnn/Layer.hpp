@@ -13,14 +13,15 @@
 #include<types/MatrixTypes.hpp>
 #include<types/MatrixArray.hpp>
 
-
-#include <mlnn/nn_utils.h> // TODO: dispatch and destroy!
-
 namespace mic {
 namespace mlnn {
 
 /// Forward declaration of MultiLayerNeuralNetwork
 class MultiLayerNeuralNetwork;
+
+inline float sqrt_eps(const float x) {
+	return sqrtf(x + 1e-6);
+}
 
 /*!
  * abstract

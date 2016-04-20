@@ -19,4 +19,4 @@ link_directories(${MIAlgorithms_LIB_DIR})
 # ==============================================================================
 # Set the LIBRARIES variable.
 # ==============================================================================
-set(MIAlgorithms_LIBRARIES core_types data_io data_utils auto_encoders classifiers htm) # rbm)
+set(MIAlgorithms_LIBRARIES "@MIAlgorithms_LIBRARIES@") # core_types data_io data_utils auto_encoders classifiers htm) # rbm)

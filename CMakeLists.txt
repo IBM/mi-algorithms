@@ -2,10 +2,10 @@
 project(MIAlgorithms CXX)
 
 #  Set current version number.
-set (MIAlgorithms_VERSION_MAJOR 1)
-set (MIAlgorithms_VERSION_MINOR 0)
-set (MIAlgorithms_VERSION_PATCH 0)
-set (MIAlgorithms_VERSION ${MIAlgorithms_VERSION_MAJOR}.${MIAlgorithms_VERSION_MINOR}.${MIAlgorithms_VERSION_PATCH})
+set (MIAlgorithms_MAJOR_VERSION 1)
+set (MIAlgorithms_MINOR_VERSION 0)
+set (MIAlgorithms_PATCH_VERSION 0)
+set (MIAlgorithms_VERSION ${MIAlgorithms_MAJOR_VERSION}.${MIAlgorithms_MINOR_VERSION}.${MIAlgorithms_PATCH_VERSION})
 
 # CMake required version.
 cmake_minimum_required(VERSION 3.2)
@@ -46,17 +46,17 @@ include_directories( ${EIGEN3_INCLUDE_DIR} )
 
 find_package( OpenBLAS )
 if(NOT OpenBLAS_FOUND)
-    message(WARNING " OpenBLAS not found!")
+    message(WARNING "-- OpenBLAS not found!")
 else(NOT OpenBLAS_FOUND)
-    message(WARNING " OpenBLAS found!")
 	include_directories(${OpenBLAS_INCLUDE_DIR})
 	add_definitions(-DOpenBLAS_FOUND=1)
 endif(NOT OpenBLAS_FOUND)
 
 # Find MIC Toolchain
-find_package(MIToolchain REQUIRED)
+find_package(MIToolchain 1.0 REQUIRED)
 
-message("Found MI Toolchain libs: ${MIToolchain_LIBRARIES} ")
+message("-- MI Toolchain version: ${MIToolchain_VERSION}")
+message("-- Found the following MI Toolchain libs:\n--   ${MIToolchain_LIBRARIES} ")
 
 # =======================================================================
 # RPATH settings.
@@ -74,48 +74,34 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 # which point to directories outside the build tree to the install RPATH
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+# =======================================================================
+# Cmake configuration
+# =======================================================================
+# Create the cached variable for sstoring all library names.
+set(MIAlgorithms_LIBRARIES "" CACHE INTERNAL "" FORCE)
 
+# add subdirectory.
 add_subdirectory(src)
 
-# =======================================================================
-# MIAlgorithmsConfig.cmake preparation
-# =======================================================================
+message ("-- Configured MIAlgorithms libraries:\n" "--   " "${MIAlgorithms_LIBRARIES}")
 
-# include directories
-set(CMAKE_INCLUDE_DIRS_CONFIGCMAKE 
-	"${CMAKE_INSTALL_PREFIX}/include"
-)
-
-# lib directory
-
+# Set include directory
+set(CMAKE_INCLUDE_DIRS_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/include")
+# Set lib directory
 set(CMAKE_LIB_DIRS_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/lib")
-
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MIAlgorithmsConfig.cmake.in" "${CMAKE_BINARY_DIR}/MIAlgorithmsConfig.cmake" IMMEDIATE @ONLY)
-
-install(FILES ${CMAKE_BINARY_DIR}/MIAlgorithmsConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX}/share/MIAlgorithms/)
+# Set variable that will store generated libraries
 
 # =======================================================================
-# CPack: binary installer generator
+# Preparation of cmake configs
 # =======================================================================
 
-# CPack variables used when generating binary installer
-set(CPACK_PACKAGE_NAME "MIAlgorithms")
-set(CPACK_PACKAGE_VENDOR "MIAlgorithms")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "MIAlgorithms - Machine Intelligence Algorithms")
-set(CPACK_PACKAGE_VERSION ${MIAlgorithms_VERSION})
-set(CPACK_PACKAGE_VERSION_MAJOR ${MIAlgorithms_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${MIAlgorithms_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${MIAlgorithms_VERSION_PATCH})
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "MIAlgorithms")
+# Configure *Config.cmake and *ConfigVersion.cmake
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MIAlgorithmsConfig.cmake.in" "${CMAKE_BINARY_DIR}/MIAlgorithmsConfig.cmake" @ONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MIAlgorithmsConfigVersion.cmake.in" "${CMAKE_BINARY_DIR}/MIAlgorithmsConfigVersion.cmake" @ONLY)
 
-# License file
-#set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-
-# Tell CPack all of the components to install. The "ALL"
-# refers to the fact that this is the set of components that
-# will be included when CPack is instructed to put everything
-# into the binary installer (the default behavior).
-set(CPACK_COMPONENTS_ALL types data_io data_utils auto_encoders classifiers htm rbm)
-
-# This must always be last!
-include(CPack)
+# Install the *Config.cmake and *ConfigVersion.cmake
+install(FILES
+  "${CMAKE_BINARY_DIR}/MIAlgorithmsConfig.cmake"
+  "${CMAKE_BINARY_DIR}/MIAlgorithmsConfigVersion.cmake"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/share/MIAlgorithms/")
+  

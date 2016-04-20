@@ -7,6 +7,8 @@
 
 #include <mlnn/MultiLayerNeuralNetwork.hpp>
 
+#include <iomanip>
+
 namespace mic {
 namespace mlnn {
 

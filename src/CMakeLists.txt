@@ -34,8 +34,9 @@ if(OpenBLAS_FOUND)
 	target_link_libraries(types  ${OpenBLAS_LIB} )
 endif(OpenBLAS_FOUND)
 
-
-
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "types" CACHE INTERNAL "" FORCE)
+ 
 # =======================================================================
 # Install includes related to DATA UTILS used by other libraries.
 FILE(GLOB files data_utils/*.hpp data_utils/*.h)
@@ -45,6 +46,9 @@ install(FILES ${files} DESTINATION include/data_utils)
 file(GLOB data_utils_src data_utils/*.cpp)
 add_library(data_utils SHARED ${data_utils_src})
 target_link_libraries(data_utils types )
+
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "data_utils" CACHE INTERNAL "" FORCE)
 
 # =======================================================================
 # Install includes related to DATA IO used by other libraries.
@@ -56,19 +60,24 @@ file(GLOB data_io_src data_io/*.cpp)
 add_library(data_io SHARED ${data_io_src})
 target_link_libraries(data_io types data_utils configuration)
 
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "data_io" CACHE INTERNAL "" FORCE)
+
 # =======================================================================
 # Install includes related to AUTO ENCODERS used by other libraries.
 FILE(GLOB files encoders/*.hpp )
 install(FILES ${files} DESTINATION include/encoders)
 
-FILE(GLOB files auto_encoders/*.hpp )
-install(FILES ${files} DESTINATION include/auto_encoders)
+FILE(GLOB files encoders/*.hpp )
+install(FILES ${files} DESTINATION include/encoders)
 
 # Create shared library containing AUTO ENCODERS.
-file(GLOB auto_encoders_src encoders/*.cpp auto_encoders/*.cpp)
-add_library(auto_encoders SHARED ${auto_encoders_src})
-target_link_libraries(auto_encoders types )
+file(GLOB encoders_src encoders/*.cpp encoders/*.cpp)
+add_library(encoders SHARED ${encoders_src})
+target_link_libraries(encoders types )
 
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "encoders" CACHE INTERNAL "" FORCE)
 
 # =======================================================================
 # Install includes related to CLASSIFIERS used by other libraries.
@@ -79,6 +88,9 @@ install(FILES ${files} DESTINATION include/classifiers)
 file(GLOB classifiers_src classifiers/*.cpp)
 add_library(classifiers SHARED ${classifiers_src})
 target_link_libraries(classifiers types data_utils)
+
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "classifiers" CACHE INTERNAL "" FORCE)
 
 # =======================================================================
 # Install includes related to HTM used by other libraries.
@@ -93,6 +105,9 @@ file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
 add_library(htm SHARED ${htm_src})
 target_link_libraries(htm types data_utils system_utils)
 
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "htm" CACHE INTERNAL "" FORCE)
+
 # =======================================================================
 # Install includes related to RBM used by other libraries.
 FILE(GLOB files rbm/*.hpp)
@@ -103,6 +118,8 @@ file(GLOB rbm_src rbm/*.cpp )
 add_library(rbm SHARED ${rbm_src})
 target_link_libraries(rbm types data_utils)
 
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "rbm" CACHE INTERNAL "" FORCE)
 
 # =======================================================================
 # Install includes related to MLNN used by other libraries.
@@ -114,17 +131,14 @@ file(GLOB mlnn_src mlnn/*.cpp )
 add_library(mlnn SHARED ${mlnn_src})
 target_link_libraries(mlnn types)
 
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "mlnn" CACHE INTERNAL "" FORCE)
 
 # =======================================================================
 # Install target libraries.
 # =======================================================================
 
-install(TARGETS types data_io data_utils auto_encoders classifiers htm rbm mlnn LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
-
-
-# Build tests.
-#add_subdirectory(tests)
-
+install(TARGETS ${MIAlgorithms_LIBRARIES} LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
 
 # =======================================================================
 # Build and install - char encoder test application.
@@ -141,7 +155,7 @@ if(${BUILD_TEST_CHAR_ENCODER})
 		application
 		types
 		data_io
-		auto_encoders
+		encoders
 		configuration
 		${Boost_LIBRARIES}
 		)
@@ -224,7 +238,7 @@ endif(${BUILD_TEST_COLLECTOR})
 
 
 # =======================================================================
-# Build and install - data collector test application.
+# Build and install - mlnn test.
 # =======================================================================
 
 set(BUILD_TEST_MLNN ON CACHE BOOL "Build the application for testing creation/serialization of multi-layer neural networks")
@@ -250,9 +264,9 @@ endif(${BUILD_TEST_MLNN})
 # Build and install - MNIST recogntion based on CNNs.
 # =======================================================================
 
-set(BUILD_TEST_MNIST_CNN_APP ON CACHE BOOL "Build the application using Convolutional Neural Network for recognition of MNIST digits")
+set(BUILD_MNIST_CNN_APP ON CACHE BOOL "Build the application using Convolutional Neural Network for recognition of MNIST digits")
 
-if(${BUILD_TEST_MNIST_CNN_APP})
+if(${BUILD_MNIST_CNN_APP})
         # Create exeutable.
         ADD_EXECUTABLE(mnist_convnet tests/mnist_convnet.cpp)
         # Link it with shared libraries.
@@ -260,7 +274,7 @@ if(${BUILD_TEST_MNIST_CNN_APP})
 			logger
 	        types
 			data_io
-			auto_encoders
+			encoders
 			mlnn
 		    ${Boost_LIBRARIES}
 		    ${EIGEN_LIBRARIES}
@@ -272,7 +286,7 @@ if(${BUILD_TEST_MNIST_CNN_APP})
         # install test to bin directory
         install(TARGETS mnist_convnet RUNTIME DESTINATION bin)
 
-endif(${BUILD_TEST_MNIST_CNN_APP})
+endif(${BUILD_MNIST_CNN_APP})
 
 
 # =======================================================================
@@ -289,7 +303,7 @@ if(${BUILD_MNIST_MLP_APP})
 			logger
 	        types
 			data_io
-			auto_encoders
+			encoders
 			mlnn
 	        ${Boost_LIBRARIES}
 	        ${EIGEN_LIBRARIES}

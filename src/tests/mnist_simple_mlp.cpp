@@ -9,6 +9,8 @@
 #include <logger/ConsoleOutput.hpp>
 using namespace mic::logger;
 
+#include <iomanip>
+
 #include <data_io/MNISTMatrixImporter.hpp>
 #include <encoders/MatrixXfMatrixXfEncoder.hpp>
 #include <encoders/UIntMatrixXfEncoder.hpp>
