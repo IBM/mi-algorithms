@@ -2,21 +2,16 @@
 # Include directories to add to the user project.
 # ==============================================================================
 
-# Provide the include directories to the caller
+# Provide the include directory to the caller
 set(MIAlgorithms_INCLUDE_DIRS @CMAKE_INCLUDE_DIRS_CONFIGCMAKE@)
-
 include_directories(${MIAlgorithms_INCLUDE_DIRS})
 
-# ==============================================================================
-# Link directories to add to the user project.
-# ==============================================================================
+# Provide the libs directory to the caller
+SET(MIAlgorithms_LIB_DIR @CMAKE_LIB_DIRS_CONFIGCMAKE@)
+LINK_DIRECTORIES(${MIAlgorithms_LIB_DIR})
 
-# Provide the libs directory anyway, it may be needed in some cases.
-set(MIAlgorithms_LIB_DIR @CMAKE_LIB_DIRS_CONFIGCMAKE@)
+# Provide the variable containing list of libraries to the caller
+SET(MIAlgorithms_LIBRARIES "@MIAlgorithms_LIBRARIES@")
 
-link_directories(${MIAlgorithms_LIB_DIR})
-
-# ==============================================================================
-# Set the LIBRARIES variable.
-# ==============================================================================
-set(MIAlgorithms_LIBRARIES "@MIAlgorithms_LIBRARIES@") # core_types data_io data_utils auto_encoders classifiers htm) # rbm)
+message("-- MI Algorithms version: ${MIToolchain_VERSION}")
+message("-- Found the following MI Algorithms libraries:\n--   ${MIAlgorithms_LIBRARIES} ")

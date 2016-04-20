@@ -55,9 +55,6 @@ endif(NOT OpenBLAS_FOUND)
 # Find MIC Toolchain
 find_package(MIToolchain 1.0 REQUIRED)
 
-message("-- MI Toolchain version: ${MIToolchain_VERSION}")
-message("-- Found the following MI Toolchain libs:\n--   ${MIToolchain_LIBRARIES} ")
-
 # =======================================================================
 # RPATH settings.
 # =======================================================================
@@ -83,7 +80,7 @@ set(MIAlgorithms_LIBRARIES "" CACHE INTERNAL "" FORCE)
 # add subdirectory.
 add_subdirectory(src)
 
-message ("-- Configured MIAlgorithms libraries:\n" "--   " "${MIAlgorithms_LIBRARIES}")
+message ("-- Configured MI Algorithms libraries:\n" "--   " "${MIAlgorithms_LIBRARIES}")
 
 # Set include directory
 set(CMAKE_INCLUDE_DIRS_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/include")
