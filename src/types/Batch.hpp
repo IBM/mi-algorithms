@@ -63,17 +63,17 @@ public:
 	virtual ~Batch() { };
 
 	/// Returns sample data.
-	std::vector <std::shared_ptr<DataType> > data() {
+	std::vector <std::shared_ptr<DataType> > & data() {
 		return sample_data;
 	}
 
 	/// Returns sample labels.
-	std::vector <std::shared_ptr<LabelType> > labels() {
+	std::vector <std::shared_ptr<LabelType> > & labels() {
 		return sample_labels;
 	}
 
 	/// Returns sample numbers (sample "positions" in original dataset).
-	std::vector <size_t> indices() {
+	std::vector <size_t> & indices() {
 		return sample_indices;
 	}
 
