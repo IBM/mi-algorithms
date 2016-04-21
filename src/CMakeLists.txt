@@ -64,9 +64,9 @@ target_link_libraries(data_io types data_utils configuration)
 set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "data_io" CACHE INTERNAL "" FORCE)
 
 # =======================================================================
-# Install includes related to AUTO ENCODERS used by other libraries.
-FILE(GLOB files encoders/*.hpp )
-install(FILES ${files} DESTINATION include/encoders)
+# Install includes related to (AUTO) ENCODERS used by other libraries.
+FILE(GLOB files auto_encoders/*.hpp )
+install(FILES ${files} DESTINATION include/auto_encoders)
 
 FILE(GLOB files encoders/*.hpp )
 install(FILES ${files} DESTINATION include/encoders)
