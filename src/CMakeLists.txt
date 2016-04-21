@@ -72,7 +72,7 @@ FILE(GLOB files encoders/*.hpp )
 install(FILES ${files} DESTINATION include/encoders)
 
 # Create shared library containing AUTO ENCODERS.
-file(GLOB encoders_src encoders/*.cpp encoders/*.cpp)
+file(GLOB encoders_src auto_encoders/*.cpp encoders/*.cpp)
 add_library(encoders SHARED ${encoders_src})
 target_link_libraries(encoders types )
 
