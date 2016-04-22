@@ -25,26 +25,45 @@ MultiLayerNeuralNetwork::~MultiLayerNeuralNetwork() {
 
 
 void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool skip_dropout) {
+	// Make sure that there are some layers in the nn!
+	assert(layers.size() != 0);
 
-	//copy inputs to the lowest point in the network
+//	std::cout << layers[0]->s['x']->cols() << "x" << layers[0]->s['x']->rows() << std::endl;
+//	std::cout << input_data.cols() << "x" << input_data.rows() << std::endl;
+
+	// Make sure that the dimensions are ok.
+	assert((layers[0]->s['x'])->cols() == input_data.cols());
+	assert((layers[0]->s['x'])->rows() == input_data.rows());
+
+	// Copy inputs to the lowest point in the network.
 	(*(layers[0]->s['x'])) = input_data;
 
-	//compute forward activations
+	// Compute the forward activations.
 	for (size_t i = 0; i < layers.size(); i++) {
-		//std::cout << "layer i =  " << i << " name = " << layers[i]->id() << std::endl;
+/*		std::cout << "Layer [" << i << "] " << layers[i]->id() << ": (" <<
+				layers[i]->inputsSize() << "x" << layers[i]->batchSize() << ") -> (" <<
+				layers[i]->outputsSize() << "x" << layers[i]->batchSize() << ")" <<
+				std::endl;*/
 
-		//y = f(x)
+		// Perform the forward computation: y = f(x).
 		layers[i]->forward(skip_dropout);
 
-		//x(next layer) = y(current layer)
-		if (i + 1 < layers.size())
+		// Pass result to the next layer: x(next layer) = y(current layer).
+		if (i + 1 < layers.size()) {
 			(*(layers[i+1]->s['x'])) = (*(layers[i]->s['y']));
 			//layers[i + 1]->x = layers[i]->y;
+		}
 	}
 
 }
 
 void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& targets_) {
+	// Make sure that there are some layers in the nn!
+	assert(layers.size() != 0);
+
+	// Make sure that the dimensions are ok.
+	assert((layers.back()->g['y'])->cols() == targets_.cols());
+	assert((layers.back()->g['y'])->rows() == targets_.rows());
 
 	//set targets at the top
 	//layers[layers.size() - 1]->dy = t;
