@@ -7,29 +7,26 @@
 
 #include <mlnn/MultiLayerNeuralNetwork.hpp>
 
+#include <logger/Log.hpp>
+
 #include <iomanip>
 
 namespace mic {
 namespace mlnn {
 
-MultiLayerNeuralNetwork::MultiLayerNeuralNetwork(std::string name_ ) : name(name_) { }
+
+
+MultiLayerNeuralNetwork::MultiLayerNeuralNetwork(std::string name_ ) : name(name_), loss_type(LossFunctionType::Undefined) { }
 
 MultiLayerNeuralNetwork::~MultiLayerNeuralNetwork() {
-
-/*	for (size_t i = 0; i < layers.size(); i++) {
-
-		delete(layers[i]);
-	}*/
-
 }
-
 
 void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool skip_dropout) {
 	// Make sure that there are some layers in the nn!
 	assert(layers.size() != 0);
 
-//	std::cout << layers[0]->s['x']->cols() << "x" << layers[0]->s['x']->rows() << std::endl;
-//	std::cout << input_data.cols() << "x" << input_data.rows() << std::endl;
+	LOG(LDEBUG) << "First layer input matrix size: " <<  layers[0]->s['x']->cols() << "x" << layers[0]->s['x']->rows();
+	LOG(LDEBUG) << "Input matrix size: " << input_data.cols() << "x" << input_data.rows();
 
 	// Make sure that the dimensions are ok.
 	assert((layers[0]->s['x'])->cols() == input_data.cols());
@@ -40,10 +37,9 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 
 	// Compute the forward activations.
 	for (size_t i = 0; i < layers.size(); i++) {
-/*		std::cout << "Layer [" << i << "] " << layers[i]->id() << ": (" <<
+		LOG(LDEBUG) << "Layer [" << i << "] " << layers[i]->id() << ": (" <<
 				layers[i]->inputsSize() << "x" << layers[i]->batchSize() << ") -> (" <<
-				layers[i]->outputsSize() << "x" << layers[i]->batchSize() << ")" <<
-				std::endl;*/
+				layers[i]->outputsSize() << "x" << layers[i]->batchSize() << ")";
 
 		// Perform the forward computation: y = f(x).
 		layers[i]->forward(skip_dropout);
@@ -60,6 +56,9 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& targets_) {
 	// Make sure that there are some layers in the nn!
 	assert(layers.size() != 0);
+
+	LOG(LDEBUG) << "Last layer output gradient matrix size: " << layers.back()->g['y']->cols() << "x" << layers.back()->g['y']->rows();
+	LOG(LDEBUG) << "Passed target matrix size: " <<  targets_.cols() << "x" << targets_.rows();
 
 	// Make sure that the dimensions are ok.
 	assert((layers.back()->g['y'])->cols() == targets_.cols());
@@ -100,24 +99,24 @@ void MultiLayerNeuralNetwork::update(float alpha, float decay) {
 }
 
 
-void MultiLayerNeuralNetwork::train(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_, float learning_rate_, float weight_decay_) {
+float MultiLayerNeuralNetwork::train(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_, float learning_rate_, float weight_decay_) {
 
-	// Forward activations.
+	// Forward propagate the activations from first layer to the last.
 	forward(*encoded_batch_);
 
 	// Get predictions.
 	mic::types::MatrixXfPtr encoded_predictions = getPredictions();
 
-	// Backprogagation
+	// Backpropagate the gradients from last layer to the first.
 	backward(*encoded_targets_);
 
 	// Apply changes
 	update(learning_rate_, weight_decay_);
 
-	// Calculate the statistics.
-	size_t correct = countCorrectPredictions(*encoded_predictions, *encoded_targets_);
-	float loss = encoded_predictions->calculateCrossEntropy(*encoded_targets_);
-	std::cout << " Loss = " << std::setprecision(2) << std::setw(6) << loss << " | " << std::setprecision(1) << std::setw(4) << std::fixed << 100.0 * (float)correct / (float)encoded_batch_->cols() << "% batch correct" << std::endl;
+	// Calculate the loss.
+	return calculateLossFunction(encoded_targets_, encoded_predictions);
+	// size_t correct = countCorrectPredictions(*encoded_predictions, *encoded_targets_);
+	// std::cout << " Loss = " << std::setprecision(2) << std::setw(6) << loss << " | " << std::setprecision(1) << std::setw(4) << std::fixed << 100.0 * (float)correct / (float)encoded_batch_->cols() << "% batch correct" << std::endl;
 
 }
 
@@ -128,7 +127,31 @@ float MultiLayerNeuralNetwork::test(mic::types::MatrixXfPtr encoded_batch_, mic:
 
 	forward(*encoded_batch_, skip_dropout);
 
-	return countCorrectPredictions(*(getPredictions()), *encoded_targets_);
+	// Get predictions.
+	mic::types::MatrixXfPtr encoded_predictions = getPredictions();
+
+	// Calculate the loss.
+	return calculateLossFunction(encoded_targets_, encoded_predictions);
+//	return countCorrectPredictions(*(getPredictions()), *encoded_targets_);
+
+}
+
+float MultiLayerNeuralNetwork::calculateLossFunction(mic::types::MatrixXfPtr encoded_targets_, mic::types::MatrixXfPtr encoded_predictions_) {
+	mic::types::MatrixXf diff;
+	// Calculate the loss.
+	switch (loss_type) {
+		case LossFunctionType::RegressionQuadratic:
+			diff = (Eigen::MatrixXf)((*encoded_predictions_) - (*encoded_targets_));
+			return (diff * diff.transpose()).sum();
+			break;
+		case LossFunctionType::ClassificationEntropy:
+			return encoded_predictions_->calculateCrossEntropy(*encoded_targets_);
+			 break;
+		case LossFunctionType::Undefined:
+		default:
+			LOG(LERROR)<<"Loss function not set! Possible reason: the network lacks the regression/classification layer. This may cause problems with the convergence during learning!";
+			return std::numeric_limits<float>::infinity();
+	}//: switch
 
 }
 

@@ -17,6 +17,17 @@ namespace mic {
 namespace mlnn {
 
 /*!
+ * \brief Enumeration of possible loss function types.
+ * \author tkornuta
+ */
+enum class LossFunctionType : short
+{
+	Undefined = -1, ///< Loss function undefined!
+	RegressionQuadratic = 0, ///< Quadratic cost function used in regression
+	ClassificationEntropy = 1, ///< Entropy used in classification
+};
+
+/*!
  * \brief Class representing a multi-layer neural network.
  * \author krocki/tkornuta
  */
@@ -44,7 +55,6 @@ public:
 		layers.push_back(std::shared_ptr <LayerType> (layer_ptr_));
 	}
 
-
 	/*!
 	 * Passes the data in a feed-forward manner through all consecutive layers, from the input to the output layer.
 	 * @param input_data Input data - a matrix containing [sample_size x batch_size].
@@ -71,16 +81,25 @@ public:
 	 * @param encoded_targets_ Targets (labels) encoded in the form of matrix of size [label_size x batch_size].
 	 * @param learning_rate_ The learning rate.
 	 * @param weight_decay_ Weight decay.
+	 * @return Loss computed according to the selected loss function. If function not set - returns INF.
 	 */
-	void train(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_, float learning_rate_, float weight_decay_);
+	float train(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_, float learning_rate_, float weight_decay_);
 
 	/*!
 	 * Tests the neural network with a given batch.
 	 * @param encoded_batch_ Batch encoded in the form of matrix of size [sample_size x batch_size].
 	 * @param encoded_targets_ Targets (labels) encoded in the form of matrix of size [label_size x batch_size].
-	 * @return
+	 * @return Loss computed according to the selected loss function. If function not set - returns INF.
 	 */
 	float test(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_);
+
+	/*!
+	 * Calculates the loss function according to the selected function type.
+	 * @param encoded_targets_ Targets (labels) encoded in the form of pointer to matrix of size [label_size x batch_size].
+	 * @param encoded_predictions_ Predicted outputs of the network encoded in the form of pointer to matrix of size [label_size x batch_size].
+	 * @return Loss computed according to the selected loss function. If function not set - returns INF.
+	 */
+	float calculateLossFunction(mic::types::MatrixXfPtr encoded_targets_, mic::types::MatrixXfPtr encoded_predictions_);
 
 	/*!
 	 * Returns the predictions (output of the forward processing).
@@ -120,7 +139,35 @@ protected:
 	 */
 	std::string name;
 
+	/*!
+	 * Type of the used loss function.
+	 */
+	LossFunctionType loss_type;
 };
+
+
+/*!
+ * Adds layer to neural network - template method specialization for the Regression layer - sets the adequate loss function.
+ * @param layer_ptr_ Pointer to the newly created layer.
+ * @tparam layer_ptr_ Pointer to the newly created layer.
+ */
+template <>
+void MultiLayerNeuralNetwork::addLayer<Regression>( mic::mlnn::Regression* layer_ptr_){
+	layers.push_back(std::shared_ptr <Regression> (layer_ptr_));
+	loss_type = LossFunctionType::RegressionQuadratic;
+}
+
+/*!
+ * Adds layer to neural network - template method specialization for the Softmax layer - sets the adequate loss function.
+ * @param layer_ptr_ Pointer to the newly created layer.
+ * @tparam layer_ptr_ Pointer to the newly created layer.
+ */
+template <>
+void MultiLayerNeuralNetwork::addLayer<Softmax>( mic::mlnn::Softmax* layer_ptr_){
+	layers.push_back(std::shared_ptr <Softmax> (layer_ptr_));
+	loss_type = LossFunctionType::ClassificationEntropy;
+}
+
 
 } /* namespace mlnn */
 } /* namespace mic */

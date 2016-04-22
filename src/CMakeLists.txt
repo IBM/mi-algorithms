@@ -238,6 +238,28 @@ endif(${BUILD_TEST_COLLECTOR})
 
 
 # =======================================================================
+# Build and install - matrix array test.
+# =======================================================================
+
+set(BUILD_TEST_MATRIX_ARRAY ON CACHE BOOL "Build the application for testing creation/serialization of matrix array class")
+
+if(${BUILD_TEST_MATRIX_ARRAY})
+	# Create exeutable.
+	ADD_EXECUTABLE(matrix_array_test tests/matrix_array_test.cpp)
+	# Link it with shared libraries.
+	target_link_libraries(matrix_array_test
+		configuration
+		types
+		data_io
+		${Boost_LIBRARIES}
+		)
+
+	# install test to bin directory
+	install(TARGETS matrix_array_test RUNTIME DESTINATION bin)
+
+endif(${BUILD_TEST_MATRIX_ARRAY})
+
+# =======================================================================
 # Build and install - mlnn test.
 # =======================================================================
 

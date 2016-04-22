@@ -27,8 +27,7 @@ int main() {
 	size_t batch_size = 100;
 
 	// Set console output.
-	ConsoleOutput* co = new ConsoleOutput();
-	LOGGER->addOutput(co);
+	LOGGER->addOutput(new ConsoleOutput());
 
 
 	//[60000, 784]

@@ -5,11 +5,13 @@
  * \date Feb 17, 2016
  */
 
+#include <logger/Log.hpp>
+#include <logger/ConsoleOutput.hpp>
+using namespace mic::logger;
+
 #include <iostream>
 
 #include <mlnn/MultiLayerNeuralNetwork.hpp>
-
-#include <types/MatrixArray.hpp>
 
 #include <fstream>
 // Include headers that implement a archive in simple text format
@@ -19,71 +21,35 @@
 
 // Using multi-layer neural networks
 using namespace mic::mlnn;
+using namespace mic::types;
 
 int main() {
-	// Default sizes of matrices.
-	const size_t N = 2;
-	const size_t M = 3;
-	const size_t B = 4;
+	// Set console output.
+	LOGGER->addOutput(new ConsoleOutput());
 
-	// Test MatrixArray operations.
-	mic::types::MatrixArray<double> ma1("test_array");
+	// Create 1 layer (linear) network.
+	MultiLayerNeuralNetwork nn("simple_linear_network");
+	nn.addLayer(new Linear(36, 4, 1));
+	nn.addLayer(new Regression(4, 4, 1));
 
-	ma1.add (
-				{
-					std::make_tuple ( "x", M, B ), 	// input
-					std::make_tuple ( "y", N, B ) 		// output
-				} );
+	// Generate sample.
+	MatrixXfPtr sample (new MatrixXf(36, 1));
+	(*sample) << 0,   0,   0,   0,   0,   0,   0,  10,   0,   0, -10,   0, -10,   0, -10,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   1,   0,   0,   0,   0;
+	std::cout<<"Sample: " << sample->transpose() << std::endl;
 
-	ma1.add (std::make_tuple ( "w", M, N ));
+	// Forward the sample and get prediction - used later as target.
+	nn.forward(*sample);
+	MatrixXfPtr targets (new MatrixXf(*nn.getPredictions()));
 
-	ma1["x"]->randn(1, 0.00001);
-	ma1["w"]->randn(1, 0.00001);
-
-
-	mic::types::MatrixArray<double> ma2 = ma1;
-
-	std::cout<<"Saved MatrixArray = " << ma1;
-
-	const char* fileName = "saved.txt";
-	// Save data
-	{
-		// Create an output archive
-		std::ofstream ofs(fileName);
-		boost::archive::text_oarchive ar(ofs);
-		// Write data
-		ar & ma1;
-	}
-
-	(*ma1["y"]) = (*ma1["w"]) * (*ma1["x"]);
-	std::cout<<"Calculated MatrixArray = " << ma1;
-
-	std::cout<<"Copied MatrixArray = " << ma2;
-
-	// Restore data
-	mic::types::MatrixArray<double> restored_ma;
-	{
-		// Create and input archive
-		std::ifstream ifs(fileName);
-		boost::archive::text_iarchive ar(ifs);
-		// Load data
-		ar & restored_ma;
-		std::cout << "Restored MatrixArray = " << restored_ma << std::endl;
-	}
-
-
-	/*
-	size_t batch_size = 100;
-	MultiLayerNeuralNetwork nn(batch_size);
-
-	nn.layers.push_back(new Linear(28 * 28, 256, batch_size));
-	nn.layers.push_back(new ReLU(256, 256, batch_size));
-	nn.layers.push_back(new Linear(256, 100, batch_size));
-	nn.layers.push_back(new ReLU(100, 100, batch_size));
-	nn.layers.push_back(new Linear(100, 10, batch_size));
-	nn.layers.push_back(new Softmax(10, 10, batch_size));
-	*/
-
+	// Train several times for the same state and rewards.
+	for(size_t i=0; i< 10; i++) {
+		float loss = nn.train(sample, targets, 0.005, 0.0);
+		// Compare results
+		MatrixXf predictions = (*nn.getPredictions());
+		std::cout<<"Loss        : " << loss << std::endl;
+		std::cout<<"Targets     : " << targets->transpose() << std::endl;
+		std::cout<<"Predictions : " << predictions.transpose() << std::endl;
+	}//: for
 
 
 }
