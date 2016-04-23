@@ -48,9 +48,12 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 		if (i + 1 < layers.size()) {
 			(*(layers[i+1]->s['x'])) = (*(layers[i]->s['y']));
 			//layers[i + 1]->x = layers[i]->y;
+			LOG(LDEBUG) << "Passing data from " << i << " to "<< i+1;
+			LOG(LDEBUG) << layers[i]->s['y']->transpose();
+			LOG(LDEBUG) << layers[i+1]->s['y']->transpose();
 		}
 	}
-
+	LOG(LDEBUG) <<" getPredictions(): " << getPredictions()->transpose();
 }
 
 void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& targets_) {
