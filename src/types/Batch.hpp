@@ -10,6 +10,11 @@
 
 #include <types/Sample.hpp>
 
+#include <random>
+
+#include <list>
+
+
 namespace mic {
 namespace types {
 
@@ -26,13 +31,25 @@ public:
 	/*!
 	 * Empty constructor.
 	 */
-	Batch() { }
+	Batch(size_t batch_size_ = 1) :
+		next_sample_index(0),
+		batch_size(batch_size_),
+		rng_mt19937_64(rd())
+	{
+
+	}
 
 	/*!
 	 * Copy constructor.
 	 * @param batch_ Batch to be copied.
 	 */
-	Batch(const mic::types::Batch<DataType, LabelType>& batch_) {
+	Batch(const mic::types::Batch<DataType, LabelType>& batch_) :
+		rng_mt19937_64(rd())
+	{
+		// Copy parameters.
+		next_sample_index = batch_.next_sample_index;
+		batch_size = batch_.batch_size;
+
 		// Copy "samples".
 		this->sample_data = batch_.sample_data;
 		this->sample_labels = batch_.sample_labels;
@@ -113,6 +130,155 @@ public:
 	}
 
 
+
+	/*!
+	 * Returns a batch of random samples.
+	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
+	 */
+	mic::types::Batch<DataType, LabelType> getRandomBatch() {
+
+		// Initialize uniform index distribution - integers.
+		std::uniform_int_distribution<> index_dist(0, this->sample_data.size()-1);
+
+		std::vector<size_t> tmp_indices;
+		for (size_t i=0; i<batch_size; i++) {
+			// Pick an index.
+			tmp_indices.push_back((size_t)index_dist(rng_mt19937_64));
+
+		}//: batch_size
+
+		// Return data.
+		return this->getBatchDirect(tmp_indices);
+	}
+
+
+	/*!
+	 * Iterates through samples and returns them batch by batch.
+	 * After returning the last possible batch from the dataset the procedure starts from the beginning.
+	 * This behaviour can be avoided by manually calling the isLastBatch() method.
+	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
+	 */
+	mic::types::Batch<DataType, LabelType> getNextBatch() {
+
+		// Check index.
+		if((next_sample_index+batch_size) >= this->sample_data.size()){
+			// Reset index.
+			next_sample_index = 0;
+		}
+		// Generate list of indices.
+		std::vector<size_t> indices;
+		for (size_t i=0; i<batch_size; i++) {
+			// Pick an index.
+			indices.push_back((size_t)(next_sample_index+i));
+
+		}//: batch_size
+
+		// Increment index.
+		next_sample_index = (size_t)next_sample_index + (size_t)batch_size;
+		// Return data.
+		return this->getBatchDirect(indices);
+	}
+
+
+	/*!
+	 * Returns batch of samples with given indices.
+	 * If any of the indices is out of dataset range throws an "std::out_of_range" exception.
+	 * @param indices_ Vector of indices
+	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
+	 */
+	mic::types::Batch<DataType, LabelType> getBatch(std::vector<size_t> indices_) {
+
+		// New empty batch.
+		mic::types::Batch<DataType, LabelType> batch;
+		// Set number of classes.
+		batch.number_of_classes = number_of_classes;
+
+		// For all indices.
+		for (size_t local_index: indices_) {
+			// Try to add sample to batch.
+			batch.add(getSample(local_index));
+		}
+		// Return batch.
+		return batch;
+	}
+
+
+	/*!
+	 * Returns batch of samples with given positions in the batch (thus they can have different indices i.e. positions in the original dataset!).
+	 * If any of the indices is out of dataset range throws an "std::out_of_range" exception.
+	 * @param indices_ Vector of indices
+	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
+	 */
+	mic::types::Batch<DataType, LabelType> getBatchDirect(std::vector<size_t> indices_) {
+
+		// New empty batch.
+		mic::types::Batch<DataType, LabelType> batch;
+
+		// For all indices.
+		for (size_t local_index: indices_) {
+			// Try to add sample to batch.
+			batch.add(getSampleDirect(local_index));
+		}
+		// Return batch.
+		return batch;
+	}
+
+
+	/*!
+	 * Sets the batch size.
+	 * @param batch_size_ Batch size.
+	 */
+	void setBatchSize(size_t batch_size_ = 1) {
+		batch_size = batch_size_;
+	}
+
+	/*!
+	 * Checks if the returned batch was the last possible one.
+	 * @return True if the batch was the last one.
+	 */
+	bool isLastBatch() {
+		return ((next_sample_index+batch_size) >= this->sample_data.size());
+	}
+
+
+	/*!
+	 * Picks a random sample from the dataset (the same sample can be selected many times - n-tuples).
+	 * @return Sample containing shared pointer to sample data, its label and sample number.
+	 */
+	mic::types::Sample<DataType, LabelType> getRandomSample() {
+
+		// Initialize uniform index distribution - integers.
+		std::uniform_int_distribution<> index_dist(0, this->sample_data.size()-1);
+
+		// Pick an index.
+		unsigned int tmp_index= index_dist(rng_mt19937_64);
+
+		LOG(LDEBUG) << "data size = " << this->sample_data.size() << " labels size = " << this->sample_labels.size() << " index = " << tmp_index;
+
+		// Return data.
+		return this->getSampleDirect(tmp_index);
+	}
+
+	/*!
+	 * Iterates through samples and returns them one by one.
+	 * After returning the last element from the dataset the procedure starts from the beginning.
+	 * This behaviour can be avoided by manualy calling the isLastSample() method.
+	 * @return Sample containing shared pointer to sample data, its label and sample number.
+	 */
+	mic::types::Sample<DataType, LabelType> getNextSample() {
+
+		// Check index.
+		if(next_sample_index >= this->sample_data.size()){
+			// Reset index.
+			next_sample_index = 0;
+		}
+		// Return given sample and increment index afterwards.
+		mic::types::Sample<DataType, LabelType > sample = this->getSampleDirect(next_sample_index);
+		next_sample_index += 1;
+		return sample;
+	}
+
+
 	/*!
 	 * Returns sample with given index. If index is out of batch range throws an "std::out_of_range" exception.
 	 * @param index_ Sample index.
@@ -141,30 +307,6 @@ public:
 		return Sample<DataType, LabelType> (data_ptr, label_ptr, sample_index);
 	}
 
-
-	/*!
-	 * Returns batch of samples with given indices.
-	 * If any of the indices is out of dataset range throws an "std::out_of_range" exception.
-	 * @param indices_ Vector of indices
-	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
-	 */
-	mic::types::Batch<DataType, LabelType> getBatch(std::vector<size_t> indices_) {
-
-		// New empty batch.
-		mic::types::Batch<DataType, LabelType> batch;
-		// Set number of classes.
-		batch.number_of_classes = number_of_classes;
-
-		// For all indices.
-		for (size_t local_index: indices_) {
-			// Try to add sample to batch.
-			batch.add(getSample(local_index));
-		}
-		// Return batch.
-		return batch;
-	}
-
-
 	/*!
 	 * Returns sample being in a given position in the batch (thus it can have different index i.e. position in the original dataset!).
 	 * If index is out of batch range throws an "std::out_of_range" exception.
@@ -190,23 +332,19 @@ public:
 
 
 	/*!
-	 * Returns batch of samples with given positions in the batch (thus they can have different indices i.e. positions in the original dataset!).
-	 * If any of the indices is out of dataset range throws an "std::out_of_range" exception.
-	 * @param indices_ Vector of indices
-	 * @return Batch - a pair of vectors of <shared pointers to samples> / vectors of <shared pointers to labels>, supplemented by third vector containing sample numbers.
+	 * Sets the index of the next returned sample.
+	 * @param index_ Sample index.
 	 */
-	mic::types::Batch<DataType, LabelType> getBatchDirect(std::vector<size_t> indices_) {
+	void setNextSampleIndex(size_t index_ = 0) {
+		next_sample_index = index_;
+	}
 
-		// New empty batch.
-		mic::types::Batch<DataType, LabelType> batch;
-
-		// For all indices.
-		for (size_t local_index: indices_) {
-			// Try to add sample to batch.
-			batch.add(getSampleDirect(local_index));
-		}
-		// Return batch.
-		return batch;
+	/*!
+	 * Checks if the returned sample was the last one.
+	 * @return True if the sample was the last one.
+	 */
+	bool isLastSample() {
+		return (next_sample_index >= this->sample_data.size());
 	}
 
 
@@ -235,13 +373,48 @@ public:
 	}
 
 	/*!
+	 * Counts the distinctive classes.
+	 * Quite slow method, but works.
+	 */
+	void countClasses() {
+		std::list<LabelType> classes;
+		for(auto label: this->sample_labels) {
+			classes.push_back(*label);
+		}//: for
+		classes.sort();
+		classes.unique();
+		this->number_of_classes = classes.size();
+	}
+
+	/*!
 	 * Returns the number of distinctive classes.
 	 * @return Number of classes.
 	 */
 	size_t classes() {
 		return number_of_classes;
 	}
+
 protected:
+	/*!
+	 * Index of the returned sample - it is used ONLY in getNextSample (i.e. iterative, not random sampling) method.
+	 */
+	size_t next_sample_index;
+
+	/*!
+	 * Batch size. As defaults set to one.
+	 */
+	size_t batch_size;
+
+	/*!
+	 * Random device used for generation of random numbers.
+	 */
+	std::random_device rd;
+
+	/*!
+	 *  Mersenne Twister pseudo-random generator of 32-bit numbers with a state size of 19937 bits.
+	 */
+	std::mt19937_64 rng_mt19937_64;
+
 
 	/// Stores the data.
 	std::vector <std::shared_ptr<DataType> > sample_data;
