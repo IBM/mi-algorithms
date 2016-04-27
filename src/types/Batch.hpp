@@ -352,7 +352,7 @@ public:
 	 * Adds sample to the batch.
 	 * @param sample_ Sample to be added.
 	 */
-	void add(mic::types::Sample<DataType, LabelType> sample_) {
+	virtual void add(mic::types::Sample<DataType, LabelType> sample_) {
 		// Add sample to vectors.
 		sample_data.push_back(sample_.data());
 		sample_labels.push_back(sample_.label());
@@ -365,11 +365,23 @@ public:
 	 * @param label_ Sample label.
 	 * @param number_ Sample number.
 	 */
-	void add(std::shared_ptr<DataType> data_, std::shared_ptr<LabelType> label_, size_t index_) {
+	virtual void add(std::shared_ptr<DataType> data_, std::shared_ptr<LabelType> label_, size_t index_) {
 		// Add sample to vectors.
 		sample_data.push_back(data_);
 		sample_labels.push_back(label_);
 		sample_indices.push_back(index_);
+	}
+
+	/*!
+	 * Adds sample to the batch and generates the index of the added sample (sets it to the previous size).
+	 * @param data_ Sample data.
+	 * @param label_ Sample label.
+	 */
+	virtual void add(std::shared_ptr<DataType> data_, std::shared_ptr<LabelType> label_) {
+		// Add sample to vectors.
+		sample_data.push_back(data_);
+		sample_labels.push_back(label_);
+		sample_indices.push_back(sample_indices.size());
 	}
 
 	/*!
