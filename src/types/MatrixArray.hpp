@@ -65,9 +65,8 @@ public:
 	/*!
 	 * Simple constructor. Stores the name.
 	 * @param name_ Name of the array.
-	 * @param id_ Id (optional, as default set to "")
 	 */
-	MatrixArray(std::string name_, std::string id_="")  : name ( name_ +  "_" + id_ ) {
+	MatrixArray(std::string name_)  : array_name ( name_ ) {
 	}
 
 
@@ -75,9 +74,8 @@ public:
 	 * The main constructor. Adds parameters.
 	 * @param name_ Name of the array.
 	 * @param args_ Vector of tuples containing <id, width, height>.
-	 * @param id_ Id (optional, as default set to "")
 	 */
-	MatrixArray ( std::string name_, std::initializer_list<std::tuple<std::string, size_t, size_t> > args_, std::string id_ = "") : name ( name_ + "_" + id_ ) {
+	MatrixArray ( std::string name_, std::initializer_list<std::tuple<std::string, size_t, size_t> > args_) : array_name ( name_ ) {
 
 		add ( args_ );
 
@@ -85,17 +83,17 @@ public:
 
 	MatrixArray ( const MatrixArray& other ) {
 		// Copy name.
-		name = other.name;
+		array_name = other.array_name;
 
-		namemap.clear();
+		keys_map.clear();
 		matrices.clear();
 		// Copy data.
-		for (auto& i: other.namemap) {
+		for (auto& i: other.keys_map) {
 			std::string tmp_name = i.first;
 			mic::types::MatrixPtr<T> tmp_mat_ptr =  other.matrices[i.second];
 
 			// Add tuple to array.
- 			namemap[ tmp_name ] = matrices.size();
+ 			keys_map[ tmp_name ] = matrices.size();
  			matrices.push_back ( std::make_shared<mic::types::Matrix<T> > (mic::types::Matrix<T> (*tmp_mat_ptr) ) );
 		}//: for
 
@@ -103,17 +101,17 @@ public:
 
 	MatrixArray& operator= ( const MatrixArray& other ) {
 		// Copy name.
-		name = other.name;
+		array_name = other.array_name;
 
-		namemap.clear();
+		keys_map.clear();
 		matrices.clear();
 		// Copy data.
-		for (auto& i: other.namemap) {
+		for (auto& i: other.keys_map) {
 			std::string tmp_name = i.first;
 			mic::types::MatrixPtr<T> tmp_mat_ptr =  other.matrices[i.second];
 
 			// Add tuple to array.
- 			namemap[ tmp_name ] = matrices.size();
+ 			keys_map[ tmp_name ] = matrices.size();
  			matrices.push_back ( std::make_shared<mic::types::Matrix<T> > (mic::types::Matrix<T> (*tmp_mat_ptr) ) );
 		}//: for
 
@@ -126,7 +124,7 @@ public:
 	 */
 	void add ( std::initializer_list<std::tuple<std::string, size_t, size_t> > params_ ) {
 		for ( auto i : params_ ) {
-			namemap[std::get<0> ( i )] = matrices.size();
+			keys_map[std::get<0> ( i )] = matrices.size();
 			matrices.push_back ( std::make_shared<mic::types::Matrix<T> > ( mic::types::Matrix<T> ( std::get<1> ( i ), std::get<2> ( i ) ) ) );
 		}//: for
 	}
@@ -136,7 +134,7 @@ public:
 	 * @param param_ A tuple to be added.
 	 */
 	void add ( std::tuple<std::string, size_t, size_t> param_ ) {
-		namemap[std::get<0> ( param_ )] = matrices.size();
+		keys_map[std::get<0> ( param_ )] = matrices.size();
 		matrices.push_back ( std::make_shared<mic::types::Matrix<T> > ( mic::types::Matrix<T> ( std::get<1> ( param_ ), std::get<2> ( param_ ) ) ) );
 	}
 
@@ -171,13 +169,13 @@ public:
 	 */
 	mic::types::MatrixPtr<T>& operator[] ( std::string key ) {
 
-		if ( namemap.find ( key ) == namemap.end() )
-			std::cout << "Warning !!! " << name <<
+		if ( keys_map.find ( key ) == keys_map.end() )
+			std::cout << "Warning !!! " << array_name <<
 					  "::[] - key not found:" << key << std::endl;
 
 		// TODO: throw exception when out of the scope?
 
-		return matrices[namemap[key]];
+		return matrices[keys_map[key]];
 
 	}
 
@@ -188,8 +186,8 @@ public:
 	 */
 	friend std::ostream& operator<<(std::ostream& os_, const MatrixArray& obj_) {
 		// Display name
-		os_ << "[" << obj_.name << "]:\n";
-		for (auto& i: obj_.namemap) {
+		os_ << "[" << obj_.array_name << "]:\n";
+		for (auto& i: obj_.keys_map) {
 			// Display elements.
 			os_ << "(" << i.second << ") [" << i.first << "]:\n";
 			os_ << (*obj_.matrices[i.second]) << std::endl;
@@ -209,8 +207,15 @@ public:
 	/*!
 	 * Returns the name of the vector of matrices.
 	 */
-	std::string getName() {
-		return name;
+	std::string name() {
+		return array_name;
+	}
+
+	/*!
+	 * Returns the name of the vector of matrices.
+	 */
+	std::map<std::string, size_t> keys() {
+		return keys_map;
 	}
 
 	/*!
@@ -222,14 +227,14 @@ public:
 
 protected:
 	/// Name of the given vector of matrices.
-	std::string name;
+	std::string array_name;
 
 	/// Vector of matrices.
 	std::vector<mic::types::MatrixPtr<T> > matrices;
 
 
 	/// Vector of names of consecutive matrices in the array.
-	std::map<std::string, size_t> namemap;
+	std::map<std::string, size_t> keys_map;
 
 private:
 	// Friend class - required for using boost serialization.
@@ -243,11 +248,11 @@ private:
 	template<class Archive>
 	void save(Archive & ar, const unsigned int version) const {
 		// Serialize name and size.
-		ar & name;
+		ar & array_name;
 		size_t size = matrices.size();
 		ar & size;
 		// Serialize elements.
-		for (auto& i: namemap) {
+		for (auto& i: keys_map) {
 			ar & i.first;
 			ar & (*matrices[i.second]);
 		}//: for
@@ -261,7 +266,7 @@ private:
      template<class Archive>
      void load(Archive & ar, const unsigned int version) {
  		// Deserialize name and size.
- 		ar & name;
+ 		ar & array_name;
  		size_t size;
  		ar & size;
  		// Deserialize elements.
@@ -271,7 +276,7 @@ private:
  			mic::types::Matrix<T> tmp_mat;
  			ar & tmp_mat;
  			// Add tuple to array.
- 			namemap[ tmp_name ] = matrices.size();
+ 			keys_map[ tmp_name ] = matrices.size();
  			matrices.push_back ( std::make_shared<mic::types::Matrix<T> > (mic::types::Matrix<T> (tmp_mat) ) );
 
  		}//: for

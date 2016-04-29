@@ -10,8 +10,8 @@
 namespace mic {
 namespace mlnn {
 
-Linear::Linear(size_t inputs_, size_t outputs_, size_t batch_size_) :
-	Layer(inputs_, outputs_, batch_size_, "linear") {
+Linear::Linear(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_) :
+	Layer(inputs_, outputs_, batch_size_, LayerTypes::Linear, name_) {
 
 	W = mic::types::MatrixXf(outputs_, inputs_);
 	b = (Eigen::VectorXf)Eigen::VectorXf::Zero(outputs_);

@@ -12,6 +12,20 @@
 
 #include <mlnn/LayerTypes.hpp>
 
+#include <boost/serialization/serialization.hpp>
+// include this header to serialize vectors
+#include <boost/serialization/vector.hpp>
+// include this header to serialize arrays
+//#include <boost/serialization/array.hpp>
+#include <boost/serialization/version.hpp>
+
+// Forward declaration of class boost::serialization::access
+namespace boost {
+namespace serialization {
+class access;
+}//: serialization
+}//: access
+
 
 namespace mic {
 namespace mlnn {
@@ -128,6 +142,22 @@ public:
 
 	void save_to_files(std::string prefix);
 
+	/*!
+	 * Stream operator enabling to print neural network.
+	 * @param os_ Ostream object.
+	 * @param obj_ Tensor object.
+	 */
+	friend std::ostream& operator<<(std::ostream& os_, const MultiLayerNeuralNetwork& obj_) {
+		// Display dimensions.
+		os_ << "[" << obj_.name << "]:\n";
+		// Display layers one by one.
+		for (size_t i = 0; i < obj_.layers.size(); i++)
+			os_ << (*obj_.layers[i]) << std::endl;
+
+		return os_;
+	}
+
+
 protected:
 	/*!
 	 * Contains a list of consecutive layers.
@@ -143,6 +173,42 @@ protected:
 	 * Type of the used loss function.
 	 */
 	LossFunctionType loss_type;
+
+private:
+	// Friend class - required for using boost serialization.
+    friend class boost::serialization::access;
+
+    /*!
+     * Serialization save - saves the neural net object to archive.
+     * @param ar Used archive.
+     * @param version Version of the neural net class (not used currently).
+     */
+    template<class Archive>
+    void save(Archive & ar, const unsigned int version) const {
+        ar & name;
+//        ar & dimensions;
+//        ar & boost::serialization::make_array<T>(data_ptr, elements);
+    }
+
+    /*!
+     * Serialization load - loads the neural net object to archive.
+     * @param ar Used archive.
+     * @param version Version of the neural net class (not used currently).
+     */
+    template<class Archive>
+    void load(Archive & ar, const unsigned int version) {
+		ar & name;
+/*		ar & dimensions;
+		// Allocate memory.
+		if (data_ptr != nullptr)
+			delete (data_ptr);
+		data_ptr = new T[elements];
+		ar & boost::serialization::make_array<T>(data_ptr, elements);*/
+    }
+
+     // The serialization must be splited as load requires to allocate the memory.
+     BOOST_SERIALIZATION_SPLIT_MEMBER()
+
 };
 
 

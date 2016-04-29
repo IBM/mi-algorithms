@@ -12,13 +12,16 @@
 namespace mic {
 namespace mlnn {
 
-Layer::Layer(size_t inputs_size_, size_t outputs_size_, size_t batch_size_, std::string label_) :
-		name(label_),
+Layer::Layer(size_t inputs_size_, size_t outputs_size_, size_t batch_size_, LayerTypes layer_type_, std::string label_) :
 		inputs_size(inputs_size_),
 		outputs_size(outputs_size_),
 		batch_size(batch_size_),
+		layer_type(layer_type_),
+		layer_name(label_),
 		s("state"),
-		g("gradients")
+		g("gradients"),
+		p("parameters"),
+		m("memory")
 
 {
 	s.add (

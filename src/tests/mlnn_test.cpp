@@ -31,11 +31,11 @@ int main() {
 
 	// Create 1 layer (linear) network.
 	MultiLayerNeuralNetwork nn("simple_linear_network");
-	nn.addLayer(new Linear(10, 20, 1));
-	nn.addLayer(new ReLU(20, 20, 1));
-	nn.addLayer(new Linear(20, 4, 1));
+	nn.addLayer(new Linear(10, 20, 1, "Linear 1"));
+	nn.addLayer(new ReLU(20, 20, 1, "ReLU 1"));
+	nn.addLayer(new Linear(20, 4, 1, "Linear 2"));
 //	nn.addLayer(new Softmax(4, 4, 1));
-	nn.addLayer(new Regression(4, 4, 1));
+	nn.addLayer(new Regression(4, 4, 1, "Final Regression"));
 
 /*	// Generate sample.
 	MatrixXfPtr sample (new MatrixXf(36, 1));
@@ -78,7 +78,7 @@ int main() {
 	}//: for
 
 	// Training.
-	size_t iteration = 0;
+/*	size_t iteration = 0;
 	while (iteration < 100000) {
 		Sample <MatrixXf, MatrixXf> sample = batch.getRandomSample();
 		//std::cout << "[" << iteration++ << "]: sample (" << sample.index() << "): "<< sample.data()->transpose() << "->" << sample.label()->transpose() << std::endl;
@@ -94,6 +94,7 @@ int main() {
 		iteration++;
 	}//: while
 
+	// Test network
 	iteration = 0;
 	while (iteration < 10) {
 		Sample <MatrixXf, MatrixXf> sample = batch.getRandomSample();
@@ -106,6 +107,46 @@ int main() {
 		std::cout<<"Targets     : " << sample.label()->transpose() << std::endl;
 		std::cout<<"Predictions : " << predictions.transpose() << std::endl << std::endl;
 
-	}//: while
+	}//: while*/
+
+	// Save network to file.
+	const char* fileName = "saved.txt";
+	{
+		// Create an output archive
+		std::ofstream ofs(fileName);
+		boost::archive::text_oarchive ar(ofs);
+		// Write data
+		ar & nn;
+		std::cout << "Saved network: \n" << nn;
+	}
+
+
+	// Load network from file.
+	MultiLayerNeuralNetwork restored_nn("simple_linear_network_loaded");
+
+	{
+		// Create and input archive
+		std::ifstream ifs(fileName);
+		boost::archive::text_iarchive ar(ifs);
+		// Load data
+		ar & restored_nn;
+		std::cout << "Restored network: \n" << restored_nn;
+	}
+
+
+/*	// Test network
+	iteration = 0;
+	while (iteration < 10) {
+		Sample <MatrixXf, MatrixXf> sample = batch.getRandomSample();
+		std::cout << "[" << iteration++ << "]: sample (" << sample.index() << "): "<< sample.data()->transpose() << "->" << sample.label()->transpose() << std::endl;
+
+		float loss = restored_nn.test(sample.data(), sample.label());
+		// Compare results
+		MatrixXf predictions = (*restored_nn.getPredictions());
+		std::cout<<"Loss        : " << loss << std::endl;
+		std::cout<<"Targets     : " << sample.label()->transpose() << std::endl;
+		std::cout<<"Predictions : " << predictions.transpose() << std::endl << std::endl;
+
+	}//: while*/
 
 }

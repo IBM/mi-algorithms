@@ -37,7 +37,7 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 
 	// Compute the forward activations.
 	for (size_t i = 0; i < layers.size(); i++) {
-		LOG(LDEBUG) << "Layer [" << i << "] " << layers[i]->id() << ": (" <<
+		LOG(LDEBUG) << "Layer [" << i << "] " << layers[i]->name() << ": (" <<
 				layers[i]->inputsSize() << "x" << layers[i]->batchSize() << ") -> (" <<
 				layers[i]->outputsSize() << "x" << layers[i]->batchSize() << ")";
 
@@ -193,7 +193,7 @@ void MultiLayerNeuralNetwork::save_to_files(std::string prefix) {
 
 		std::ostringstream ss;
 		ss << std::setw(3) << std::setfill('0') << i + 1;
-		layers[i]->save_to_files(prefix + "_" + ss.str() + "_" + layers[i]->name);
+		layers[i]->save_to_files(prefix + "_" + ss.str() + "_" + layers[i]->layer_name);
 	}
 
 }

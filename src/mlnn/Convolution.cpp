@@ -12,8 +12,8 @@ namespace mlnn {
 
 #define ADDRESS_3D_TO_1D(i, j, k, cols, channel_size) ((i) + (j) * (cols) + (k) * (channel_size))
 
-Convolution::Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size) :
-	Layer(inputs * channels, filters * (sqrt(inputs) - filter_size + 1) * (sqrt(inputs) - filter_size + 1), batch_size, "conv"),
+Convolution::Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size, std::string name_) :
+	Layer(inputs * channels, filters * (sqrt(inputs) - filter_size + 1) * (sqrt(inputs) - filter_size + 1), batch_size, LayerTypes::Convolution, name_),
 	input_channels(channels), output_channels(filters), kernel_size(filter_size),
 	output_map_size((sqrt(inputs) - filter_size + 1) * (sqrt(inputs) - filter_size + 1)) {
 

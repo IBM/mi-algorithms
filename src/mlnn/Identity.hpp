@@ -19,7 +19,7 @@ namespace mlnn {
 class Identity : public mic::mlnn::Layer {
 public:
 
-	Identity(size_t inputs, size_t outputs, size_t batch_size);
+	Identity(size_t inputs, size_t outputs, size_t batch_size, std::string name_ = "Identity");
 
 	virtual ~Identity() {};
 

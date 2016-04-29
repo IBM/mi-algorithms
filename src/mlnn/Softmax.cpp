@@ -10,8 +10,8 @@
 namespace mic {
 namespace mlnn {
 
-Softmax::Softmax(size_t inputs_, size_t outputs_, size_t batch_size_) :
-	Layer(inputs_, outputs_, batch_size_, "softmax") {
+Softmax::Softmax(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_) :
+	Layer(inputs_, outputs_, batch_size_, LayerTypes::Softmax, name_) {
 
 }
 

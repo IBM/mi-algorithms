@@ -18,7 +18,7 @@ namespace mlnn {
  */
 class Linear : public mic::mlnn::Layer {
 public:
-	Linear(size_t inputs_, size_t outputs_, size_t batch_size_);
+	Linear(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_ = "Linear");
 
 	virtual ~Linear() {};
 

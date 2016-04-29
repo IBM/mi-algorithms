@@ -19,7 +19,7 @@ namespace mlnn {
 class Convolution : public mic::mlnn::Layer {
 public:
 
-	Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size);
+	Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size, std::string name_ = "Convolution");
 
 	virtual ~Convolution() {};
 

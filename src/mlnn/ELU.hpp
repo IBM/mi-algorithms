@@ -21,7 +21,7 @@ namespace mlnn {
 class ELU : public mic::mlnn::Layer {
 public:
 
-	ELU(size_t inputs, size_t outputs, size_t batch_size);
+	ELU(size_t inputs, size_t outputs, size_t batch_size, std::string name_ = "ELU");
 
 	virtual ~ELU() {};
 

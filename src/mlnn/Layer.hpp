@@ -16,6 +16,26 @@
 namespace mic {
 namespace mlnn {
 
+/*!
+ * \brief Enumeration of possible layer types.
+ * \author tkornuta
+ */
+enum class LayerTypes : short
+{
+	Linear = 0,
+	Pooling,
+	Convolution,
+	Sigmoid,
+	Identity,
+	ReLU,
+	ELU,
+	Softmax,
+	Dropout,
+	Padding,
+	Regression
+};
+
+
 /// Forward declaration of MultiLayerNeuralNetwork
 class MultiLayerNeuralNetwork;
 
@@ -25,24 +45,37 @@ inline float sqrt_eps(const float x) {
 
 /*!
  * abstract
- * \author krocki
+ * \author krocki/tkornuta
  */
 class Layer {
 public:
-	Layer(size_t inputs_size_, size_t outputs_size_, size_t batch_size_, std::string label_ = "layer");
+	/*!
+	 *
+	 * @param inputs_size_
+	 * @param outputs_size_
+	 * @param batch_size_
+	 * @param layer_type_
+	 * @param label_
+	 */
+	Layer(size_t inputs_size_, size_t outputs_size_, size_t batch_size_, LayerTypes layer_type_, std::string label_ = "layer");
 
-	//need to override these
-
-	/*		TODO: allow 2 versions of forward (with 0 and 1 params),
-			currently you must override version with 1 				*/
-
+	/*!
+	 * Abstract method responsible for processing the data from the inputs to outputs. To be overridden in the derived classes.
+	 * @param test Test mode - used for dropout-alike regularization techniques.
+	 */
 	virtual void forward(bool test = false) = 0;
+
+	/*!
+	 * Abstract method responsible for processing the gradients from outputs to inputs (i.e. in the opposite direction). To be overridden in the derived classes.
+	 */
 	virtual void backward() = 0;
 
 	//this is mainly for debugging - TODO: proper serialization of layers and object NN
 	virtual void save_to_files(std::string prefix);
 
 	virtual void resetGrads() {};
+
+
 	virtual void applyGrads(double alpha_, double decay_) {};
 
 	virtual ~Layer() {};
@@ -59,9 +92,84 @@ public:
 	/// Returns size (length) of (mini)batch.
 	size_t batchSize();
 
-	/// Returns Id (name) of the layer.
-	std::string id() {
-		return name;
+	/// Returns name of the layer.
+	const std::string name() const {
+		return layer_name;
+	}
+
+	/*!
+	 * Returns the type of layer.
+	 */
+	const std::string type() const {
+		switch(layer_type) {
+		case(LayerTypes::Linear):
+			return "Linear";
+		case(LayerTypes::Pooling):
+			return "Pooling";
+		case(LayerTypes::Convolution):
+			return "Convolution";
+		case(LayerTypes::Sigmoid):
+			return "Sigmoid";
+		case(LayerTypes::Identity):
+			return "Identity";
+		case(LayerTypes::ReLU):
+			return "ReLU";
+		case(LayerTypes::ELU):
+			return "ELU";
+		case(LayerTypes::Softmax):
+			return "Softmax";
+		case(LayerTypes::Dropout):
+			return "Dropout";
+		case(LayerTypes::Padding):
+			return "Padding";
+		case(LayerTypes::Regression):
+			return "Regression";
+		default:
+			return "Undefined";
+		}//: switch
+	}
+
+	/*!
+	 * Stream operator enabling to print neural network.
+	 * @param os_ Ostream object.
+	 * @param obj_ Tensor object.
+	 */
+	friend std::ostream& operator<<(std::ostream& os_, Layer& obj_) {
+		// Display dimensions.
+		os_ << "  [" << obj_.type() << "]: " << obj_.layer_name << ":\n";
+		// Display inputs.
+		os_ << "    [" << obj_.s.name() << "]:\n";
+		for (auto& i: obj_.s.keys()) {
+			// Display elements.
+			os_ << "      [" << i.first << "]: ";
+			os_ << (obj_.s[i.second])->cols() << "x" << (obj_.s[i.second])->rows() << std::endl;
+		}//: for keys
+
+		// Display gradients.
+		os_ << "    [" << obj_.g.name() << "]:\n";
+		for (auto& i: obj_.g.keys()) {
+			// Display elements.
+			os_ << "      [" << i.first << "]: ";
+			os_ << (obj_.g[i.second])->cols() << "x" << (obj_.g[i.second])->rows() << std::endl;
+		}//: for keys
+
+		// Display parameters.
+		os_ << "    [" << obj_.p.name() << "]:\n";
+		for (auto& i: obj_.p.keys()) {
+			// Display elements.
+			os_ << "      [" << i.first << "]: ";
+			os_ << (obj_.p[i.second])->cols() << "x" << (obj_.p[i.second])->rows() << std::endl;
+		}//: for keys
+
+		// Display gradients.
+		os_ << "    [" << obj_.m.name() << "]:\n";
+		for (auto& i: obj_.m.keys()) {
+			// Display elements.
+			os_ << "      [" << i.first << "]: ";
+			os_ << (obj_.m[i.second])->cols() << "x" << (obj_.m[i.second])->rows() << std::endl;
+		}//: for keys
+
+		return os_;
 	}
 
 protected:
@@ -75,9 +183,6 @@ protected:
 	mic::types::MatrixXf dy;
 */
 
-	/// Name (identifier of the type) of the layer.
-	const std::string name;
-
 	/// Size (length) of inputs.
 	const size_t inputs_size;
 
@@ -86,6 +191,13 @@ protected:
 
 	/// Size (length) of (mini)batch.
 	const size_t batch_size;
+
+	/// Type of the layer.
+	const LayerTypes layer_type;
+
+	/// Name (identifier of the type) of the layer.
+	const std::string layer_name;
+
 
 	/// States - contains input [x] and output [y] matrices.
 	mic::types::MatrixArray<float> s;
@@ -99,7 +211,7 @@ protected:
 	/// Memory - a list of temporal parameters, to be used by the derived classes.
 	mic::types::MatrixArray<float> m;
 
-	// Add access to protected fields to the nn class.
+	// Adds the nn class the access to protected fields of class layer.
 	friend class MultiLayerNeuralNetwork;
 
 };

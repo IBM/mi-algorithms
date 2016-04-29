@@ -19,7 +19,7 @@ namespace mlnn {
 class Pooling : public mic::mlnn::Layer {
 public:
 
-	Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_);
+	Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_, std::string name_ = "Pooling");
 
 	virtual ~Pooling() {};
 

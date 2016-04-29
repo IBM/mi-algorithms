@@ -19,7 +19,7 @@ namespace mlnn {
 class Softmax : public mic::mlnn::Layer {
 public:
 
-	Softmax(size_t inputs_, size_t outputs_, size_t batch_size_);
+	Softmax(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_ = "Softmax");
 
 	~Softmax() {};
 

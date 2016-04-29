@@ -19,7 +19,7 @@ namespace mlnn {
 class Dropout : public Layer {
 public:
 
-	Dropout(size_t inputs, size_t outputs, size_t batch_size, float _ratio);
+	Dropout(size_t inputs, size_t outputs, size_t batch_size, float _ratio, std::string name = "Dropout");
 
 	virtual ~Dropout() {};
 

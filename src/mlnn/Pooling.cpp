@@ -10,8 +10,8 @@
 namespace mic {
 namespace mlnn {
 
-Pooling::Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_) :
-	Layer(inputs_, channels_ * (sqrt(inputs_ / channels_) / window_size_) * (sqrt(inputs_ / channels_) / window_size_), batch_size_, "pool"),
+Pooling::Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_, std::string name_) :
+	Layer(inputs_, channels_ * (sqrt(inputs_ / channels_) / window_size_) * (sqrt(inputs_ / channels_) / window_size_), batch_size_, LayerTypes::Pooling, name_),
 	channels(channels_), window_size(window_size_) {
 
 	// cache = mic::types::MatrixXf::Zero(x.rows(), x.cols());

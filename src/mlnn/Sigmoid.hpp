@@ -18,7 +18,7 @@ namespace mlnn {
  */
 class Sigmoid : public mic::mlnn::Layer {
 public:
-	Sigmoid(size_t inputs, size_t outputs, size_t batch_size);
+	Sigmoid(size_t inputs, size_t outputs, size_t batch_size, std::string name_ = "Sigmoid");
 
 	virtual ~Sigmoid() {};
 

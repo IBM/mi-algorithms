@@ -20,7 +20,7 @@ namespace mlnn {
 class Regression : public mic::mlnn::Layer {
 public:
 
-	Regression(size_t inputs_, size_t outputs_, size_t batch_size_);
+	Regression(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_ = "Regression");
 
 	~Regression() {};
 

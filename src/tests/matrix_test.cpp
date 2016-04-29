@@ -167,7 +167,7 @@ int main(int argc, char* argv[]) {
 	std::cout  <<  "Multiplication time = " << time <<  std::endl;
 
 
-	const char* fileName = "saved.xml";
+	const char* fileName = "saved.txt";
 
 	// Save data
 	{

@@ -11,8 +11,8 @@ namespace mic {
 namespace mlnn {
 
 
-ReLU::ReLU(size_t inputs, size_t outputs, size_t batch_size) :
-	Layer(inputs, outputs, batch_size, "relu") {
+ReLU::ReLU(size_t inputs, size_t outputs, size_t batch_size, std::string name_) :
+	Layer(inputs, outputs, batch_size, LayerTypes::ReLU, name_) {
 
 }
 

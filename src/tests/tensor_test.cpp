@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 	mic::types::TensorXd t4 = mat;
 	std::cout << "tensor from matrix = " << t4 << std::endl;
 
-	const char* fileName = "saved.xml";
+	const char* fileName = "saved.txt";
 
 	// Save data
 	{

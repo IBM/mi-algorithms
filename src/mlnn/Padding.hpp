@@ -19,7 +19,7 @@ namespace mlnn {
 class Padding : public Layer {
 public:
 
-	Padding(size_t inputs, size_t _channels, size_t batch_size, size_t _padding);
+	Padding(size_t inputs, size_t _channels, size_t batch_size, size_t _padding, std::string name_ = "Padding");
 
 	~Padding() {};
 
