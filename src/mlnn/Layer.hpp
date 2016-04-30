@@ -13,6 +13,21 @@
 #include<types/MatrixTypes.hpp>
 #include<types/MatrixArray.hpp>
 
+#include <boost/serialization/serialization.hpp>
+// include this header to serialize vectors
+#include <boost/serialization/vector.hpp>
+// include this header to serialize arrays
+#include <boost/serialization/array.hpp>
+#include <boost/serialization/version.hpp>
+
+// Forward declaration of class boost::serialization::access
+namespace boost {
+namespace serialization {
+class access;
+}//: serialization
+}//: access
+
+
 namespace mic {
 namespace mlnn {
 
@@ -36,6 +51,19 @@ enum class LayerTypes : short
 };
 
 
+/*class Linear;
+class Pooling;
+class Convolution;
+class Sigmoid;
+class Identity;
+class ReLU;
+class ELU;
+class Softmax;
+class Dropout;
+class Padding;
+class Regression;*/
+
+
 /// Forward declaration of MultiLayerNeuralNetwork
 class MultiLayerNeuralNetwork;
 
@@ -50,14 +78,14 @@ inline float sqrt_eps(const float x) {
 class Layer {
 public:
 	/*!
-	 *
-	 * @param inputs_size_
-	 * @param outputs_size_
-	 * @param batch_size_
-	 * @param layer_type_
-	 * @param label_
+	 * Default constructor of the layer parent class. Sets the input-output dimensions, layer type and name.
+	 * @param inputs_size_ Size of the input vector.
+	 * @param outputs_size_ Size of the output vector.
+	 * @param batch_size_ Size of the batch.
+	 * @param layer_type_ Type of the layer.
+	 * @param name_ Name of the layer.
 	 */
-	Layer(size_t inputs_size_, size_t outputs_size_, size_t batch_size_, LayerTypes layer_type_, std::string label_ = "layer");
+	Layer(size_t inputs_size_, size_t outputs_size_, size_t batch_size_, LayerTypes layer_type_, std::string name_ = "layer");
 
 	/*!
 	 * Abstract method responsible for processing the data from the inputs to outputs. To be overridden in the derived classes.
@@ -136,7 +164,7 @@ public:
 	 */
 	friend std::ostream& operator<<(std::ostream& os_, Layer& obj_) {
 		// Display dimensions.
-		os_ << "  [" << obj_.type() << "]: " << obj_.layer_name << ":\n";
+		os_ << "  [" << obj_.type() << "]: " << obj_.layer_name << ": " << obj_.inputs_size << "x" << obj_.batch_size << " -> " << obj_.outputs_size << "x" << obj_.batch_size << "\n";
 		// Display inputs.
 		os_ << "    [" << obj_.s.name() << "]:\n";
 		for (auto& i: obj_.s.keys()) {
@@ -174,29 +202,20 @@ public:
 
 protected:
 
-/*	//used in forward pass
-	mic::types::MatrixXf x; //inputs
-	mic::types::MatrixXf y; //outputs
-
-	//grads, used in backward pass
-	mic::types::MatrixXf dx;
-	mic::types::MatrixXf dy;
-*/
-
 	/// Size (length) of inputs.
-	const size_t inputs_size;
+	size_t inputs_size;
 
 	/// Size (length) of outputs.
-	const size_t outputs_size;
+	size_t outputs_size;
 
 	/// Size (length) of (mini)batch.
-	const size_t batch_size;
+	size_t batch_size;
 
 	/// Type of the layer.
-	const LayerTypes layer_type;
+	LayerTypes layer_type;
 
 	/// Name (identifier of the type) of the layer.
-	const std::string layer_name;
+	std::string layer_name;
 
 
 	/// States - contains input [x] and output [y] matrices.
@@ -213,6 +232,37 @@ protected:
 
 	// Adds the nn class the access to protected fields of class layer.
 	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Protected constructor, used only by the derived classes during the serialization. Empty!!
+	 */
+	Layer () { }
+
+private:
+
+	// Friend class - required for using boost serialization.
+    friend class boost::serialization::access;
+
+    /*!
+     * Serializes the layer to and from archive.
+     * @param ar Used archive.
+     * @param version Version of the layer class (not used currently).
+     */
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version) {
+        // Archive parameters.
+        ar & inputs_size;
+        ar & outputs_size;
+        ar & batch_size;
+        ar & layer_type;
+        ar & layer_name;
+        // Archive four matrix arrays.
+        ar & s;
+        ar & g;
+        ar & p;
+        ar & m;
+    }
+
 
 };
 

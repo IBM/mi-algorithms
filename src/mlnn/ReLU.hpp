@@ -26,6 +26,12 @@ public:
 	void forward(bool apply_dropout = false);
 
 	void backward();
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	ReLU() : Layer () { }
+
 };
 
 } /* namespace mlnn */

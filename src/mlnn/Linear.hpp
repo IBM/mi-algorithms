@@ -18,6 +18,13 @@ namespace mlnn {
  */
 class Linear : public mic::mlnn::Layer {
 public:
+	/*!
+	 * Default constructor used for creation of the layer.
+	 * @param inputs_
+	 * @param outputs_
+	 * @param batch_size_
+	 * @param name_
+	 */
 	Linear(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_ = "Linear");
 
 	virtual ~Linear() {};
@@ -30,7 +37,13 @@ public:
 
 	void applyGrads(double alpha_, double decay_ = 0);
 
-protected:
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Linear() : Layer () { }
+
+
+/*protected:
 	mic::types::MatrixXf W;
 	mic::types::VectorXf b;
 
@@ -38,7 +51,9 @@ protected:
 	mic::types::MatrixXf db;
 
 	mic::types::MatrixXf mW;
-	mic::types::MatrixXf mb;
+	mic::types::MatrixXf mb;*/
+
+private:
 };
 
 } /* namespace mlnn */

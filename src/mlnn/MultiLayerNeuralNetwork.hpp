@@ -16,7 +16,7 @@
 // include this header to serialize vectors
 #include <boost/serialization/vector.hpp>
 // include this header to serialize arrays
-//#include <boost/serialization/array.hpp>
+#include <boost/serialization/array.hpp>
 #include <boost/serialization/version.hpp>
 
 // Forward declaration of class boost::serialization::access
@@ -186,7 +186,50 @@ private:
     template<class Archive>
     void save(Archive & ar, const unsigned int version) const {
         ar & name;
-//        ar & dimensions;
+        // Serialize number of layers.
+        size_t size = layers.size();
+		std::cout << size << std::endl;
+        ar & size;
+
+		// Serialize layers one by one.
+		for (size_t i = 0; i < layers.size(); i++) {
+			// Serialize type first - so we can use it in load.
+			ar & layers[i]->layer_type;
+
+			// Register the type, so it can be used during the deserialization.
+			switch(layers[i]->layer_type) {
+			case(LayerTypes::Linear):
+				ar.template register_type<mic::mlnn::Linear>();
+				std::cout <<  "Linear\n"; break;
+			case(LayerTypes::Pooling):
+				std::cout <<  "Pooling"; break;
+			case(LayerTypes::Convolution):
+				std::cout <<  "Convolution"; break;
+			case(LayerTypes::Sigmoid):
+				std::cout <<  "Sigmoid"; break;
+			case(LayerTypes::Identity):
+				std::cout <<  "Identity"; break;
+			case(LayerTypes::ReLU):
+				std::cout <<  "ReLU"; break;
+			case(LayerTypes::ELU):
+				std::cout <<  "ELU"; break;
+			case(LayerTypes::Softmax):
+				std::cout <<  "Softmax"; break;
+			case(LayerTypes::Dropout):
+				std::cout <<  "Dropout"; break;
+			case(LayerTypes::Padding):
+				std::cout <<  "Padding"; break;
+			case(LayerTypes::Regression):
+				std::cout <<  "Regression"; break;
+			default:
+				std::cout <<  "Undefined";
+			}//: switch
+
+
+			// Serialize the layer.
+			ar & (*layers[i]);
+		}//: for
+
 //        ar & boost::serialization::make_array<T>(data_ptr, elements);
     }
 
@@ -198,6 +241,54 @@ private:
     template<class Archive>
     void load(Archive & ar, const unsigned int version) {
 		ar & name;
+		// Deserialize number of layers
+		size_t size;
+		ar & size;
+
+		std::cout << "Odczytany: " << size << std::endl;
+
+		// Serialize layers one by one.
+		for (size_t i = 0; i < size; i++) {
+			LayerTypes lt;
+			// Get layer type
+			ar & lt;
+
+			std::shared_ptr<Layer> layer_ptr;
+			switch(lt) {
+			case(LayerTypes::Linear):
+				//ar.template register_type<mic::mlnn::Linear>();
+				layer_ptr = std::make_shared<Linear>(Linear());
+				std::cout <<  "Linear\n"; break;
+			case(LayerTypes::Pooling):
+				std::cout <<  "Pooling\n"; break;
+			case(LayerTypes::Convolution):
+				std::cout <<  "Convolution"; break;
+			case(LayerTypes::Sigmoid):
+				std::cout <<  "Sigmoid\n"; break;
+			case(LayerTypes::Identity):
+				std::cout <<  "Identity\n"; break;
+			case(LayerTypes::ReLU):
+				layer_ptr = std::make_shared<ReLU>(ReLU());
+				std::cout <<  "ReLU\n"; break;
+			case(LayerTypes::ELU):
+				std::cout <<  "ELU\n"; break;
+			case(LayerTypes::Softmax):
+				std::cout <<  "Softmax\n"; break;
+			case(LayerTypes::Dropout):
+				std::cout <<  "Dropout\n"; break;
+			case(LayerTypes::Padding):
+				std::cout <<  "Padding\n"; break;
+			case(LayerTypes::Regression):
+				layer_ptr = std::make_shared<Regression>(Regression());
+				std::cout <<  "Regression\n"; break;
+			default:
+				std::cout <<  "Undefined\n";
+			}//: switch
+
+			ar & (*layer_ptr);
+			layers.push_back(layer_ptr);
+		}//: for
+
 /*		ar & dimensions;
 		// Allocate memory.
 		if (data_ptr != nullptr)

@@ -78,7 +78,7 @@ int main() {
 	}//: for
 
 	// Training.
-/*	size_t iteration = 0;
+	size_t iteration = 0;
 	while (iteration < 100000) {
 		Sample <MatrixXf, MatrixXf> sample = batch.getRandomSample();
 		//std::cout << "[" << iteration++ << "]: sample (" << sample.index() << "): "<< sample.data()->transpose() << "->" << sample.label()->transpose() << std::endl;
@@ -107,7 +107,7 @@ int main() {
 		std::cout<<"Targets     : " << sample.label()->transpose() << std::endl;
 		std::cout<<"Predictions : " << predictions.transpose() << std::endl << std::endl;
 
-	}//: while*/
+	}//: while
 
 	// Save network to file.
 	const char* fileName = "saved.txt";
@@ -134,7 +134,7 @@ int main() {
 	}
 
 
-/*	// Test network
+	// Test network
 	iteration = 0;
 	while (iteration < 10) {
 		Sample <MatrixXf, MatrixXf> sample = batch.getRandomSample();
@@ -147,6 +147,6 @@ int main() {
 		std::cout<<"Targets     : " << sample.label()->transpose() << std::endl;
 		std::cout<<"Predictions : " << predictions.transpose() << std::endl << std::endl;
 
-	}//: while*/
+	}//: while
 
 }

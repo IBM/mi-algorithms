@@ -28,6 +28,11 @@ public:
 
 	void backward();
 
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Regression() : Layer () { }
+
 };
 
 } /* namespace mlnn */
