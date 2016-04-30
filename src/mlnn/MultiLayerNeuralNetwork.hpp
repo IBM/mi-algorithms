@@ -169,28 +169,48 @@ public:
 	 * Saves network to file using serialization.
 	 * @param filename_ Name of the file.
 	 */
-	void save(std::string filename_)
+	bool save(std::string filename_)
 	{
-		// Create an output archive
-		std::ofstream ofs(filename_);
-		boost::archive::text_oarchive ar(ofs);
-		// Write data
-		ar & (*this);
-		LOG(LDEBUG) << "Saved network: \n" << (*this);
+		try {
+			// Create an output archive
+			std::ofstream ofs(filename_);
+			boost::archive::text_oarchive ar(ofs);
+			// Write data
+			ar & (*this);
+			LOG(LINFO) << "Network " << name << " properly saved to file " << filename_;
+			LOG(LDEBUG) << "Saved network: \n" << (*this);
+		} catch(...) {
+			LOG(LERROR) << "Could not write neural network " << name << " to file " << filename_ << "!";
+			// Clear layers - just in case.
+			layers.clear();
+			loss_type = LossFunctionType::Undefined;
+			return false;
+		}
+		return true;
 	}
 
 	/*!
 	 * Loads network from the file using serialization.
 	 * @param filename_ Name of the file.
 	 */
-	void load(std::string filename_)
+	bool load(std::string filename_)
 	{
-		// Create and input archive
-		std::ifstream ifs(filename_);
-		boost::archive::text_iarchive ar(ifs);
-		// Load data
-		ar & (*this);
-		LOG(LDEBUG) << "Loaded network: \n" << (*this);
+		try {
+			// Create and input archive
+			std::ifstream ifs(filename_);
+			boost::archive::text_iarchive ar(ifs);
+			// Load data
+			ar & (*this);
+			LOG(LINFO) << "Network " << name << " properly loaded from file " << filename_;
+			LOG(LDEBUG) << "Loaded network: \n" << (*this);
+		} catch(...) {
+			LOG(LERROR) << "Could not load neural network from file " << filename_ << "!";
+			// Clear layers - just in case.
+			layers.clear();
+			loss_type = LossFunctionType::Undefined;
+			return false;
+		}
+		return true;
 	}
 
 
