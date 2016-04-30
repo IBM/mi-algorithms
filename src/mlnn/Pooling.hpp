@@ -67,9 +67,26 @@ protected:
 
 	mic::types::MatrixXf cache;
 
-	const size_t channels;
+	/*!
+	 * Number of image (matrix) channels.
+	 */
+	size_t channels;
 
-	const size_t window_size;
+	/*!
+	 * Size of the window.
+	 */
+	size_t window_size;
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Pooling() : Layer () { }
+
 };
 
 } /* namespace mlnn */

@@ -27,6 +27,11 @@ public:
 
 	void backward();
 
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
 	/*!
 	 * Private constructor, used only during the serialization.
 	 */

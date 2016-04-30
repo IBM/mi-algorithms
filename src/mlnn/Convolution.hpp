@@ -14,6 +14,7 @@ namespace mic {
 namespace mlnn {
 
 /*!
+ * \brief Class representing a convolution layer.
  * \author krocki
  */
 class Convolution : public mic::mlnn::Layer {
@@ -55,11 +56,23 @@ protected:
 	mic::types::MatrixXf mW;
 	mic::types::MatrixXf mb;
 
-	const size_t input_channels;
-	const size_t output_channels;
-	const size_t kernel_size;
-	const size_t output_map_size;
+	size_t input_channels;
 
+	size_t output_channels;
+
+	size_t kernel_size;
+
+	size_t output_map_size;
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Convolution() : Layer () { }
 
 };
 

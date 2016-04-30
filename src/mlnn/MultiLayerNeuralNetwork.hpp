@@ -19,6 +19,8 @@
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/version.hpp>
 
+#include <logger/Log.hpp>
+
 // Forward declaration of class boost::serialization::access
 namespace boost {
 namespace serialization {
@@ -186,7 +188,8 @@ private:
     template<class Archive>
     void save(Archive & ar, const unsigned int version) const {
         ar & name;
-        // Serialize number of layers.
+		ar & loss_type;
+     // Serialize number of layers.
         size_t size = layers.size();
 		std::cout << size << std::endl;
         ar & size;
@@ -196,41 +199,10 @@ private:
 			// Serialize type first - so we can use it in load.
 			ar & layers[i]->layer_type;
 
-			// Register the type, so it can be used during the deserialization.
-			switch(layers[i]->layer_type) {
-			case(LayerTypes::Linear):
-				ar.template register_type<mic::mlnn::Linear>();
-				std::cout <<  "Linear\n"; break;
-			case(LayerTypes::Pooling):
-				std::cout <<  "Pooling"; break;
-			case(LayerTypes::Convolution):
-				std::cout <<  "Convolution"; break;
-			case(LayerTypes::Sigmoid):
-				std::cout <<  "Sigmoid"; break;
-			case(LayerTypes::Identity):
-				std::cout <<  "Identity"; break;
-			case(LayerTypes::ReLU):
-				std::cout <<  "ReLU"; break;
-			case(LayerTypes::ELU):
-				std::cout <<  "ELU"; break;
-			case(LayerTypes::Softmax):
-				std::cout <<  "Softmax"; break;
-			case(LayerTypes::Dropout):
-				std::cout <<  "Dropout"; break;
-			case(LayerTypes::Padding):
-				std::cout <<  "Padding"; break;
-			case(LayerTypes::Regression):
-				std::cout <<  "Regression"; break;
-			default:
-				std::cout <<  "Undefined";
-			}//: switch
-
-
 			// Serialize the layer.
 			ar & (*layers[i]);
 		}//: for
 
-//        ar & boost::serialization::make_array<T>(data_ptr, elements);
     }
 
     /*!
@@ -241,11 +213,11 @@ private:
     template<class Archive>
     void load(Archive & ar, const unsigned int version) {
 		ar & name;
-		// Deserialize number of layers
+		ar & loss_type;
+
+		// Deserialize number of layers.
 		size_t size;
 		ar & size;
-
-		std::cout << "Odczytany: " << size << std::endl;
 
 		// Serialize layers one by one.
 		for (size_t i = 0; i < size; i++) {
@@ -258,43 +230,56 @@ private:
 			case(LayerTypes::Linear):
 				//ar.template register_type<mic::mlnn::Linear>();
 				layer_ptr = std::make_shared<Linear>(Linear());
-				std::cout <<  "Linear\n"; break;
+				LOG(LDEBUG) <<  "Linear";
+				break;
 			case(LayerTypes::Pooling):
-				std::cout <<  "Pooling\n"; break;
+				layer_ptr = std::make_shared<Pooling>(Pooling());
+				LOG(LERROR) <<  "Pooling Layer serialization not implemented (some params are not serialized)!";
+				break;
 			case(LayerTypes::Convolution):
-				std::cout <<  "Convolution"; break;
+				layer_ptr = std::make_shared<Convolution>(Convolution());
+				LOG(LERROR) <<  "Convolution Layer serialization not implemented (some params are not serialized)!";
+				break;
 			case(LayerTypes::Sigmoid):
-				std::cout <<  "Sigmoid\n"; break;
+				layer_ptr = std::make_shared<Sigmoid>(Sigmoid());
+				LOG(LDEBUG) <<  "Sigmoid";
+				break;
 			case(LayerTypes::Identity):
-				std::cout <<  "Identity\n"; break;
+				layer_ptr = std::make_shared<Identity>(Identity());
+				LOG(LDEBUG) <<  "Identity";
+				break;
 			case(LayerTypes::ReLU):
 				layer_ptr = std::make_shared<ReLU>(ReLU());
-				std::cout <<  "ReLU\n"; break;
+				LOG(LDEBUG) <<  "ReLU";
+				break;
 			case(LayerTypes::ELU):
-				std::cout <<  "ELU\n"; break;
+				layer_ptr = std::make_shared<ELU>(ELU());
+				LOG(LDEBUG) <<  "ELU";
+				break;
 			case(LayerTypes::Softmax):
-				std::cout <<  "Softmax\n"; break;
+				layer_ptr = std::make_shared<Softmax>(Softmax());
+				LOG(LDEBUG) <<  "Softmax";
+				break;
 			case(LayerTypes::Dropout):
-				std::cout <<  "Dropout\n"; break;
+				layer_ptr = std::make_shared<Dropout>(Dropout());
+				LOG(LERROR) <<  "Dropout Layer serialization not implemented (some params are not serialized)!";
+				break;
 			case(LayerTypes::Padding):
-				std::cout <<  "Padding\n"; break;
+				layer_ptr = std::make_shared<Padding>(Padding());
+				LOG(LERROR) <<  "Padding Layer serialization not implemented (some params are not serialized)!";
+				break;
 			case(LayerTypes::Regression):
 				layer_ptr = std::make_shared<Regression>(Regression());
-				std::cout <<  "Regression\n"; break;
+				LOG(LDEBUG) <<  "Regression";
+				break;
 			default:
-				std::cout <<  "Undefined\n";
+				LOG(LERROR) <<  "Undefined Layer type detected during deserialization!";
 			}//: switch
 
 			ar & (*layer_ptr);
 			layers.push_back(layer_ptr);
 		}//: for
 
-/*		ar & dimensions;
-		// Allocate memory.
-		if (data_ptr != nullptr)
-			delete (data_ptr);
-		data_ptr = new T[elements];
-		ar & boost::serialization::make_array<T>(data_ptr, elements);*/
     }
 
      // The serialization must be splited as load requires to allocate the memory.

@@ -64,7 +64,7 @@ class Padding;
 class Regression;*/
 
 
-/// Forward declaration of MultiLayerNeuralNetwork
+// Forward declaration of MultiLayerNeuralNetwork
 class MultiLayerNeuralNetwork;
 
 inline float sqrt_eps(const float x) {

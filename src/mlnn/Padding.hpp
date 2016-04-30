@@ -14,6 +14,7 @@ namespace mic {
 namespace mlnn {
 
 /*!
+ * \brief Class implementing padding operation - expanding the size of image (matrix) by a margin of n pixels on every image side.
  * \author krocki
  */
 class Padding : public Layer {
@@ -33,6 +34,18 @@ protected:
 	size_t channels;
 
 	size_t padding;
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Padding() : Layer () { }
+
+
 
 };
 

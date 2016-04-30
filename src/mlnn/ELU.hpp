@@ -14,7 +14,7 @@ namespace mic {
 namespace mlnn {
 
 /*!
- * Exponential Linear Unit
+ * \brief Class implementing the layer with Exponential Linear Unit (ELU).
  * http://arxiv.org/pdf/1511.07289v5.pdf
  * \author krocki
  */
@@ -28,6 +28,16 @@ public:
 	void forward(bool test = false);
 
 	void backward();
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	ELU() : Layer () { }
 
 };
 

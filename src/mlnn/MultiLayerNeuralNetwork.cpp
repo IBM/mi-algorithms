@@ -7,8 +7,6 @@
 
 #include <mlnn/MultiLayerNeuralNetwork.hpp>
 
-#include <logger/Log.hpp>
-
 #include <iomanip>
 
 namespace mic {

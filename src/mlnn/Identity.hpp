@@ -14,6 +14,8 @@ namespace mic {
 namespace mlnn {
 
 /*!
+ * \brief Identity layer - passes inputs/gradients without any modifications.
+ * Implemented for testing purposes.
  * \author krocki
  */
 class Identity : public mic::mlnn::Layer {
@@ -26,6 +28,16 @@ public:
 	void forward(bool test = false);
 
 	void backward();
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Identity() : Layer () { }
 
 };
 } /* namespace mlnn */
