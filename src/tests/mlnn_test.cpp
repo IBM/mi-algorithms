@@ -15,11 +15,6 @@ using namespace mic::logger;
 
 #include <types/Batch.hpp>
 
-#include <fstream>
-// Include headers that implement a archive in simple text format
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
 
 // Using multi-layer neural networks
 using namespace mic::mlnn;
@@ -31,9 +26,9 @@ int main() {
 
 	// Create 1 layer (linear) network.
 	MultiLayerNeuralNetwork nn("simple_linear_network");
-	nn.addLayer(new Linear(10, 20, 1, "Linear 1"));
-	nn.addLayer(new ReLU(20, 20, 1, "ReLU 1"));
-	nn.addLayer(new Linear(20, 4, 1, "Linear 2"));
+	nn.addLayer(new Linear(10, 20, 1, "First Linear"));
+	nn.addLayer(new ReLU(20, 20, 1, "ReLU"));
+	nn.addLayer(new Linear(20, 4, 1, "Second Linear"));
 //	nn.addLayer(new Softmax(4, 4, 1));
 	nn.addLayer(new Regression(4, 4, 1, "Final Regression"));
 
@@ -56,9 +51,9 @@ int main() {
 		std::cout<<"Predictions : " << predictions.transpose() << std::endl;
 	}//: for*/
 
-	Batch<MatrixXf, MatrixXf> batch;
 
-	// Generate batch.
+	// Generate a batch.
+	Batch<MatrixXf, MatrixXf> batch;
 	for(size_t i=0; i< 10; i++) {
 		// Generate "pose".
 		MatrixXfPtr pose (new MatrixXf(10, 1));
@@ -111,27 +106,14 @@ int main() {
 
 	// Save network to file.
 	const char* fileName = "saved.txt";
-	{
-		// Create an output archive
-		std::ofstream ofs(fileName);
-		boost::archive::text_oarchive ar(ofs);
-		// Write data
-		ar & nn;
-		std::cout << "Saved network: \n" << nn;
-	}
+	nn.save(fileName);
+	std::cout << "Saved network: \n" << nn;
 
 
 	// Load network from file.
 	MultiLayerNeuralNetwork restored_nn("simple_linear_network_loaded");
-
-	{
-		// Create and input archive
-		std::ifstream ifs(fileName);
-		boost::archive::text_iarchive ar(ifs);
-		// Load data
-		ar & restored_nn;
-		std::cout << "Restored network: \n" << restored_nn;
-	}
+	restored_nn.load(fileName);
+	std::cout << "Restored network: \n" << restored_nn;
 
 
 	// Test network

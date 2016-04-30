@@ -19,6 +19,11 @@
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/version.hpp>
 
+#include <fstream>
+// Include headers that implement a archive in simple text format
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <logger/Log.hpp>
 
 // Forward declaration of class boost::serialization::access
@@ -160,6 +165,36 @@ public:
 	}
 
 
+	/*!
+	 * Saves network to file using serialization.
+	 * @param filename_ Name of the file.
+	 */
+	void save(std::string filename_)
+	{
+		// Create an output archive
+		std::ofstream ofs(filename_);
+		boost::archive::text_oarchive ar(ofs);
+		// Write data
+		ar & (*this);
+		LOG(LDEBUG) << "Saved network: \n" << (*this);
+	}
+
+	/*!
+	 * Loads network from the file using serialization.
+	 * @param filename_ Name of the file.
+	 */
+	void load(std::string filename_)
+	{
+		// Create and input archive
+		std::ifstream ifs(filename_);
+		boost::archive::text_iarchive ar(ifs);
+		// Load data
+		ar & (*this);
+		LOG(LDEBUG) << "Loaded network: \n" << (*this);
+	}
+
+
+
 protected:
 	/*!
 	 * Contains a list of consecutive layers.
@@ -189,9 +224,8 @@ private:
     void save(Archive & ar, const unsigned int version) const {
         ar & name;
 		ar & loss_type;
-     // Serialize number of layers.
+		// Serialize number of layers.
         size_t size = layers.size();
-		std::cout << size << std::endl;
         ar & size;
 
 		// Serialize layers one by one.
@@ -212,6 +246,10 @@ private:
      */
     template<class Archive>
     void load(Archive & ar, const unsigned int version) {
+    	// Clear the layers vector - just in case.
+    	layers.clear();
+
+    	// Deserialize name and loss function type.
 		ar & name;
 		ar & loss_type;
 
