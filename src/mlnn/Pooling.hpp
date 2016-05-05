@@ -19,13 +19,46 @@ namespace mlnn {
 class Pooling : public mic::mlnn::Layer {
 public:
 
-	Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_);
+	Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_, std::string name_ = "Pooling");
 
 	virtual ~Pooling() {};
 
 	void forward(bool test_ = false);
 
+	/*!
+	 * Processes forwards data for a single channel.
+	 * @param x Channel
+	 * @param cache
+	 * @param window_size
+	 * @return
+	 */
+	mic::types::MatrixXf forwardChannel(mic::types::MatrixXf& x, mic::types::MatrixXf& cache);
+
+	/*!
+	 *
+	 * @param out
+	 * @param cache
+	 * @param image
+	 */
+	void poolDisjoint2D(mic::types::MatrixXf& out, mic::types::MatrixXf& cache, mic::types::MatrixXf& image);
+
 	void backward();
+
+	/*!
+	 * Processes backwards data for a single channel.
+	 * @param dy
+	 * @param cache_
+	 * @return
+	 */
+	mic::types::MatrixXf backwardChannel(mic::types::MatrixXf& dy, mic::types::MatrixXf& cache_);
+
+	/*!
+	 *
+	 * @param dx
+	 * @param cache
+	 * @param dy
+	 */
+	void unpoolDisjoint2D(mic::types::MatrixXf& dx, mic::types::MatrixXf& cache, mic::types::MatrixXf& dy);
 
 	//this is mainly for debugging - TODO: proper serialization of layers
 	void save_to_files(std::string prefix);
@@ -34,9 +67,26 @@ protected:
 
 	mic::types::MatrixXf cache;
 
-	const size_t channels;
+	/*!
+	 * Number of image (matrix) channels.
+	 */
+	size_t channels;
 
-	const size_t window_size;
+	/*!
+	 * Size of the window.
+	 */
+	size_t window_size;
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Pooling() : Layer () { }
+
 };
 
 } /* namespace mlnn */

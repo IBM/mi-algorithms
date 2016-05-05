@@ -19,13 +19,24 @@ namespace mlnn {
 class ReLU : public mic::mlnn::Layer {
 public:
 
-	ReLU(size_t inputs, size_t outputs, size_t batch_size);
+	ReLU(size_t inputs, size_t outputs, size_t batch_size, std::string name_ = "ReLU");
 
 	virtual ~ReLU() {};
 
 	void forward(bool apply_dropout = false);
 
 	void backward();
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	ReLU() : Layer () { }
+
 };
 
 } /* namespace mlnn */

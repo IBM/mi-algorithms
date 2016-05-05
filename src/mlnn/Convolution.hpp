@@ -14,18 +14,30 @@ namespace mic {
 namespace mlnn {
 
 /*!
+ * \brief Class representing a convolution layer.
  * \author krocki
  */
 class Convolution : public mic::mlnn::Layer {
 public:
 
-	Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size);
+	Convolution(size_t inputs, size_t channels, size_t filter_size, size_t filters, size_t batch_size, std::string name_ = "Convolution");
 
 	virtual ~Convolution() {};
 
 	void forward(bool test = false);
 
+	/*!
+	 * Outer loop over image locations, all images processed in parallel
+	 * @param out
+	 * @param in
+	 */
+	void forwardGemm(mic::types::MatrixXf& out, mic::types::MatrixXf& in);
+
 	void backward();
+
+	void backwardGemm(mic::types::MatrixXf& out, mic::types::MatrixXf& in);
+
+	void backwardFullGemm(mic::types::MatrixXf& out, mic::types::MatrixXf& in);
 
 	void resetGrads();
 
@@ -44,11 +56,23 @@ protected:
 	mic::types::MatrixXf mW;
 	mic::types::MatrixXf mb;
 
-	const size_t input_channels;
-	const size_t output_channels;
-	const size_t kernel_size;
-	const size_t output_map_size;
+	size_t input_channels;
 
+	size_t output_channels;
+
+	size_t kernel_size;
+
+	size_t output_map_size;
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Convolution() : Layer () { }
 
 };
 

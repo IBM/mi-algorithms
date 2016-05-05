@@ -28,5 +28,6 @@
 
 #include <mlnn/Padding.hpp>
 
+#include <mlnn/Regression.hpp>
 
 #endif /* SRC_MLNN_LAYERTYPES_HPP_ */

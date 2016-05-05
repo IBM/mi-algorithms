@@ -42,13 +42,6 @@ public:
 
 
 	/*!
-	 * @brief Method responsible for encoding input sample into SDR.
-	 * @param[in] sample_ Shared pointer to sample data.
-	 * @return Shared pointer to encoded SDR.
-	 */
-	virtual std::shared_ptr<mic::types::MatrixXf> encodeSample(const std::shared_ptr<inputDataType>& sample_) = 0;
-
-	/*!
 	 * Method responsible for encoding batch containing several samples into matrix containing several SDRs.
 	 * @param[in] batch_ Vector of shared pointers containing samples
 	 * @return Matrix containing several SDRs.
@@ -60,7 +53,7 @@ public:
 		// Encode the samples one by one.
 		for (size_t i=0; i < batch_.size(); i++ ) {
 			// Encode single sample.
-			std::shared_ptr<mic::types::MatrixXf> sample_sdr = encodeSample(batch_[i]);
+			std::shared_ptr<mic::types::MatrixXf> sample_sdr = this->encodeSample(batch_[i]);
 
 			// Set SDR rows.
 			sdrs->col(i) = sample_sdr->col(0);
@@ -70,17 +63,11 @@ public:
 		return sdrs;
 	}
 
-	/*!
-	 * Method responsible for decoding of SDR back into original data type.
-	 * @param[in] sdr_ Shared pointer to SDR.
-	 * @return Shared pointer to decoded data.
-	 */
-	virtual std::shared_ptr<inputDataType> decodeSample(const std::shared_ptr<mic::types::MatrixXf>& sdr_) = 0;
 
 	/*!
-	 * Method responsible for encoding batch containing several samples into matrix containing several SDRs.
+	 * Method responsible for encoding batch containing several samples into matrix containing several SDRs. Each sample SDR is stored in a separate column.
 	 * @param[in] batch_ Vector of shared pointers containing samples
-	 * @return Matrix containins several SDRs.
+	 * @return Matrix containing several SDRs.
 	 */
 	virtual std::vector<std::shared_ptr<inputDataType> > decodeBatch(const std::shared_ptr<mic::types::MatrixXf>& sdrs_) {
 		// Create the output vector.
@@ -90,7 +77,7 @@ public:
 		// Iterate through columns and decode them one by one.
 		for (size_t i=0; i < sdrs_->cols(); i++ ) {
 			sample_sdr->col(0) = sdrs_->col(i);
-			std::shared_ptr<inputDataType> decoded = decodeSample(sample_sdr);
+			std::shared_ptr<inputDataType> decoded = this->decodeSample(sample_sdr);
 			// Add result to vector.
 			output.push_back(decoded);
 		}//: for

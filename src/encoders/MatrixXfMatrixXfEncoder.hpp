@@ -23,11 +23,10 @@ public:
 
 	/*!
 	 * Default constructor. Sets the encoding parameters.
-	 * @param sdr_length_ SDR length.
 	 * @param matrix_width_ Width of the matrix.
 	 * @param matrix_height_ Height of the matrix.
 	 */
-	MatrixXfMatrixXfEncoder(size_t sdr_length_, size_t matrix_height_, size_t matrix_width_) : MatrixXfSDREncoder(sdr_length_),
+	MatrixXfMatrixXfEncoder(size_t matrix_height_, size_t matrix_width_) : MatrixXfSDREncoder(matrix_height_*matrix_width_),
 		matrix_height(matrix_height_),
 		matrix_width(matrix_width_)
 	{
@@ -40,16 +39,16 @@ public:
 	/*!
 	 * @brief Method responsible for encoding of input data sample into SDR (a 1D matrix - vector of floats).
 	 * @param[in] sample_ Shared pointer to a matrix.
-	 * @return Shared pointer to SDR - here in the form of 1D matrix (cols,1) of floats. Memory to this variable must be assigned earlier.
+	 * @return Shared pointer to SDR - here in the form of 1D matrix (rows,1) of floats. Memory to this variable must be assigned earlier.
 	 */
-	virtual std::shared_ptr<mic::types::MatrixXf> encodeSample(const std::shared_ptr<mic::types::MatrixXf>& sample_);
+	virtual mic::types::MatrixXfPtr encodeSample(const mic::types::MatrixXfPtr& sample_);
 
 	/*!
 	 * Method responsible for decoding of SDR into data.
 	 * @param[in] sdr_ Shared pointer to SDR (1D matrix).
 	 * @return Shared pointer to a 2D matrix.
 	 */
-	virtual std::shared_ptr<mic::types::MatrixXf> decodeSample(const std::shared_ptr<mic::types::MatrixXf>& sdr_);
+	virtual mic::types::MatrixXfPtr decodeSample(const mic::types::MatrixXfPtr& sdr_);
 
 protected:
 	/// Height of the matrix - number of rows.

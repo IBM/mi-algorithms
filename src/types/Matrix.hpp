@@ -34,8 +34,8 @@ template<typename T>
 class Tensor;
 
 // Forward declaration of a class Vector.
-template<typename T>
-class Vector;
+//template<typename T>
+//class Vector;
 
 /*!
  * \brief Template-typed Matrix of dynamic size.
@@ -168,43 +168,44 @@ public:
 	 * @param mean Mean
 	 * @param stddev Variance
 	 */
-	void normRandReal(T mean = 0, T stddev = 1) {
+	void randn(T mean = 0, T stddev = 1) {
 
 		// Initialize random number generator with normal distribution.
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::normal_distribution<> dist(mean, stddev);
+		std::normal_distribution<double> dist(mean, stddev);
 
 		// Get access to data.
 		T* data_ptr = this->data();
 
 #pragma omp parallel for
 		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
-			data_ptr[i] = dist(mt);
+			data_ptr[i] = (T)dist(mt);
 		}
 	}
 
 	/*!
-	 * Set values of all matrix elements to random real numbers from range <min, max> - uniform distribution.
+	 * Set values of all matrix elements to random numbers from range <min, max> - uniform distribution.
 	 * @param min Min value.
 	 * @param max Max value.
 	 * @return Random real value.
 	 */
-	void uniRandReal(T min = 0, T max = 1) {
+	void rand(T min = 0, T max = 1) {
 
 		// Initialize random number generator with normal distribution.
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::uniform_real_distribution<> dist(min, max);
+		std::uniform_real_distribution<double> dist(min, max);
 
 		// Get access to data.
-		float* data_ptr = this->data();
+		T* data_ptr = this->data();
 
 #pragma omp parallel for
 		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
-			data_ptr[i] = dist(rd);
+			data_ptr[i] = (T)dist(rd);
 		}
 	}
+
 
 	/*!
 	 * Applies elementwise function to all matrix elements.
@@ -329,6 +330,56 @@ public:
 			}//: y
 		}//: x
 	}
+
+	/*!
+	 * Returns a vector of indices indicating maximal elements in consecutive matrix columns (colwise).
+	 * @return Vector of indices.
+	 */
+	Eigen::Matrix<T, Eigen::Dynamic, 1> colwiseReturnMaxIndices() {
+
+		Eigen::Matrix<T, Eigen::Dynamic, 1> indices((*this).cols());
+
+		for (size_t i = 0; i < (*this).cols(); i++) {
+
+			T current_max_val;
+			T index;
+
+			for (size_t j = 0; j < (*this).rows(); j++) {
+
+				if (j == 0 || (*this)(j, i) > current_max_val) {
+
+					index = j;
+					current_max_val = (*this)(j, i);
+				}
+
+				indices(i) = index;
+
+			}
+		}
+
+		return indices;
+	}
+
+	/*!
+	 * Calculates the cross entropy as measure of how accurate given matrix (treated as prediction) fits to the desired (target) matrix.
+	 * @param targets_ Desired results (targets) in the form of a matrix of answers.
+	 * @return
+	 */
+	T calculateCrossEntropy(Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& targets_) {
+
+		T ce = 0.0;
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> error(this->rows(), this->cols());
+
+		//check what has happened and get information content for that event
+		error.array() = - (this->unaryExpr(std::ptr_fun(::logf)).array() * targets_.array());
+
+		// Sum the errors.
+		ce = error.sum();
+
+		return ce;
+	}
+
+
 
 private:
 

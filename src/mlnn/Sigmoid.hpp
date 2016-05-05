@@ -18,13 +18,24 @@ namespace mlnn {
  */
 class Sigmoid : public mic::mlnn::Layer {
 public:
-	Sigmoid(size_t inputs, size_t outputs, size_t batch_size);
+	Sigmoid(size_t inputs, size_t outputs, size_t batch_size, std::string name_ = "Sigmoid");
 
 	virtual ~Sigmoid() {};
 
 	void forward(bool test = false);
 
 	void backward();
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Sigmoid() : Layer () { }
+
 
 };
 

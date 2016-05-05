@@ -40,19 +40,30 @@ bool RawTextImporter::importData(){
 			LOG(LDEBUG) << character;
 
 			// Add character to both data and labels.
-			data.push_back(std::make_shared <char> (character) );
-			labels.push_back(std::make_shared <char> (character) );
+			sample_data.push_back(std::make_shared <char> (character) );
+			sample_labels.push_back(std::make_shared <char> (character) );
 
 		}//: while ! eof
 
 		// Close the file.
 		data_file.close();
+
 	} else {
 		LOG(LFATAL) << "Oops! Couldn't find file: " << data_filename;
 		return false;
 	}//: else
 
-	LOG(LINFO) << "Imported " << data.size() << " characters";
+	LOG(LINFO) << "Imported " << sample_data.size() << " characters";
+
+	// Fill the indices table(!)
+	for (size_t i=0; i < sample_data.size(); i++ )
+		sample_indices.push_back(i);
+
+	// Count the classes.
+	countClasses();
+
+	LOG(LINFO) << "Data import finished";
+
 	return true;
 }
 

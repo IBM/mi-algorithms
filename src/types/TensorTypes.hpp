@@ -32,7 +32,7 @@ typedef std::shared_ptr< mic::types::TensorXi > TensorXiPtr;
  * \brief Tensor of single precision floats (of dynamic size).
  * \author tkornuta
  */
-typedef mic::types::Tensor<double> TensorXf;
+typedef mic::types::Tensor<float> TensorXf;
 
 
 /*!

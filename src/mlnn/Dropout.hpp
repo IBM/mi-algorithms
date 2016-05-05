@@ -14,12 +14,13 @@ namespace mic {
 namespace mlnn {
 
 /*!
+ * \brief Droput layer - a layer used for the regularization of neural network by randomly dropping neurons during training.
  * \author krocki
  */
 class Dropout : public Layer {
 public:
 
-	Dropout(size_t inputs, size_t outputs, size_t batch_size, float _ratio);
+	Dropout(size_t inputs, size_t outputs, size_t batch_size, float _ratio, std::string name = "Dropout");
 
 	virtual ~Dropout() {};
 
@@ -29,9 +30,24 @@ public:
 
 protected:
 
-	const float keep_ratio;
+	float keep_ratio;
 
+	/*!
+	 * Dropout mask.
+	 * Computed in forward() method, so it does not need to be moved to common parameters/memory arrays.
+	 */
 	mic::types::MatrixXf dropout_mask;
+
+private:
+
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
+
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Dropout() : Layer () { }
+
 
 };
 

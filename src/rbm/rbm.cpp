@@ -80,8 +80,8 @@ RBM::RBM(size_t n_visible, size_t n_hidden, size_t b_size)
 	posprods.setZero();
 	negprods.setZero();
 
-	// Initialize W with random variables from 0.0f to 0.001f (normal distribution mi=0, variance=1).
-	W.normRandReal(0.0, 0.001);
+	// Initialize W with random variables from -0.001f to 0.001f (normal distribution mi=0.0, variance=0.001).
+	W.randn(0.0, 0.001);
 
 	if (learning_type == LTYPE::PCD) {
 		LOG(LERROR) << "PCD not implemented!";
@@ -128,7 +128,7 @@ void RBM::down() { // v given h
 
 	// Compute binary activation H by thresholding h with random variables stored in matrix rh.
 	H = h;
-	rh.uniRandReal(0.0, 1.0);
+	rh.rand(0.0, 1.0);
 	H.elementwiseFunctionMatrix(&_compare, rh);
 
 	vn = (H.transpose()) * W;

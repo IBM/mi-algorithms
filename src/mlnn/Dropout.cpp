@@ -10,8 +10,8 @@
 namespace mic {
 namespace mlnn {
 
-Dropout::Dropout(size_t inputs, size_t outputs, size_t batch_size, float _ratio) :
-	Layer(inputs, outputs, batch_size, "dropout"),  keep_ratio(_ratio) {
+Dropout::Dropout(size_t inputs, size_t outputs, size_t batch_size, float _ratio, std::string name_) :
+	Layer(inputs, outputs, batch_size, LayerTypes::Dropout, name_),  keep_ratio(_ratio) {
 
 };
 
@@ -25,7 +25,8 @@ void Dropout::forward(bool test) {
 	} else {
 
 		mic::types::MatrixXf rands = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(s['y']->rows(), s['y']->cols());
-		rand(rands, 0.0f, 1.0f);
+		//rand(rands, 0.0f, 1.0f);
+		rands.rand(0.0f, 1.0f);
 
 		//dropout mask - 1s - preserved elements
 		dropout_mask = (rands.array() < keep_ratio).cast <float> ();

@@ -58,11 +58,21 @@ bool IBMFontMatrixImporter::importData(){
 	    }//: else
 
 		// Add character and label to vectors.
-		data.push_back(mat);
-		labels.push_back(std::make_shared <char> (font_labels_table[i]) );
+		sample_data.push_back(mat);
+		sample_labels.push_back(std::make_shared <char> (font_labels_table[i]) );
 
 	}//: for
-	LOG(LINFO) << "Imported " << data.size() << " fonts";
+	LOG(LINFO) << "Imported " << sample_data.size() << " fonts";
+
+	// Fill the indices table(!)
+	for (size_t i=0; i < sample_data.size(); i++ )
+		sample_indices.push_back(i);
+
+	// Count the classes.
+	countClasses();
+
+	LOG(LINFO) << "Data import finished";
+
 	return true;
 }
 

@@ -14,11 +14,19 @@ namespace mic {
 namespace mlnn {
 
 /*!
+ * \brief Class implementing a linear, fully connecteed layer.
  * \author krocki
  */
 class Linear : public mic::mlnn::Layer {
 public:
-	Linear(size_t inputs_, size_t outputs_, size_t batch_size_);
+	/*!
+	 * Default constructor used for creation of the layer.
+	 * @param inputs_
+	 * @param outputs_
+	 * @param batch_size_
+	 * @param name_
+	 */
+	Linear(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_ = "Linear");
 
 	virtual ~Linear() {};
 
@@ -30,15 +38,16 @@ public:
 
 	void applyGrads(double alpha_, double decay_ = 0);
 
-protected:
-	mic::types::MatrixXf W;
-	mic::types::VectorXf b;
+private:
 
-	mic::types::MatrixXf dW;
-	mic::types::MatrixXf db;
+	// Adds the nn class the access to protected fields of class layer.
+	friend class MultiLayerNeuralNetwork;
 
-	mic::types::MatrixXf mW;
-	mic::types::MatrixXf mb;
+	/*!
+	 * Private constructor, used only during the serialization.
+	 */
+	Linear() : Layer () { }
+
 };
 
 } /* namespace mlnn */

@@ -10,23 +10,37 @@
 namespace mic {
 namespace mlnn {
 
-Linear::Linear(size_t inputs_, size_t outputs_, size_t batch_size_) :
-	Layer(inputs_, outputs_, batch_size_, "linear") {
+Linear::Linear(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_) :
+	Layer(inputs_, outputs_, batch_size_, LayerTypes::Linear, name_) {
 
-	W = mic::types::MatrixXf(outputs_, inputs_);
-	b = (Eigen::VectorXf)Eigen::VectorXf::Zero(outputs_);
+	//W = mic::types::MatrixXf(outputs_, inputs_);
+	p.add (std::make_tuple ( "W", outputs_, inputs_ ));
+
+	//b = (Eigen::VectorXf)Eigen::VectorXf::Zero(outputs_);
+	p.add (std::make_tuple ( "b", outputs_, 1 ));
+
+	// Initialize weights of the W matrix.
 	double range = sqrt(6.0 / double(inputs_ + outputs_));
 
-	rand(W, -range, range);
+	//W.rand(-range, range);
+	p['W']->rand(-range, range);
 
-	mW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
-	mb = mic::types::VectorXf::Zero(b.rows());
+	//mW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
+	m.add (std::make_tuple ( "W", outputs_, inputs_ ));
+
+
+	//mb = mic::types::VectorXf::Zero(b.rows());
+	m.add (std::make_tuple ( "b", outputs_, 1 ));
+
+	// Add W and b gradients.
+	g.add (std::make_tuple ( "W", outputs_, inputs_ ));
+	g.add (std::make_tuple ( "b", outputs_, 1 ));
 
 };
 
 void Linear::forward(bool test_) {
 	// y = W * x + b.replicate(1, x.cols());
-	(*s['y']) = W * (*s['x']) + b.replicate(1, (*s['x']).cols());
+	(*s['y']) = (*p['W']) * (*s['x']) + (*p['b']).replicate(1, (*s['x']).cols());
 
 }
 
@@ -36,26 +50,32 @@ void Linear::backward() {
 	db = dy.rowwise().sum();
 	dx = W.transpose() * dy;*/
 
-	dW = (*g['y']) * ((*s['x']).transpose());
-	db = (*g['y']).rowwise().sum();
-	(*g['x']) = W.transpose() * (*g['y']);
+	(*g['W']) = (*g['y']) * ((*s['x']).transpose());
+	(*g['b']) = (*g['y']).rowwise().sum();
+	(*g['x']) = (*p['W']).transpose() * (*g['y']);
 
 }
 
 void Linear::resetGrads() {
 
-	dW = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
-	db = mic::types::VectorXf::Zero(b.rows());
+	(*g['W']).setZero(); // = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(W.rows(), W.cols());
+	(*g['b']).setZero(); // = mic::types::VectorXf::Zero(b.rows());
 }
 
 void Linear::applyGrads(double alpha_, double decay_) {
 
 	//adagrad
-	mW += dW.cwiseProduct(dW);
-	mb += db.cwiseProduct(db);
+	//mW += dW.cwiseProduct(dW);
+	(*m['W']) += (*g['W']).cwiseProduct((*g['W']));
 
-	W = (1 - decay_) * W + alpha_ * dW.cwiseQuotient(mW.unaryExpr(std::ptr_fun(sqrt_eps)));
-	b += alpha_ * db.cwiseQuotient(mb.unaryExpr(std::ptr_fun(sqrt_eps)));
+	//mb += db.cwiseProduct(db);
+	(*m['b']) += (*g['b']).cwiseProduct((*g['b']));
+
+	//W = (1 - decay_) * W + alpha_ * dW.cwiseQuotient(mW.unaryExpr(std::ptr_fun(sqrt_eps)));
+	(*p['W']) = (1 - decay_) * (*p['W']) + alpha_ * (*g['W']).cwiseQuotient((*m['W']).unaryExpr(std::ptr_fun(sqrt_eps)));
+
+	//b += alpha_ * db.cwiseQuotient(mb.unaryExpr(std::ptr_fun(sqrt_eps)));
+	(*p['b']) += alpha_ * (*g['b']).cwiseQuotient((*m['b']).unaryExpr(std::ptr_fun(sqrt_eps)));
 
 	// 'plain' fixed learning rate update
 	// b += alpha * db;

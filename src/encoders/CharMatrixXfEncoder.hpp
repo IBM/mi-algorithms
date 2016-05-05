@@ -36,14 +36,14 @@ public:
 	 * @param[in] sample_ Shared pointer to a char.
 	 * @return Shared pointer to SDR - here in the form of 1d matrix (cols,1) of floats. Memory to this variable must be assigned earlier.
 	 */
-	virtual std::shared_ptr<mic::types::MatrixXf> encodeSample(const std::shared_ptr<char>& sample_);
+	virtual mic::types::MatrixXfPtr encodeSample(const std::shared_ptr<char>& sample_);
 
 	/*!
 	 * Method responsible for decoding of SDR into data.
 	 * @param[in] sdr_ Shared pointer to SDR.
 	 * @return Shared pointer to a char
 	 */
-	virtual std::shared_ptr<char> decodeSample(const std::shared_ptr<mic::types::MatrixXf>& sdr_);
+	virtual std::shared_ptr<char> decodeSample(const mic::types::MatrixXfPtr& sdr_);
 };
 
 } /* namespace encoders */
