@@ -12,12 +12,12 @@
 
 #include <mlnn/LayerTypes.hpp>
 
-#include <boost/serialization/serialization.hpp>
+/*#include <boost/serialization/serialization.hpp>
 // include this header to serialize vectors
 #include <boost/serialization/vector.hpp>
 // include this header to serialize arrays
 #include <boost/serialization/array.hpp>
-#include <boost/serialization/version.hpp>
+#include <boost/serialization/version.hpp>*/
 
 #include <fstream>
 // Include headers that implement a archive in simple text format

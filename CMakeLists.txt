@@ -36,7 +36,7 @@ endif(${DEBUG_RUN})
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # Find Boost package
-find_package(Boost 1.58 REQUIRED COMPONENTS system thread random program_options regex date_time serialization)
+find_package(Boost 1.54 REQUIRED COMPONENTS system thread random program_options regex date_time serialization)
 # Try to include Boost as system directory to suppress it's warnings
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
 
