@@ -11,8 +11,11 @@ set (MIAlgorithms_VERSION ${MIAlgorithms_MAJOR_VERSION}.${MIAlgorithms_MINOR_VER
 cmake_minimum_required(VERSION 3.2)
 
 # Add C++11 dependency.
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -Wall")
-
+if (WIN32)
+  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-Wall -Ic:/progra~1/boost/boost_1_60_0")
+else ()
+  set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -Wall")
+endif ()
 
 # =======================================================================
 # Create CMAKE variables storing preprocessor commands
@@ -36,9 +39,13 @@ endif(${DEBUG_RUN})
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # Find Boost package
-find_package(Boost 1.58 REQUIRED COMPONENTS system thread random program_options regex date_time serialization)
+find_package(Boost 1.54 REQUIRED COMPONENTS system thread random program_options regex date_time serialization)
 # Try to include Boost as system directory to suppress it's warnings
-include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+if (WIN32)
+  include_directories(SYSTEM )
+else ()
+  include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+endif ()
 
 # Find Eigen package
 find_package( Eigen3 REQUIRED )
