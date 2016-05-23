@@ -14,7 +14,13 @@ namespace mlnn {
 
 
 
-MultiLayerNeuralNetwork::MultiLayerNeuralNetwork(std::string name_ ) : name(name_), loss_type(LossFunctionType::Undefined) { }
+MultiLayerNeuralNetwork::MultiLayerNeuralNetwork(std::string name_ ) :
+		name(name_),
+		loss_type(LossFunctionType::Undefined), // Initially the type of loss function is undefined.
+		connected(false) // Initially the network is not connected.
+{
+
+}
 
 MultiLayerNeuralNetwork::~MultiLayerNeuralNetwork() {
 }
@@ -33,6 +39,18 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 	// Copy inputs to the lowest point in the network.
 	(*(layers[0]->s['x'])) = input_data;
 
+	// Connect layers by setting the input matrices pointers to point the output matrices.
+	// There will not need to be copy data between layers anymore.
+	if (!connected) {
+		// Set pointers.
+		for (size_t i = 0; i < layers.size()-1; i++) {
+			layers[i+1]->s['x'] = layers[i]->s['y'];
+			layers[i]->g['y'] = layers[i+1]->g['x'];
+		}//: for
+		connected = true;
+	}
+
+
 	// Compute the forward activations.
 	for (size_t i = 0; i < layers.size(); i++) {
 		LOG(LDEBUG) << "Layer [" << i << "] " << layers[i]->name() << ": (" <<
@@ -42,14 +60,14 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 		// Perform the forward computation: y = f(x).
 		layers[i]->forward(skip_dropout);
 
-		// Pass result to the next layer: x(next layer) = y(current layer).
+		/*// Pass result to the next layer: x(next layer) = y(current layer).
 		if (i + 1 < layers.size()) {
 			(*(layers[i+1]->s['x'])) = (*(layers[i]->s['y']));
 			//layers[i + 1]->x = layers[i]->y;
 			LOG(LDEBUG) << "Passing data from " << i << " to "<< i+1;
 			LOG(LDEBUG) << layers[i]->s['y']->transpose();
 			LOG(LDEBUG) << layers[i+1]->s['y']->transpose();
-		}
+		}*/
 	}
 	LOG(LDEBUG) <<" getPredictions(): " << getPredictions()->transpose();
 }
@@ -77,12 +95,12 @@ void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& targets_) {
 		layers[i]->backward();
 
 		//dy(previous layer) = dx(current layer)
-		if (i > 0) {
+/*		if (i > 0) {
 
 //			layers[i - 1]->dy = layers[i]->dx;
 			(*(layers[i - 1]->g['y'])) = (*(layers[i]->g['x']));
 
-		}
+		}*/
 
 	}
 

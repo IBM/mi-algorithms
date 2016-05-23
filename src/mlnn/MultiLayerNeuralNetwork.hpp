@@ -12,12 +12,12 @@
 
 #include <mlnn/LayerTypes.hpp>
 
-#include <boost/serialization/serialization.hpp>
+/*#include <boost/serialization/serialization.hpp>
 // include this header to serialize vectors
 #include <boost/serialization/vector.hpp>
 // include this header to serialize arrays
 #include <boost/serialization/array.hpp>
-#include <boost/serialization/version.hpp>
+#include <boost/serialization/version.hpp>*/
 
 #include <fstream>
 // Include headers that implement a archive in simple text format
@@ -74,6 +74,7 @@ public:
 	template <typename LayerType>
 	void addLayer( LayerType* layer_ptr_){
 		layers.push_back(std::shared_ptr <LayerType> (layer_ptr_));
+		connected = false;
 	}
 
 	/*!
@@ -235,6 +236,9 @@ private:
 	// Friend class - required for using boost serialization.
     friend class boost::serialization::access;
 
+    /// Flag denoting whether the layers are interconnected, thus no copying between inputs and outputs of the neighbouring layers will be required.
+    bool connected;
+
     /*!
      * Serialization save - saves the neural net object to archive.
      * @param ar Used archive.
@@ -268,6 +272,7 @@ private:
     void load(Archive & ar, const unsigned int version) {
     	// Clear the layers vector - just in case.
     	layers.clear();
+    	connected = false;
 
     	// Deserialize name and loss function type.
 		ar & name;
