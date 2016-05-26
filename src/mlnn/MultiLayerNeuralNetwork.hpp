@@ -137,7 +137,7 @@ public:
 	 * @param targets_ Desired results (targets) in the form of a matrix of answers, each encoded as SDR.
 	 * @return
 	 */
-	size_t countCorrectPredictions(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_);
+	size_t countCorrectPredictions(mic::types::MatrixXfPtr targets_, mic::types::MatrixXfPtr predictions_);
 
 	/// Returns the size (length) of inputs of the last (i.e. previously added) layer.
 	size_t lastLayerInputsSize();

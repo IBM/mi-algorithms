@@ -13,7 +13,7 @@
 namespace mic {
 namespace data_io {
 
-MNISTMatrixImporter::MNISTMatrixImporter(std::string data_filename_, std::string labels_filename_, std::string node_name_) : Importer (node_name_),
+MNISTMatrixImporter::MNISTMatrixImporter(std::string node_name_, std::string data_filename_, std::string labels_filename_) : Importer (node_name_),
 		data_filename("data_filename",data_filename_),
 		labels_filename("labels_filename", labels_filename_)
 {

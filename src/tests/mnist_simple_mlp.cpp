@@ -23,8 +23,8 @@ using namespace mic::types;
 
 int main() {
 	// Task parameters.
-	size_t iterations = 500;
 	size_t batch_size = 100;
+	size_t iterations = 60000/batch_size;
 
 	// Set console output.
 	LOGGER->addOutput(new ConsoleOutput());
@@ -76,7 +76,7 @@ int main() {
 
 	// Perform the training.
 	for (size_t ii = 0; ii < iterations; ii++) {
-		std::cout<< "[" << std::setw(4) << ii << "/" << std::setw(4) << iterations << "] ";
+		LOG(LINFO) << "[" << std::setw(4) << ii << "/" << std::setw(4) << iterations << "] ";
 
 		// Get random batch [784 x batch_size].
 		MNISTBatch rand_batch = training.getRandomBatch();
@@ -92,6 +92,7 @@ int main() {
 	// Check performance on the test dataset.
 	LOG(LSTATUS) << "Calculating performance for test dataset...";
 	size_t correct = 0;
+	float loss = 0.0;
 	test.setNextSampleIndex(0);
 	while(!test.isLastBatch()) {
 
@@ -101,14 +102,22 @@ int main() {
 		encoded_targets  = label_encoder.encodeBatch(next_batch.labels());
 
 		// Test network response.
-		correct += nn.test(encoded_batch, encoded_targets);
+		// Skip dropout layers at test time
+		nn.forward(*encoded_batch, true);
+		// Get predictions.
+		mic::types::MatrixXfPtr encoded_predictions = nn.getPredictions();
+		// Calculate the loss and correct predictions.
+		loss += nn.calculateLossFunction(encoded_targets, encoded_predictions);
+		correct += nn.countCorrectPredictions(encoded_targets, encoded_predictions);
+
 	}//: while
 	double test_acc = (double)correct / (double)(test.size());
-	LOG(LINFO) << "Test  : " << std::setprecision(3) << 100.0 * test_acc << " %";
+	LOG(LINFO) << "Test  : loss = " << std::setprecision(3) << loss << " correct = " << std::setprecision(3) << 100.0 * test_acc << " %";
 
 	// Check performance on the training dataset.
 	LOG(LSTATUS) << "Calculating performance for the training dataset...";
 	correct = 0;
+	loss = 0;
 	training.setNextSampleIndex(0);
 	while(!training.isLastBatch()) {
 
@@ -118,10 +127,15 @@ int main() {
 		encoded_targets  = label_encoder.encodeBatch(next_batch.labels());
 
 		// Test network response.
-		correct += nn.test(encoded_batch, encoded_targets);
-
+		// Skip dropout layers at test time
+		nn.forward(*encoded_batch, true);
+		// Get predictions.
+		mic::types::MatrixXfPtr encoded_predictions = nn.getPredictions();
+		// Calculate the loss and correct predictions.
+		loss += nn.calculateLossFunction(encoded_targets, encoded_predictions);
+		correct += nn.countCorrectPredictions(encoded_targets, encoded_predictions);
 	}
 	double train_acc = (double)correct / (double)(training.size());
-	LOG(LINFO) << "Train : " << std::setprecision(3) << 100.0 * train_acc << " %";
+	LOG(LINFO) << "Train  : loss = " << std::setprecision(3) << loss << " correct = " << std::setprecision(3) << 100.0 * train_acc << " %";
 
 }

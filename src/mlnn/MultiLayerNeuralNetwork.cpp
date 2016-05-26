@@ -133,10 +133,11 @@ float MultiLayerNeuralNetwork::train(mic::types::MatrixXfPtr encoded_batch_, mic
 	update(learning_rate_, weight_decay_);
 
 	// Calculate the loss.
-	return calculateLossFunction(encoded_targets_, encoded_predictions);
-	// size_t correct = countCorrectPredictions(*encoded_predictions, *encoded_targets_);
-	// std::cout << " Loss = " << std::setprecision(2) << std::setw(6) << loss << " | " << std::setprecision(1) << std::setw(4) << std::fixed << 100.0 * (float)correct / (float)encoded_batch_->cols() << "% batch correct" << std::endl;
-
+	float loss = calculateLossFunction(encoded_targets_, encoded_predictions);
+	float correct = countCorrectPredictions(encoded_targets_, encoded_predictions);
+	LOG(LDEBUG) << " Loss = " << std::setprecision(2) << std::setw(6) << loss << " | " << std::setprecision(1) << std::setw(4) << std::fixed << 100.0 * (float)correct / (float)encoded_batch_->cols() << "% batch correct";
+	// Return loss.
+	return loss;
 }
 
 
@@ -175,11 +176,11 @@ float MultiLayerNeuralNetwork::calculateLossFunction(mic::types::MatrixXfPtr enc
 }
 
 
-size_t MultiLayerNeuralNetwork::countCorrectPredictions(mic::types::MatrixXf& predictions_, mic::types::MatrixXf& targets_) {
+size_t MultiLayerNeuralNetwork::countCorrectPredictions(mic::types::MatrixXfPtr targets_, mic::types::MatrixXfPtr predictions_) {
 
 	// Get vectors of indices denoting classes (type of 1-ouf-of-k dencoding).
-	mic::types::VectorXf predicted_classes = predictions_.colwiseReturnMaxIndices();
-	mic::types::VectorXf target_classes = targets_.colwiseReturnMaxIndices();
+	mic::types::VectorXf predicted_classes = predictions_->colwiseReturnMaxIndices();
+	mic::types::VectorXf target_classes = targets_->colwiseReturnMaxIndices();
 
 	// Get direct pointers to data.
 	float *p = predicted_classes.data();

@@ -19,11 +19,11 @@ class MNISTMatrixImporter: public mic::data_io::Importer< mic::types::MatrixXf, 
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.
+	 * @param node_name_ Name of the node in configuration file.
 	 * @param data_filename_ File (with path) containing MNIST images.
 	 * @param labels_filename_ File (with path) containing MNIST labels.
-	 * @param node_name_ Name of the node in configuration file.
 	 */
-	MNISTMatrixImporter(std::string data_filename_ = "", std::string labels_filename_ = "", std::string node_name_ = "mnist_matrix_importer");
+	MNISTMatrixImporter(std::string node_name_ = "mnist_matrix_importer", std::string data_filename_ = "", std::string labels_filename_ = "");
 
 	/*!
 	 * Virtual destructor. Empty.
