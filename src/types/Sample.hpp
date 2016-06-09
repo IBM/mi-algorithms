@@ -22,6 +22,12 @@ namespace types {
 template<typename DataType, typename LabelType>
 class Sample {
 public:
+
+	/*!
+	 * Constructor without parameters - nulls both data and label pointers and set index to -1.
+	 */
+	Sample() : sample_data(nullptr), sample_label(nullptr), sample_index(-1) { }
+
 	/*!
 	 * Constructor.
 	 * @param data_ The sample itself (data).
