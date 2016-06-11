@@ -108,6 +108,27 @@ double gaussrand(void)
     return Z;
 }
 
+// http://en.wikipedia.org/wiki/Random_permutation
+
+unsigned uniform(unsigned i, unsigned m) { /* Returns a random integer i <= uniform(i,m) <= m */
+  return (i + (int) (((double) (m - i)) * rand_real01()));
+}
+
+void permute(int permutation[], unsigned n) {
+  unsigned i;
+  for (i = 0; i < n; i++) {
+    unsigned j = uniform(i, n - 1);
+    if (j<0) j=0;
+    if (j>n-1) j=n-1;
+    int swap = permutation[i];
+    permutation[i] = permutation[j];
+    permutation[j] = swap;
+  }
+}
+
+
+
+
 }//: namespace data_utils
 }//: namespace mic
 
