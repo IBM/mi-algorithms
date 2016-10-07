@@ -24,44 +24,48 @@ int main() {
 	// Test MatrixArray operations.
 	mic::types::MatrixArray<double> ma1("test_array");
 
+	// Two different methods of adding matrices to array.
 	ma1.add (
 				{
 					std::make_tuple ( "x", M, B ), 	// input
 					std::make_tuple ( "y", N, B ) 		// output
 				} );
 
-	ma1.add (std::make_tuple ( "w", M, N ));
+	ma1.add (std::make_tuple ( "w", N, M ));
 
 	ma1["x"]->randn(1, 0.00001);
 	ma1["w"]->randn(1, 0.00001);
 
 
-	mic::types::MatrixArray<double> ma2 = ma1;
-
 	std::cout<<"Saved MatrixArray = " << ma1;
 
+	// Copy matrix.
+	mic::types::MatrixArray<double> ma2 = ma1;
+
 	const char* fileName = "saved.txt";
-	// Save data
+	// Save data.
 	{
-		// Create an output archive
+		// Create an output archive.
 		std::ofstream ofs(fileName);
 		boost::archive::text_oarchive ar(ofs);
 		// Write data
 		ar & ma1;
 	}
 
+	// Multiply matrices.
 	(*ma1["y"]) = (*ma1["w"]) * (*ma1["x"]);
 	std::cout<<"Calculated MatrixArray = " << ma1;
 
 	std::cout<<"Copied MatrixArray = " << ma2;
 
-	// Restore data
+
+	// Restore data.
 	mic::types::MatrixArray<double> restored_ma;
 	{
-		// Create and input archive
+		// Create and input archive.
 		std::ifstream ifs(fileName);
 		boost::archive::text_iarchive ar(ifs);
-		// Load data
+		// Load data.
 		ar & restored_ma;
 		std::cout << "Restored MatrixArray = " << restored_ma << std::endl;
 	}
