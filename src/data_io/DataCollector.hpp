@@ -320,8 +320,8 @@ public:
 		output << label_ << std::endl;
 
 		// Export matrix.
-		for (size_t y = 0; y < matrix_->rows(); y++) {
-			for (size_t x = 0; x < matrix_->cols(); x++) {
+		for (size_t y = 0; y < (size_t)matrix_->rows(); y++) {
+			for (size_t x = 0; x < (size_t)matrix_->cols(); x++) {
 				output << matrix_(y,x) << ", ";
 			}//: for
 		}//: for
@@ -356,8 +356,8 @@ public:
 
 			//DATA_TYPE* data_ptr = matrix->data();
 			// Export matrix.
-			for (size_t y = 0; y < matrix_ptr->rows(); y++) {
-				for (size_t x = 0; x < matrix_ptr->cols(); x++) {
+			for (size_t y = 0; y < (size_t)matrix_ptr->rows(); y++) {
+				for (size_t x = 0; x < (size_t)matrix_ptr->cols(); x++) {
 					output << (*matrix_ptr)(y,x) << ", ";
 				}//: for
 			}//: for

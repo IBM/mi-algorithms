@@ -137,10 +137,10 @@ public:
 			return true;
 		} else {
 			// Execute the "truncated move.
-			if (((x+ac_.dx) < 0) || ((x+ac_.dx) >= width_))
+			if (((x+ac_.dx) < 0) || ((x+ac_.dx) >= (long)width_))
 				return false;
 
-			if (((y+ac_.dy) < 0) || ((y+ac_.dy) >= height_))
+			if (((y+ac_.dy) < 0) || ((y+ac_.dy) >= (long)height_))
 					return false;
 
 			x += ac_.dx;
