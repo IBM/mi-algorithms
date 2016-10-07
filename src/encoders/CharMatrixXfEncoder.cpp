@@ -29,7 +29,7 @@ mic::types::MatrixXfPtr CharMatrixXfEncoder::encodeSample(const std::shared_ptr<
 	//std::cout <<" input_ = " << input_ <<" a = " << a;
 	if (a < 0)
 		LOG(LERROR) << "Could not properly encode character '" <<sample << "' ("<<a<<")!";
-	else if (a >= sdr_length)
+	else if ((size_t) a >= (size_t) sdr_length)
 		LOG(LERROR) << "The SDR is too short for proper encoding of the character '" <<sample << "' ("<<a<<")!";
 	else
 		(*sdr)(a) = 1;

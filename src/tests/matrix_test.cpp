@@ -192,6 +192,12 @@ int main(int argc, char* argv[]) {
 		std::cout << "Restored matrix = " << restored_mat << std::endl;
 	}
 
+	// Matrix pointer.
+	mic::types::MatrixXfPtr mat_ptr (new mic::types::MatrixXf(N, M));
+	mat_ptr->randn(1, 0.001);
+	std::cout << "Pointer  = " << *mat_ptr << std::endl;
+
+
 }//: main
 
 

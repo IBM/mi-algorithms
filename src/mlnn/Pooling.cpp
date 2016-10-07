@@ -53,7 +53,7 @@ mic::types::MatrixXf Pooling::forwardChannel(mic::types::MatrixXf& x_channel_, m
 	size_t y_width = image_size / window_size;
 	mic::types::MatrixXf y = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(y_width * y_width, x_channel_.cols());
 
-	for (size_t i = 0; i < y.cols(); i++) { //images in a batch
+	for (size_t i = 0; i < (size_t) y.cols(); i++) { //images in a batch
 
 		mic::types::MatrixXf image = (Eigen::MatrixXf)x_channel_.col(i);
 		mic::types::MatrixXf local_cache = (Eigen::MatrixXf)cache_.col(i);
@@ -83,9 +83,9 @@ mic::types::MatrixXf Pooling::forwardChannel(mic::types::MatrixXf& x_channel_, m
 
 void Pooling::poolDisjoint2D(mic::types::MatrixXf& out, mic::types::MatrixXf& cache, mic::types::MatrixXf& image) {
 
-	for (size_t yi = 0; yi < out.rows(); yi++) {
+	for (size_t yi = 0; yi < (size_t)out.rows(); yi++) {
 
-		for (size_t yj = 0; yj < out.cols(); yj++) {
+		for (size_t yj = 0; yj < (size_t)out.cols(); yj++) {
 
 			float value = -INFINITY;
 			size_t idx_j;
@@ -143,7 +143,7 @@ mic::types::MatrixXf Pooling::backwardChannel(mic::types::MatrixXf& dy, mic::typ
 
 	mic::types::MatrixXf dx = (Eigen::MatrixXf)Eigen::MatrixXf::Zero(cache_.rows(), cache_.cols());
 
-	for (size_t i = 0; i < dy.cols(); i++) {
+	for (size_t i = 0; i < (size_t)dy.cols(); i++) {
 
 		mic::types::MatrixXf dy_local = (Eigen::MatrixXf)dy.col(i);
 		mic::types::MatrixXf cache_local = (Eigen::MatrixXf)cache_.col(i);
@@ -164,9 +164,9 @@ mic::types::MatrixXf Pooling::backwardChannel(mic::types::MatrixXf& dy, mic::typ
 
 void Pooling::unpoolDisjoint2D(mic::types::MatrixXf& dx, mic::types::MatrixXf& cache, mic::types::MatrixXf& dy) {
 
-	for (size_t xi = 0; xi < dx.rows(); xi++) {
+	for (size_t xi = 0; xi < (size_t)dx.rows(); xi++) {
 
-		for (size_t xj = 0; xj < dx.cols(); xj++) {
+		for (size_t xj = 0; xj < (size_t)dx.cols(); xj++) {
 
 			dx(xj, xi) = cache(xj, xi) * dy(xj / window_size, xi / window_size);
 

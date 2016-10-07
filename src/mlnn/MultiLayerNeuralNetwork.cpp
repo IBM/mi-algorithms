@@ -188,9 +188,8 @@ size_t MultiLayerNeuralNetwork::countCorrectPredictions(mic::types::MatrixXfPtr 
 
 	size_t correct=0;
 	size_t i;
-
 #pragma omp parallel for private(i) shared(correct)
-	for(i=0; i<predicted_classes.size(); i++) {
+	for(i=0; i< (size_t) predicted_classes.size(); i++) {
 		if (p[i] == t[i]) {
 #pragma omp atomic
 			correct++;

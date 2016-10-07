@@ -141,5 +141,10 @@ int main(int argc, char* argv[]) {
 		std::cout << "restored = " << restored_t5 << std::endl;
 	}
 
+	// Tensor pointer.
+	mic::types::TensorXfPtr ten_ptr (new mic::types::TensorXf({N, M, K}));
+	ten_ptr->enumerate();
+	std::cout << "Pointer to tensor = " << *ten_ptr << std::endl;
+
 } //: main
 

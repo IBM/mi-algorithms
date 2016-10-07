@@ -9,10 +9,10 @@
 #define SRC_TYPES_TENSOR_HPP_
 
 #include <stdio.h>
-
 #include <vector>
-
 #include <random>
+#include <memory> // std::shared_ptr
+#include <cstring> // memcpy
 
 #include <boost/serialization/serialization.hpp>
 // include this header to serialize vectors

@@ -126,7 +126,7 @@ bool MNISTMatrixImporter::importData(){
 				mic::types::MatrixXfPtr mat (new mic::types::MatrixXf(image_height, image_width));
 
 				// Parse and set image data.
-				for (size_t i = 0; i < image_width*image_height; i++) {
+				for (size_t i = 0; i < (size_t)(image_width*image_height); i++) {
 
 					unsigned row = i / image_width;
 					unsigned col = i % image_height;

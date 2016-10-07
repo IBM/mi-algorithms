@@ -159,7 +159,7 @@ public:
 		T* data_ptr = this->data();
 
 #pragma omp parallel for
-		for (size_t i = 0; i < this->rows() * this->cols(); i++)
+		for (size_t i = 0; i < (size_t) (this->rows() * this->cols()); i++)
 			data_ptr[i] = value_;
 	}
 
@@ -179,7 +179,7 @@ public:
 		T* data_ptr = this->data();
 
 #pragma omp parallel for
-		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
+		for (size_t i = 0; i < (size_t) (this->rows() * this->cols()); i++) {
 			data_ptr[i] = (T)dist(mt);
 		}
 	}
@@ -201,7 +201,7 @@ public:
 		T* data_ptr = this->data();
 
 #pragma omp parallel for
-		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
+		for (size_t i = 0; i < (size_t) (this->rows() * this->cols()); i++) {
 			data_ptr[i] = (T)dist(rd);
 		}
 	}
@@ -218,7 +218,7 @@ public:
 
 		// Apply function to all elements.
 #pragma omp parallel for
-		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
+		for (size_t i = 0; i < (size_t) (this->rows() * this->cols()); i++) {
 			data_ptr[i] = (*func)(data_ptr[i]);
 		} //: for i
 	}
@@ -235,7 +235,7 @@ public:
 
 		// Apply function to all elements.
 #pragma omp parallel for
-		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
+		for (size_t i = 0; i < (size_t) (this->rows() * this->cols()); i++) {
 			data_ptr[i] = (*func)(data_ptr[i], scalar_);
 		} //: for i
 	}
@@ -257,7 +257,7 @@ public:
 
 		// Apply function to all elements.
 #pragma omp parallel for
-		for (size_t i = 0; i < this->rows() * this->cols(); i++) {
+		for (size_t i = 0; i < (size_t) (this->rows() * this->cols()); i++) {
 			data_ptr[i] = (*func)(data_ptr[i], m_data_ptr[i]);
 		}//: for i
 
@@ -281,8 +281,8 @@ public:
 		//float* vector_data_ptr = v_.data();
 
 #pragma omp parallel for
-		for (size_t x = 0; x < this->cols(); x++) {
-			for (size_t y = 0; y < this->rows(); y++) {
+		for (size_t x = 0; x < (size_t)this->cols(); x++) {
+			for (size_t y = 0; y < (size_t)this->rows(); y++) {
 				//data_ptr[x + y*cols] = (*func)(data_ptr[x + y*cols], vector_data_ptr[x]);
 				(*this)(y, x) = (*func)((*this)(y, x), v_(y));
 			}//: for y
@@ -306,8 +306,8 @@ public:
 		 float* vector_data_ptr = v_.data();*/
 
 #pragma omp parallel for
-		for (size_t x = 0; x < this->cols(); x++) {
-			for (size_t y = 0; y < this->rows(); y++) {
+		for (size_t x = 0; x < (size_t)this->cols(); x++) {
+			for (size_t y = 0; y < (size_t)this->rows(); y++) {
 				//h(y,x) += c(x);
 				//(*this)(y,x) += v_(x);
 				(*this)(y, x) = (*func)((*this)(y, x), v_(x));
@@ -323,8 +323,8 @@ public:
 	 */
 	void repeatVector(Eigen::Matrix<T, Eigen::Dynamic, 1> &in) {
 #pragma omp parallel for
-		for (size_t x = 0; x < this->cols(); x++) {
-			for (size_t y = 0; y < this->rows(); y++) {
+		for (size_t x = 0; x < (size_t)this->cols(); x++) {
+			for (size_t y = 0; y < (size_t)this->rows(); y++) {
 
 				(*this)(y, x) = in(y);
 			}//: y
@@ -339,12 +339,12 @@ public:
 
 		Eigen::Matrix<T, Eigen::Dynamic, 1> indices((*this).cols());
 
-		for (size_t i = 0; i < (*this).cols(); i++) {
+		for (size_t i = 0; i < (size_t)(*this).cols(); i++) {
 
 			T current_max_val;
 			T index;
 
-			for (size_t j = 0; j < (*this).rows(); j++) {
+			for (size_t j = 0; j < (size_t)(*this).rows(); j++) {
 
 				if (j == 0 || (*this)(j, i) > current_max_val) {
 
@@ -399,7 +399,7 @@ private:
 		ar & rows;
 		ar & cols;
         // Save elements.
-        size_t elements = this->rows() * this->cols();
+        size_t elements = (size_t)(this->rows() * this->cols());
 		T* data_ptr = (T*)this->data();
         ar & boost::serialization::make_array<T>(data_ptr, elements);
      }
@@ -417,7 +417,7 @@ private:
 		// Allocate memory - resize.
 		this->resize(rows, cols);
 		// Load elements
-        size_t elements = this->rows() * this->cols();
+        size_t elements = (size_t)(this->rows() * this->cols());
 		T* data_ptr = this->data();
 		ar & boost::serialization::make_array<T>(data_ptr, elements);
      }

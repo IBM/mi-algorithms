@@ -75,7 +75,7 @@ public:
 		std::shared_ptr<mic::types::MatrixXf> sample_sdr (new mic::types::MatrixXf(sdrs_->rows(), 1));
 
 		// Iterate through columns and decode them one by one.
-		for (size_t i=0; i < sdrs_->cols(); i++ ) {
+		for (size_t i=0; i < (size_t)sdrs_->cols(); i++ ) {
 			sample_sdr->col(0) = sdrs_->col(i);
 			std::shared_ptr<inputDataType> decoded = this->decodeSample(sample_sdr);
 			// Add result to vector.

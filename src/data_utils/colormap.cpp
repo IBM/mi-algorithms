@@ -66,6 +66,7 @@ color_rgba map_value_to_color(float val, float min, float max, COLORMAP_TYPE t) 
 #ifdef _WIN32
     return(jet_colormap(value)); // have to have return value
 #endif
+    return color_rgba(255, 255, 255, 255);
 }
 
 color_rgba jet_colormap(float value) {
