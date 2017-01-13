@@ -322,7 +322,7 @@ void permanence_update(float* p, const float val) {
 #ifdef _WIN32
 	if (!(std::isnan(val)))
 #else    
-	if (!isnan(val))
+	if (!std::isnan(val))
 #endif    
 		*p = *p + val;
 }
