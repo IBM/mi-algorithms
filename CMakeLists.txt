@@ -83,9 +83,9 @@ add_subdirectory(src)
 message ("-- Configured MI Algorithms libraries:\n" "--   " "${MIAlgorithms_LIBRARIES}")
 
 # Set include directory
-set(CMAKE_INCLUDE_DIRS_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/include")
+set(CMAKE_INCLUDE_DIRS_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/include ${CMAKE_ADD_INCLUDE_PATH}")
 # Set lib directory
-set(CMAKE_LIB_DIRS_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_LIB_DIRS_CONFIGCMAKE "${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_ADD_LIB_PATH}")
 # Set variable that will store generated libraries
 
 # =======================================================================
