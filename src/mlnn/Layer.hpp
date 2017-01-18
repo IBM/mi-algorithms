@@ -8,6 +8,7 @@
 #ifndef SRC_MLNN_LAYER_HPP_
 #define SRC_MLNN_LAYER_HPP_
 
+#include <iostream>
 #include <string>
 
 #include<types/MatrixTypes.hpp>

@@ -7,6 +7,7 @@
 
 #include <mlnn/Layer.hpp>
 
+#include <iostream>
 #include <fstream>
 
 namespace mic {
