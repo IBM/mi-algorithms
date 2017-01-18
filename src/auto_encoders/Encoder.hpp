@@ -14,53 +14,54 @@
 
 namespace mic {
 
-/*!
- * \brief Contains auto-encoder parent class and all derived classes. DEPRICATED.
- * \author tkornuta
- */
-namespace auto_encoders {
+  /*!
+   * \brief Contains auto-encoder parent class and all derived classes. DEPRICATED.
+   * \author tkornuta
+   */
+  namespace auto_encoders {
 
-/*!
- * \brief Parent class for all auto-encoders.  DEPRICATED.
- *
- * \author tkornuta
- * \tparam inputDataType Template parameter defining the input datatype.
- * \tparam SDRType Template parameter defining the SDR type.
- */
-template <typename inputDataType, typename SDRType>
-class Encoder {
+    /*!
+     * \brief Parent class for all auto-encoders.  DEPRICATED.
+     *
+     * \author tkornuta
+     * \tparam inputDataType Template parameter defining the input datatype.
+     * \tparam SDRType Template parameter defining the SDR type.
+     */
+    template <typename inputDataType, typename SDRType>
+    class Encoder {
+    public:
 
-public:
+      /*!
+       * @brief Constructor - empty.
+       */
+      Encoder() {
+      };
 
-	/*!
-	 * @brief Constructor - empty.
-	 */
-	Encoder() { };
+      /*!
+       * Virtual destructor - empty.
+       */
+      virtual ~Encoder() {
+      };
 
-	/*!
-	 * Virtual destructor - empty.
-	 */
-	virtual ~Encoder() { };
+      /*!
+       * @brief Method responsible for encoding input data into SDR (a table of floats).
+       * @param[in] input_ Input data.
+       * @param[out] sdr_ Output SDR.
+       */
+      virtual void encode(const inputDataType& input_, SDRType& sdr_) = 0;
 
-	/*!
-	 * @brief Method responsible for encoding input data into SDR (a table of floats).
-	 * @param[in] input_ Input data.
-	 * @param[out] sdr_ Output SDR.
-	 */
-	virtual void encode(const inputDataType& input_, SDRType& sdr_) = 0;
+      /*!
+       * Method responsible for decoding of SDR into data.
+       * @param[out] output_ Output data.
+       * @param[in] sdr_ Input SDR.
+       */
+      virtual void decode(inputDataType& output_, const SDRType& sdr_) = 0;
 
-	/*!
-	 * Method responsible for decoding of SDR into data.
-	 * @param[out] output_ Output data.
-	 * @param[in] sdr_ Input SDR.
-	 */
-	virtual void decode(inputDataType& output_, const SDRType& sdr_) = 0;
-
-};
+    };
 
 
 
-} // namespace auto_encoders
+  } // namespace auto_encoders
 } // namespace mic
 
 #endif

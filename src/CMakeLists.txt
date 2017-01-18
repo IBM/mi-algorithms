@@ -108,31 +108,31 @@ target_link_libraries(htm types data_utils system_utils)
 # Add to variable storing all libraries/targets.
 set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "htm" CACHE INTERNAL "" FORCE)
 
-# =======================================================================
-# Install includes related to RBM used by other libraries.
-FILE(GLOB files rbm/*.hpp)
-install(FILES ${files} DESTINATION include/rbm)
+## =======================================================================
+## Install includes related to RBM used by other libraries.
+#FILE(GLOB files rbm/*.hpp)
+#install(FILES ${files} DESTINATION include/rbm)
+#
+## Create RBM shared library.
+#file(GLOB rbm_src rbm/*.cpp )
+#add_library(rbm SHARED ${rbm_src})
+#target_link_libraries(rbm types data_utils)
+#
+## Add to variable storing all libraries/targets.
+#set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "rbm" CACHE INTERNAL "" FORCE)
 
-# Create RBM shared library.
-file(GLOB rbm_src rbm/*.cpp )
-add_library(rbm SHARED ${rbm_src})
-target_link_libraries(rbm types data_utils)
-
-# Add to variable storing all libraries/targets.
-set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "rbm" CACHE INTERNAL "" FORCE)
-
-# =======================================================================
-# Install includes related to MLNN used by other libraries.
-FILE(GLOB files mlnn/*.hpp mlnn/*.h)
-install(FILES ${files} DESTINATION include/mlnn)
-
-# Create RBM shared library.
-file(GLOB mlnn_src mlnn/*.cpp )
-add_library(mlnn SHARED ${mlnn_src})
-target_link_libraries(mlnn types)
-
-# Add to variable storing all libraries/targets.
-set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "mlnn" CACHE INTERNAL "" FORCE)
+## =======================================================================
+## Install includes related to MLNN used by other libraries.
+#FILE(GLOB files mlnn/*.hpp mlnn/*.h)
+#install(FILES ${files} DESTINATION include/mlnn)
+#
+## Create RBM shared library.
+#file(GLOB mlnn_src mlnn/*.cpp )
+#add_library(mlnn SHARED ${mlnn_src})
+#target_link_libraries(mlnn types)
+#
+## Add to variable storing all libraries/targets.
+#set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "mlnn" CACHE INTERNAL "" FORCE)
 
 # =======================================================================
 # Install target libraries.
@@ -166,30 +166,30 @@ if(${BUILD_TEST_CHAR_ENCODER})
 endif(${BUILD_TEST_CHAR_ENCODER})
 
 
-# =======================================================================
-# Build and install - matrix test application.
-# =======================================================================
-
-set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
-
-if(${BUILD_TEST_MATRIX})
-	# Create exeutable.
-	ADD_EXECUTABLE(matrix_test tests/matrix_test.cpp)
-	# Link it with shared libraries.
-	target_link_libraries(matrix_test 
-		types
-		${Boost_LIBRARIES}
-		${EIGEN_LIBRARIES} 
-		)
-	if(OpenBLAS_FOUND)
-		target_link_libraries(matrix_test  ${OpenBLAS_LIB} )
-	endif(OpenBLAS_FOUND)
-
-	# install test to bin directory
-	install(TARGETS matrix_test RUNTIME DESTINATION bin)
-
-endif(${BUILD_TEST_MATRIX})
-
+## =======================================================================
+## Build and install - matrix test application.
+## =======================================================================
+#
+#set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
+#
+#if(${BUILD_TEST_MATRIX})
+#	# Create exeutable.
+#	ADD_EXECUTABLE(matrix_test tests/matrix_test.cpp)
+#	# Link it with shared libraries.
+#	target_link_libraries(matrix_test 
+#		types
+#		${Boost_LIBRARIES}
+#		${EIGEN_LIBRARIES} 
+#		)
+#	if(OpenBLAS_FOUND)
+#		target_link_libraries(matrix_test  ${OpenBLAS_LIB} )
+#	endif(OpenBLAS_FOUND)
+#
+#	# install test to bin directory
+#	install(TARGETS matrix_test RUNTIME DESTINATION bin)
+#
+#endif(${BUILD_TEST_MATRIX})
+#
 # =======================================================================
 # Build and install - tensor test application.
 # =======================================================================
@@ -237,105 +237,105 @@ if(${BUILD_TEST_COLLECTOR})
 endif(${BUILD_TEST_COLLECTOR})
 
 
-# =======================================================================
-# Build and install - matrix array test.
-# =======================================================================
+## =======================================================================
+## Build and install - matrix array test.
+## =======================================================================
+#
+#set(BUILD_TEST_MATRIX_ARRAY ON CACHE BOOL "Build the application for testing creation/serialization of matrix array class")
+#
+#if(${BUILD_TEST_MATRIX_ARRAY})
+#	# Create exeutable.
+#	ADD_EXECUTABLE(matrix_array_test tests/matrix_array_test.cpp)
+#	# Link it with shared libraries.
+#	target_link_libraries(matrix_array_test
+#		configuration
+#		types
+#		data_io
+#		${Boost_LIBRARIES}
+#		)
+#
+#	# install test to bin directory
+#	install(TARGETS matrix_array_test RUNTIME DESTINATION bin)
+#
+#endif(${BUILD_TEST_MATRIX_ARRAY})
 
-set(BUILD_TEST_MATRIX_ARRAY ON CACHE BOOL "Build the application for testing creation/serialization of matrix array class")
-
-if(${BUILD_TEST_MATRIX_ARRAY})
-	# Create exeutable.
-	ADD_EXECUTABLE(matrix_array_test tests/matrix_array_test.cpp)
-	# Link it with shared libraries.
-	target_link_libraries(matrix_array_test
-		configuration
-		types
-		data_io
-		${Boost_LIBRARIES}
-		)
-
-	# install test to bin directory
-	install(TARGETS matrix_array_test RUNTIME DESTINATION bin)
-
-endif(${BUILD_TEST_MATRIX_ARRAY})
-
-# =======================================================================
-# Build and install - mlnn test.
-# =======================================================================
-
-set(BUILD_TEST_MLNN ON CACHE BOOL "Build the application for testing creation/serialization of multi-layer neural networks")
-
-if(${BUILD_TEST_MLNN})
-	# Create exeutable.
-	ADD_EXECUTABLE(mlnn_test tests/mlnn_test.cpp)
-	# Link it with shared libraries.
-	target_link_libraries(mlnn_test 
-		configuration
-		types
-		data_io
-		mlnn
-		${Boost_LIBRARIES}
-		)
-
-	# install test to bin directory
-	install(TARGETS mlnn_test RUNTIME DESTINATION bin)
-
-endif(${BUILD_TEST_MLNN})
+## =======================================================================
+## Build and install - mlnn test.
+## =======================================================================
+#
+#set(BUILD_TEST_MLNN ON CACHE BOOL "Build the application for testing creation/serialization of multi-layer neural networks")
+#
+#if(${BUILD_TEST_MLNN})
+#	# Create exeutable.
+#	ADD_EXECUTABLE(mlnn_test tests/mlnn_test.cpp)
+#	# Link it with shared libraries.
+#	target_link_libraries(mlnn_test 
+#		configuration
+#		types
+#		data_io
+#		mlnn
+#		${Boost_LIBRARIES}
+#		)
+#
+#	# install test to bin directory
+#	install(TARGETS mlnn_test RUNTIME DESTINATION bin)
+#
+#endif(${BUILD_TEST_MLNN})
 
 # =======================================================================
 # Build and install - MNIST recogntion based on CNNs.
 # =======================================================================
 
-set(BUILD_MNIST_CNN_APP ON CACHE BOOL "Build the application using Convolutional Neural Network for recognition of MNIST digits")
+#set(BUILD_MNIST_CNN_APP ON CACHE BOOL "Build the application using Convolutional Neural Network for recognition of MNIST digits")
+#
+#if(${BUILD_MNIST_CNN_APP})
+#        # Create exeutable.
+#        ADD_EXECUTABLE(mnist_convnet tests/mnist_convnet.cpp)
+#        # Link it with shared libraries.
+#        target_link_libraries(mnist_convnet
+#			logger
+#	        types
+#			data_io
+#			encoders
+#			mlnn
+#		    ${Boost_LIBRARIES}
+#		    ${EIGEN_LIBRARIES}
+#	    )
+#        if(OpenBLAS_FOUND)
+#                target_link_libraries(mnist_convnet  ${OpenBLAS_LIB} )
+#        endif(OpenBLAS_FOUND)
+#
+#        # install test to bin directory
+#        install(TARGETS mnist_convnet RUNTIME DESTINATION bin)
+#
+#endif(${BUILD_MNIST_CNN_APP})
 
-if(${BUILD_MNIST_CNN_APP})
-        # Create exeutable.
-        ADD_EXECUTABLE(mnist_convnet tests/mnist_convnet.cpp)
-        # Link it with shared libraries.
-        target_link_libraries(mnist_convnet
-			logger
-	        types
-			data_io
-			encoders
-			mlnn
-		    ${Boost_LIBRARIES}
-		    ${EIGEN_LIBRARIES}
-	    )
-        if(OpenBLAS_FOUND)
-                target_link_libraries(mnist_convnet  ${OpenBLAS_LIB} )
-        endif(OpenBLAS_FOUND)
 
-        # install test to bin directory
-        install(TARGETS mnist_convnet RUNTIME DESTINATION bin)
-
-endif(${BUILD_MNIST_CNN_APP})
-
-
-# =======================================================================
-# Build and install -  MNIST recogntion based on MLP.
-# =======================================================================
-
-set(BUILD_MNIST_MLP_APP ON CACHE BOOL "Build the application using Multi-Layer Perceptron for recognition of MNIST digits")
-
-if(${BUILD_MNIST_MLP_APP})
-        # Create exeutable.
-        ADD_EXECUTABLE(mnist_simple_mlp_app tests/mnist_simple_mlp.cpp)
-        # Link it with shared libraries.
-        target_link_libraries(mnist_simple_mlp_app
-			logger
-	        types
-			data_io
-			encoders
-			mlnn
-	        ${Boost_LIBRARIES}
-	        ${EIGEN_LIBRARIES}
-	        )
-        if(OpenBLAS_FOUND)
-                target_link_libraries(mnist_simple_mlp_app  ${OpenBLAS_LIB} )
-        endif(OpenBLAS_FOUND)
-
-        # install test to bin directory
-        install(TARGETS mnist_simple_mlp_app RUNTIME DESTINATION bin)
-
-endif(${BUILD_MNIST_MLP_APP})
+## =======================================================================
+## Build and install -  MNIST recogntion based on MLP.
+## =======================================================================
+#
+#set(BUILD_MNIST_MLP_APP ON CACHE BOOL "Build the application using Multi-Layer Perceptron for recognition of MNIST digits")
+#
+#if(${BUILD_MNIST_MLP_APP})
+#        # Create exeutable.
+#        ADD_EXECUTABLE(mnist_simple_mlp_app tests/mnist_simple_mlp.cpp)
+#        # Link it with shared libraries.
+#        target_link_libraries(mnist_simple_mlp_app
+#			logger
+#	        types
+#			data_io
+#			encoders
+#			mlnn
+#	        ${Boost_LIBRARIES}
+#	        ${EIGEN_LIBRARIES}
+#	        )
+#        if(OpenBLAS_FOUND)
+#                target_link_libraries(mnist_simple_mlp_app  ${OpenBLAS_LIB} )
+#        endif(OpenBLAS_FOUND)
+#
+#        # install test to bin directory
+#        install(TARGETS mnist_simple_mlp_app RUNTIME DESTINATION bin)
+#
+#endif(${BUILD_MNIST_MLP_APP})
 

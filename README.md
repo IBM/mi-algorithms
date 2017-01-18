@@ -35,6 +35,7 @@ Applications
    * data_collector_test - program for testing data collector.
    * matrix_test - program for testing multiplication of matrices with/without OpenBLAS.
    * tensor_test - program for testing tensor functionality.
+   * convnet_minst - program for training MNIST using convolution neural nets?
    
 Installation
 ------------

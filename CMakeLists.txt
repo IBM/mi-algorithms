@@ -3,15 +3,15 @@ project(MIAlgorithms CXX)
 
 #  Set current version number.
 set (MIAlgorithms_MAJOR_VERSION 1)
-set (MIAlgorithms_MINOR_VERSION 0)
+set (MIAlgorithms_MINOR_VERSION 1)
 set (MIAlgorithms_PATCH_VERSION 0)
 set (MIAlgorithms_VERSION ${MIAlgorithms_MAJOR_VERSION}.${MIAlgorithms_MINOR_VERSION}.${MIAlgorithms_PATCH_VERSION})
 
 # CMake required version.
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8)
 
 # Add C++11 dependency.
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -fopenmp -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fopenmp -Wall")
 
 
 # =======================================================================

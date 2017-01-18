@@ -24,6 +24,9 @@ unsigned long long rand_int_radius (unsigned long long center, unsigned long lon
 unsigned long long rand_int_radius_2d (unsigned long long center, unsigned long long radius, unsigned long long width, unsigned long long max);
 unsigned long long rand_int_radius_2d_gaussian (unsigned long long center, unsigned long long radius, unsigned long long width, unsigned long long max);
 double gaussrand(void);
+unsigned uniform(unsigned i, unsigned m);
+void permute(int permutation[], unsigned n);
+
 
 #ifdef __cplusplus
 }
