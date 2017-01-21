@@ -25,7 +25,7 @@ Additionally it depends on the following external libraries:
 
 On Linux (Ubuntu 14.04): 
 
-    sudo apt-get install git cmake cmake-curses-gui doxygen libboost1.54-all-dev  libeigen3-dev
+    sudo apt-get install git cmake cmake-curses-gui doxygen libboost1.54-all-dev libeigen3-dev
 
 ##Main modules
 
@@ -51,7 +51,7 @@ In order to download, configure, make and install new "clean" version of mi-algo
 
     cd ~/workspace
     git clone git@github.ibm.com:tkornut/mi-algorithms.git
-    cd mi-toolchain
+    cd mi-algorithms
     mkdir build
     cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=~/workspace/mic/
