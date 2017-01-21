@@ -63,7 +63,7 @@ matrix:
 #        - COMPILER=clang++
 #      addons:
 #        apt:
-#          packages: ['libboost-all-dev']
+#          packages: ['libboost-all-dev', 'libeigen3-dev']
 
    # 3. Ubuntu 14.04 clang++
     - os: linux
@@ -75,7 +75,7 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
-          packages: ['libboost-all-dev']
+          packages: ['libboost-all-dev', 'libeigen3-dev']
 
 #   # 4. Ubuntu 14.04 clang-3.8 - doesn't work - not supporting openMP
 #    - os: linux
@@ -83,7 +83,7 @@ matrix:
 #      addons:
 #        apt:
 #          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
-#          packages: ['clang-3.8', 'libboost-all-dev']
+#          packages: ['clang-3.8', 'libboost-all-dev', 'libeigen3-dev']
 #      env: COMPILER=clang++-3.8
 
 
