@@ -1,0 +1,117 @@
+language: cpp c
+
+# This will run on Travis' 'new' container-based infrastructure
+# https://docs.travis-ci.com/user/migrating-from-legacy/#How-can-I-use-container-based-infrastructure%3F
+sudo: false
+
+# Safelist: focus Travis' attention on the master branch.
+branches:
+  only:
+    - master
+
+# Environment variables
+env:
+  global:
+    - GH_REPO_NAME: mi-algorithms
+    - DOXYFILE: $TRAVIS_BUILD_DIR/mi-algorithms.doxyfile
+    - GH_REPO_REF: github.ibm.com:tkornut/mi-algorithms.git
+  matrix:
+   # Workaround for https://github.com/travis-ci/travis-ci/issues/4681
+   - TRAVIS_4681_WORKAROUND=1
+
+
+# Define matrix of test environments.
+matrix:
+  # Travis workaround - disable "main" test environment.
+  exclude:
+    - env: TRAVIS_4681_WORKAROUND=1
+
+  include:
+    # 1. Ubuntu 14.04 g++-4.8
+    - os: linux
+      dist: trusty
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libboost-all-dev
+            - g++-4.8
+            - doxygen
+            - doxygen-doc
+            - doxygen-latex
+            - doxygen-gui
+            - graphviz
+      env:
+        - OS=Ubuntu-14.04
+        - COMPILER=g++-4.8
+
+      # Generate and deploy documentation - only once, for this test environment.
+      after_success:
+      - cd $TRAVIS_BUILD_DIR
+      - chmod +x generateDocumentationAndDeploy.sh
+      - ./generateDocumentationAndDeploy.sh
+
+#   # 2. OS X 10.11 clang++ - doesn't work - cannot switch to OSX!
+#    - os: osx
+#      osx_image: xcode8.0
+#      compiler: clang
+#      env:
+#        - OS=OSX-10.11
+#        - COMPILER=clang++
+#      addons:
+#        apt:
+#          packages: ['libboost-all-dev']
+
+   # 3. Ubuntu 14.04 clang++
+    - os: linux
+      dist: trusty
+      compiler: clang
+      env:
+        - OS=Ubuntu-14.04
+        - COMPILER=clang++
+      addons:
+        apt:
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
+          packages: ['libboost-all-dev']
+
+#   # 4. Ubuntu 14.04 clang-3.8 - doesn't work - not supporting openMP
+#    - os: linux
+#      compiler: clang++
+#      addons:
+#        apt:
+#          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
+#          packages: ['clang-3.8', 'libboost-all-dev']
+#      env: COMPILER=clang++-3.8
+
+
+
+# Configure cmake and prepare installation dir.
+before_script:
+  # Make mic output
+  - mkdir $TRAVIS_BUILD_DIR/../mic/
+  # Clone, configure and install mi-toolchain
+  - cd $TRAVIS_BUILD_DIR/..
+  # "https://${GH_REPO_TOKEN}@${GH_REPO_REF}"
+  # f3cf58e97c9d0599d37121d9a1411552288a6e59
+  # git clone https://<token>@github.com/owner/repo.git
+  # git clone git@github.ibm.com:tkornut/mi-toolchain.git
+  - git clone https://f3cf58e97c9d0599d37121d9a1411552288a6e59@github.ibm.com/tkornut/mi-toolchain.git
+  - mkdir mi-toolchain/build
+  - cd mi-toolchain/build
+  # Overwrite compiler!
+  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+  - cmake .. -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../mic/
+  - make install
+  # Make mi-algorithms
+  - mkdir $TRAVIS_BUILD_DIR/build
+  - cd $TRAVIS_BUILD_DIR/build
+  # Overwrite compiler!
+  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+  - cmake .. -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../mic/
+
+# Build and install.
+script:
+  - make install VERBOSE=1
+

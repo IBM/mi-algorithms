@@ -92,21 +92,21 @@ target_link_libraries(classifiers types data_utils)
 # Add to variable storing all libraries/targets.
 set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "classifiers" CACHE INTERNAL "" FORCE)
 
-# =======================================================================
-# Install includes related to HTM used by other libraries.
-FILE(GLOB files htm/*.h htm/*.hpp)
-install(FILES ${files} DESTINATION include/htm)
-
-FILE(GLOB files htm/shared/*.h htm/shared/*.hpp)
-install(FILES ${files} DESTINATION include/htm/shared)
-
-# Create HTM shared library.
-file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
-add_library(htm SHARED ${htm_src})
-target_link_libraries(htm types data_utils system_utils)
-
-# Add to variable storing all libraries/targets.
-set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "htm" CACHE INTERNAL "" FORCE)
+## =======================================================================
+## Install includes related to HTM used by other libraries.
+#FILE(GLOB files htm/*.h htm/*.hpp)
+#install(FILES ${files} DESTINATION include/htm)
+#
+#FILE(GLOB files htm/shared/*.h htm/shared/*.hpp)
+#install(FILES ${files} DESTINATION include/htm/shared)
+#
+## Create HTM shared library.
+#file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
+#add_library(htm SHARED ${htm_src})
+#target_link_libraries(htm types data_utils system_utils)
+#
+## Add to variable storing all libraries/targets.
+#set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "htm" CACHE INTERNAL "" FORCE)
 
 ## =======================================================================
 ## Install includes related to RBM used by other libraries.

@@ -26,7 +26,7 @@ Main modules
    * data_utils - data utils (e.g. functions for interpolations, generation of series, random generator etc.)
    * auto_encoders - auto (as well as some simple) encoders
    * classifiers - different classifiers (naive bayes, softmax etc.)
-   * htm - Hierarchical Temporal Memory 
+   * htm - Hierarchical Temporal Memory
    * rbm - Restricted Boltzmann Machine
 
 Applications
@@ -37,18 +37,29 @@ Applications
    * tensor_test - program for testing tensor functionality.
    * convnet_minst - program for training MNIST using convolution neural nets?
    
-Installation
-------------
-```
-git clone git@github.rtp.raleigh.ibm.com:tkornut-us/mi-algorithms.git
-cd mi-algorithms
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=~/Documents/workspace/mic/
-make -j4 install
-```
+## Installation
+In order to download, configure, make and install new "clean" version of mi-algorithms please execute the following:
 
-Maintainer
-----------
+    cd ~/workspace
+    git clone git@github.ibm.com:tkornut/mi-algorithms.git
+    cd mi-toolchain
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=~/workspace/mic/
+    make -j4 install
 
-tkornuta
+## Documentation
+In order to generate a "living" documentation of the code please run Doxygen:
+
+    cd ~/workspace/mi-algorithms
+    doxygen mi-algorithms.doxyfile
+    firefox html/index.html
+
+The current documentation (generated straight from the code and automatically uploaded to GH pages by Travis) is available at:
+
+https://pages.github.ibm.com/tkornut/mi-algorithms/
+
+## Maintainer
+
+Tomasz Kornuta (tkornut@us.ibm.com)
+
