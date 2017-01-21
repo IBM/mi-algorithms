@@ -21,7 +21,7 @@ Additionally it depends on the following external libraries:
    * Eigen - a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms.
    * OpenBlas (optional) - An optimized library implementing BLAS routines. If present - used for fastening operation on matrices.
 
-### Installing the dependencies/required tools
+### Installation of the dependencies/required tools
 
 On Linux (Ubuntu 14.04): 
 
