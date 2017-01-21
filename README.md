@@ -1,26 +1,34 @@
-Machine Intelligence Core: Algorithms
-=========================================
+#Machine Intelligence Core: Algorithms
 
-Description
------------
+Status of Travis Continuous Integration:
+
+[![Build Status](https://travis.ibm.com/tkornut/mi-algorithms.svg?token=9XHfj7QaSbmFqHsyaQes&branch=master)](https://travis.ibm.com/tkornut/mi-algorithms)
+
+## Description
 
 A subproject of Machine Intelligence Core framework.
 
 The project contains core types and several machine intelligence algorithms, such as HTM, RBM accompanied by some useful modules and functions.
 
-MIC dependencies
-------------
+## MIC dependencies
+
    * MIToolchain - the core of MIC framework.
 
-External dependencies
-------------
+## External dependencies
+
 Additionally it depends on the following external libraries:
    * Boost - library of free (open source) peer-reviewed portable C++ source libraries.
    * Eigen - a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms.
    * OpenBlas (optional) - An optimized library implementing BLAS routines. If present - used for fastening operation on matrices.
 
-Main modules
-------------
+### Installing the dependencies/required tools
+
+On Linux (Ubuntu 14.04): 
+
+    sudo apt-get install git cmake cmake-curses-gui doxygen libboost1.54-all-dev  libeigen3-dev
+
+##Main modules
+
    * types - core types and classes (image, tensor, matrix, vector etc.)
    * data_io - data i/o classes and functions (e.g. data importers)
    * data_utils - data utils (e.g. functions for interpolations, generation of series, random generator etc.)
@@ -29,8 +37,8 @@ Main modules
    * htm - Hierarchical Temporal Memory
    * rbm - Restricted Boltzmann Machine
 
-Applications
-------------
+## Applications
+
    * char_encoder_test - examplary 1-of-k Char Encoder test application.
    * data_collector_test - program for testing data collector.
    * matrix_test - program for testing multiplication of matrices with/without OpenBLAS.
@@ -38,6 +46,7 @@ Applications
    * convnet_minst - program for training MNIST using convolution neural nets?
    
 ## Installation
+
 In order to download, configure, make and install new "clean" version of mi-algorithms please execute the following:
 
     cd ~/workspace
@@ -49,6 +58,7 @@ In order to download, configure, make and install new "clean" version of mi-algo
     make -j4 install
 
 ## Documentation
+
 In order to generate a "living" documentation of the code please run Doxygen:
 
     cd ~/workspace/mi-algorithms

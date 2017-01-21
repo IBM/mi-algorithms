@@ -37,6 +37,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - libboost-all-dev
+            - libeigen3-dev
             - g++-4.8
             - doxygen
             - doxygen-doc
