@@ -225,7 +225,9 @@ segment* add_new_segment_to_cell(layer* l, unsigned long c, unsigned int i) {
 
 		seg = &(l->SEGMENTS(c, i, l->columns[c].cells[i].number_of_segments));
 		reset_segment(seg, i, l);
-		gettimeofday (&(seg->time_added), NULL);
+		//gettimeofday (&(seg->time_added), NULL);
+		// Get time of day with 1s resolution.
+		seg->time_added = boost::posix_time::second_clock::local_time();
 		l->columns[c].cells[i].number_of_segments++;
 	}
 

@@ -15,8 +15,8 @@
 #include <htm/shared/defs.h>
 
 // getTimeInfo
-#include <system_utils/system_info.hpp>
-using namespace mic::system_utils;
+//#include <system_utils/system_info.hpp>
+//using namespace mic::system_utils;
 
 namespace mic {
 namespace htm {
@@ -34,8 +34,8 @@ PerformanceStatistics::~PerformanceStatistics() {
 void PerformanceStatistics::logPerformanceStatistics() {
 
 	printf("\t-----------------\n");
-	printf("\tcollection_time: %s \n", getTimeInfo(collection_time).c_str());
-	printf("\ttime_since_program_start: %.6Lf s\n", time_since_program_start);
+	std::cout << "\tcollection_time: " << collection_time << std::endl;
+	std::cout << "\ttime_since_program_start: " << time_since_program_start << std::endl;
 
 	/* TODO Change SP params to configuration!
 	printf("\tactive_columns: %llu (%.3Lf%%)\n", active_columns, (long double)(active_columns * 100.0)/(long double)(l->sp_params.columns));

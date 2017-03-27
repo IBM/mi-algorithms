@@ -92,47 +92,46 @@ target_link_libraries(classifiers types data_utils)
 # Add to variable storing all libraries/targets.
 set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "classifiers" CACHE INTERNAL "" FORCE)
 
-## =======================================================================
-## Install includes related to HTM used by other libraries.
-#FILE(GLOB files htm/*.h htm/*.hpp)
-#install(FILES ${files} DESTINATION include/htm)
-#
-#FILE(GLOB files htm/shared/*.h htm/shared/*.hpp)
-#install(FILES ${files} DESTINATION include/htm/shared)
-#
-## Create HTM shared library.
-#file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
-#add_library(htm SHARED ${htm_src})
-#target_link_libraries(htm types data_utils system_utils)
-#
-## Add to variable storing all libraries/targets.
-#set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "htm" CACHE INTERNAL "" FORCE)
+# =======================================================================
+# Install includes related to HTM used by other libraries.
+FILE(GLOB files htm/*.h htm/*.hpp)
+install(FILES ${files} DESTINATION include/htm)
 
-## =======================================================================
-## Install includes related to RBM used by other libraries.
-#FILE(GLOB files rbm/*.hpp)
-#install(FILES ${files} DESTINATION include/rbm)
-#
-## Create RBM shared library.
-#file(GLOB rbm_src rbm/*.cpp )
-#add_library(rbm SHARED ${rbm_src})
-#target_link_libraries(rbm types data_utils)
-#
-## Add to variable storing all libraries/targets.
-#set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "rbm" CACHE INTERNAL "" FORCE)
+FILE(GLOB files htm/shared/*.h htm/shared/*.hpp)
+install(FILES ${files} DESTINATION include/htm/shared)
 
-## =======================================================================
-## Install includes related to MLNN used by other libraries.
-#FILE(GLOB files mlnn/*.hpp mlnn/*.h)
-#install(FILES ${files} DESTINATION include/mlnn)
-#
-## Create RBM shared library.
-#file(GLOB mlnn_src mlnn/*.cpp )
-#add_library(mlnn SHARED ${mlnn_src})
-#target_link_libraries(mlnn types)
-#
-## Add to variable storing all libraries/targets.
-#set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "mlnn" CACHE INTERNAL "" FORCE)
+# Create HTM shared library.
+file(GLOB htm_src htm/shared/*.cpp htm/*.cpp)
+add_library(htm SHARED ${htm_src})
+target_link_libraries(htm types data_utils)
+
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "htm" CACHE INTERNAL "" FORCE)
+
+# =======================================================================
+# Install includes related to RBM used by other libraries.
+FILE(GLOB files rbm/*.hpp)
+install(FILES ${files} DESTINATION include/rbm)
+
+# Create RBM shared library.
+file(GLOB rbm_src rbm/*.cpp )
+add_library(rbm SHARED ${rbm_src})
+target_link_libraries(rbm types data_utils)
+
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "rbm" CACHE INTERNAL "" FORCE)
+# =======================================================================
+# Install includes related to MLNN used by other libraries.
+FILE(GLOB files mlnn/*.hpp mlnn/*.h)
+install(FILES ${files} DESTINATION include/mlnn)
+
+# Create RBM shared library.
+file(GLOB mlnn_src mlnn/*.cpp )
+add_library(mlnn SHARED ${mlnn_src})
+target_link_libraries(mlnn types)
+
+# Add to variable storing all libraries/targets.
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "mlnn" CACHE INTERNAL "" FORCE)
 
 # =======================================================================
 # Install target libraries.

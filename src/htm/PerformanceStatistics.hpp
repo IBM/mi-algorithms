@@ -8,7 +8,8 @@
 #ifndef SRC_HTM_PERFORMANCESTATISTICS_HPP_
 #define SRC_HTM_PERFORMANCESTATISTICS_HPP_
 
-#include <sys/time.h>
+//#include <sys/time.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace mic {
 namespace htm {
@@ -22,9 +23,9 @@ public:
 	PerformanceStatistics();
 	virtual ~PerformanceStatistics();
 
-	    struct timeval 		collection_time;
+		boost::posix_time::ptime collection_time;
 
-	    long double			time_since_program_start;
+		boost::posix_time::time_duration time_since_program_start;
 
 		// columns
 		unsigned long long 	active_columns;

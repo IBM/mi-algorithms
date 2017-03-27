@@ -10,7 +10,7 @@
 #define SRC_DATA_IO_MNISTMATRIXIMPORTER_HPP_
 
 #include <data_io/Importer.hpp>
-#include <types/MatrixTypes.hpp>
+#include <types/MNISTTypes.hpp>
 
 namespace mic {
 namespace data_io {
@@ -79,25 +79,6 @@ private:
 
 } /* namespace data_io */
 } /* namespace mic */
-
-
-namespace mic {
-namespace types {
-
-/*!
- * \brief The <MatrixXf-uint> sample type used by e.g. MNISTImporter.
- * \author tkornuta
- */
-typedef mic::types::Sample<mic::types::MatrixXf, unsigned int> MNISTSample;
-
-/*!
- * \brief The <MatrixXf-uint> batch type used by e.g. MNISTImporter.
- * \author tkornuta
- */
-typedef mic::types::Batch<mic::types::MatrixXf, unsigned int> MNISTBatch;
-
-}//: namespace types
-}//: namespace mic
 
 
 #endif /* SRC_DATA_IO_MNISTMATRIXIMPORTER_HPP_ */

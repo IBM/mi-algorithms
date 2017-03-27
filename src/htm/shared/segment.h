@@ -4,7 +4,8 @@
 #include <htm/shared/synapse.h>
 #include <htm/shared/defs.h>
 
-#include <sys/time.h>
+//#include <sys/time.h>
+ #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace mic {
 namespace htm {
@@ -29,7 +30,7 @@ typedef struct {
 
 	unsigned int parent_cell_index;
 
-	struct timeval time_added;
+	boost::posix_time::ptime time_added;
 
 } segment;
 

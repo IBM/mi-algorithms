@@ -6,8 +6,8 @@
 
 #include <logger/Log.hpp>
 
-#include <system_utils/system_info.hpp>
-using namespace mic::system_utils;
+//#include <system_utils/system_info.hpp>
+//using namespace mic::system_utils;
 
 #include <data_utils/input.h>
 using namespace mic::data_utils;
@@ -211,8 +211,8 @@ mic::htm::PerformanceStatistics collectPerformanceStatistics(layer* l) {
 				segment* sp = &(l->SEGMENTS(c, i, seg));
 
 				if (sp) {
-
-					double age = getTimeDiff(sp->time_added, data.collection_time);
+					// Get age in seconds.
+					double age = (sp->time_added - data.collection_time).total_seconds();
 
 					if (age < data.min_segment_age || data.min_segment_age < 0)
 						data.min_segment_age = age;
