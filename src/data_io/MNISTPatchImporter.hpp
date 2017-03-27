@@ -58,6 +58,11 @@ public:
 	 */
 	virtual void initializePropertyDependentVariables() { };
 
+	/*!
+	 * Returns the patch size.
+	 */
+	size_t getPatchSize() { return patch_size; }
+
 private:
 	/*!
 	 * Width of MNIST image.
@@ -83,6 +88,11 @@ private:
 	 * Property: patch size (width & height).
 	 */
 	mic::configuration::Property<size_t> patch_size;
+
+	/*!
+	 * Property: maximum number of samples (limitation, from 1 to 60000). If <=0 then there is no limitation.
+	 */
+	mic::configuration::Property<int> samples_limit;
 };
 
 } /* namespace data_io */

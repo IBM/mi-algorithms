@@ -6,11 +6,8 @@
  */
 
 #include <data_io/MNISTPatchImporter.hpp>
-
 #include <logger/Log.hpp>
 
-// Dependency on data_utils.
-#include <data_utils/image_tools.hpp>
 
 #include <fstream>
 
@@ -20,12 +17,14 @@ namespace data_io {
 MNISTPatchImporter::MNISTPatchImporter(std::string node_name_) : Importer (node_name_),
 		data_filename("data_filename","images-idx3-ubyte"),
 		labels_filename("labels_filename", "labels-idx1-ubyte"),
-		patch_size("patch_size", 5)
+		patch_size("patch_size", 5),
+		samples_limit("samples_limit",-1)
 {
 	// Register properties - so their values can be overridden (read from the configuration file).
 	registerProperty(data_filename);
 	registerProperty(labels_filename);
 	registerProperty(patch_size);
+	registerProperty(samples_limit);
 	// Set image properties.
 	image_width = 28;
 	image_height = 28;
@@ -37,7 +36,7 @@ bool MNISTPatchImporter::importData(){
 	char buffer[28*28];
 	int label_offset_bytes = 8;
 	int data_offset_bytes = 16;
-	int count = 0;
+	size_t sample = 0;
 
 	// Try to open file with labels.
 	LOG(LSTATUS) << "Opening file containing MNIST labels: " << labels_filename;
@@ -62,7 +61,6 @@ bool MNISTPatchImporter::importData(){
 	labels_file.seekg (label_offset_bytes, std::ios::beg);
 	// Skip header.
 	data_file.seekg (data_offset_bytes , std::ios::beg);
-
 
 	// Import loop.
 	while(true) {
@@ -92,10 +90,11 @@ bool MNISTPatchImporter::importData(){
 		}//: for
 
 		// Got the image and label - now add the patches...
+		LOG(LDEBUG) << "Loading MNIST sample: " << sample;
 
 		// Iterate through the image.
-		for (size_t yi=0; (yi+patch_size) < image_height; yi++)
-			for (size_t xi=0; (xi +patch_size) < image_width; xi++) {
+		for (size_t yi=0; (yi+patch_size) <= image_height; yi++)
+			for (size_t xi=0; (xi +patch_size) <= image_width; xi++) {
 				// Create a new matrix.
 				mic::types::MatrixXfPtr patch (new mic::types::MatrixXf(patch_size, patch_size));
 
@@ -109,6 +108,11 @@ bool MNISTPatchImporter::importData(){
 				sample_data.push_back(patch);
 				sample_labels.push_back(std::make_shared <unsigned int> (temp_label) );
 			}//: for image
+
+		sample++;
+		// Check limit.
+		if ((samples_limit > 0) && (sample >= (size_t)samples_limit))
+			break;
 	}//: while !eof
 
 	LOG(LINFO) << "Imported " << sample_labels.size() << " patches";
