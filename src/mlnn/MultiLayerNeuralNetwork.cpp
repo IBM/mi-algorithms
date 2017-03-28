@@ -36,6 +36,8 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 	assert((layers[0]->s['x'])->cols() == input_data.cols());
 	assert((layers[0]->s['x'])->rows() == input_data.rows());
 
+	LOG(LDEBUG) <<" input_data: " << input_data.transpose();
+
 	// Copy inputs to the lowest point in the network.
 	(*(layers[0]->s['x'])) = input_data;
 
@@ -69,7 +71,7 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 			LOG(LDEBUG) << layers[i+1]->s['y']->transpose();
 		}*/
 	}
-	LOG(LDEBUG) <<" getPredictions(): " << getPredictions()->transpose();
+	LOG(LDEBUG) <<" predictions: " << getPredictions()->transpose();
 }
 
 void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& targets_) {

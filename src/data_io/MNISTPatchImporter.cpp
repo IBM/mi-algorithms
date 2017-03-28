@@ -32,11 +32,16 @@ MNISTPatchImporter::MNISTPatchImporter(std::string node_name_) : Importer (node_
 
 bool MNISTPatchImporter::importData(){
 
-
 	char buffer[28*28];
 	int label_offset_bytes = 8;
 	int data_offset_bytes = 16;
 	size_t sample = 0;
+
+	// Limit patch size.
+	if (patch_size < 1)
+		patch_size = 1;
+	else if (patch_size >= 28)
+		patch_size = 28;
 
 	// Try to open file with labels.
 	LOG(LSTATUS) << "Opening file containing MNIST labels: " << labels_filename;
@@ -55,7 +60,7 @@ bool MNISTPatchImporter::importData(){
 	}
 
 	// Label and image files ok - import patches.
-	LOG(LSTATUS) << "Importing MNIST patches...";
+	LOG(LSTATUS) << "Importing MNIST patches of size " << patch_size << " by " << patch_size << ". This might take a while...";
 
 	// Skip label header.
 	labels_file.seekg (label_offset_bytes, std::ios::beg);
