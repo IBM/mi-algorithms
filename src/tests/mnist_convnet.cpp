@@ -35,8 +35,8 @@ int main() {
 	// Load the MNIST training...
 	mic::data_io::MNISTMatrixImporter training;
 	// Manually set paths. DEPRICATED! Used here only for simplification of the test.
-	training.setDataFilename("../../../data/mnist/train-images-idx3-ubyte");
-	training.setLabelsFilename("../../../data/mnist/train-labels-idx1-ubyte");
+	training.setDataFilename("../data/mnist/train-images.idx3-ubyte");
+	training.setLabelsFilename("../data/mnist/train-labels.idx1-ubyte");
 	training.setBatchSize(batch_size);
 
 	if (!training.importData())
@@ -45,8 +45,8 @@ int main() {
 	// ... and test datasets.
 	mic::data_io::MNISTMatrixImporter test;
 	// Manually set paths. DEPRICATED! Used here only for simplification of the test.
-	test.setDataFilename("../../../data/mnist/t10k-images-idx3-ubyte");
-	test.setLabelsFilename("../../../data/mnist/t10k-labels-idx1-ubyte");
+	test.setDataFilename("../data/mnist/t10k-images.idx3-ubyte");
+	test.setLabelsFilename("../data/mnist/t10k-labels.idx1-ubyte");
 	test.setBatchSize(batch_size);
 
 	if (!test.importData())

@@ -78,6 +78,26 @@ public:
 	}
 
 	/*!
+	 * Removes the last neural network layer.
+	 */
+	void removeLastLayer( ){
+		layers.pop_back();
+		connected = false;
+	}
+
+	/*!
+	 * Removes several last layers of the neural network.
+	 * @param number_of_layers_ Number of layers to be removed.
+	 */
+	void removeLastLayers(size_t number_of_layers_){
+		assert(number_of_layers_ <= layers.size());
+		//layers.erase(layers.back() - number_of_layers_, layers.back());
+		for (size_t i=0; i <number_of_layers_; i++)
+			layers.pop_back();
+		connected = false;
+	}
+
+	/*!
 	 * Passes the data in a feed-forward manner through all consecutive layers, from the input to the output layer.
 	 * @param input_data Input data - a matrix containing [sample_size x batch_size].
 	 * @param skip_dropout Flag for skipping dropouts - which should be set to true during testing.

@@ -36,7 +36,7 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 	assert((layers[0]->s['x'])->cols() == input_data.cols());
 	assert((layers[0]->s['x'])->rows() == input_data.rows());
 
-	LOG(LDEBUG) <<" input_data: " << input_data.transpose();
+	//LOG(LDEBUG) <<" input_data: " << input_data.transpose();
 
 	// Copy inputs to the lowest point in the network.
 	(*(layers[0]->s['x'])) = input_data;
@@ -44,7 +44,7 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 	// Connect layers by setting the input matrices pointers to point the output matrices.
 	// There will not need to be copy data between layers anymore.
 	if (!connected) {
-		// Set pointers.
+		// Set pointers - pass result to the next layer: x(next layer) = y(current layer).
 		for (size_t i = 0; i < layers.size()-1; i++) {
 			layers[i+1]->s['x'] = layers[i]->s['y'];
 			layers[i]->g['y'] = layers[i+1]->g['x'];
@@ -62,16 +62,8 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 		// Perform the forward computation: y = f(x).
 		layers[i]->forward(skip_dropout);
 
-		/*// Pass result to the next layer: x(next layer) = y(current layer).
-		if (i + 1 < layers.size()) {
-			(*(layers[i+1]->s['x'])) = (*(layers[i]->s['y']));
-			//layers[i + 1]->x = layers[i]->y;
-			LOG(LDEBUG) << "Passing data from " << i << " to "<< i+1;
-			LOG(LDEBUG) << layers[i]->s['y']->transpose();
-			LOG(LDEBUG) << layers[i+1]->s['y']->transpose();
-		}*/
 	}
-	LOG(LDEBUG) <<" predictions: " << getPredictions()->transpose();
+	//LOG(LDEBUG) <<" predictions: " << getPredictions()->transpose();
 }
 
 void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& targets_) {
@@ -85,13 +77,11 @@ void MultiLayerNeuralNetwork::backward(mic::types::MatrixXf& targets_) {
 	assert((layers.back()->g['y'])->cols() == targets_.cols());
 	assert((layers.back()->g['y'])->rows() == targets_.rows());
 
-	//set targets at the top
-	//layers[layers.size() - 1]->dy = t;
+	// Set targets at the top.
 	(*(layers.back()->g['y'])) = targets_;
 
-	//propagate error backward
+	// Back-propagate the error.
 	for (int i = layers.size() - 1; i >= 0; i--) {
-		//std::cout << "layer i =  " << i << " name = " << layers[i]->id() << std::endl;
 
 		layers[i]->resetGrads();
 		layers[i]->backward();
