@@ -161,7 +161,7 @@ public:
 	mic::types::Batch<DataType, LabelType> getNextBatch() {
 
 		// Check index.
-		if((next_sample_index+batch_size) >= this->sample_data.size()){
+		if((next_sample_index+batch_size) > this->sample_data.size()){
 			// Reset index.
 			next_sample_index = 0;
 		}
@@ -253,7 +253,7 @@ public:
 		// Pick an index.
 		unsigned int tmp_index= index_dist(rng_mt19937_64);
 
-		LOG(LDEBUG) << "data size = " << this->sample_data.size() << " labels size = " << this->sample_labels.size() << " index = " << tmp_index;
+		//LOG(LDEBUG) << "data size = " << this->sample_data.size() << " labels size = " << this->sample_labels.size() << " index = " << tmp_index;
 
 		// Return data.
 		return this->getSampleDirect(tmp_index);

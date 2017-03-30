@@ -114,6 +114,10 @@ int main(int argc, char* argv[]) {
 	mk.randn(1, 0.001);
 	//std::cout <<"nm=\n" << nm <<  std::endl;
 
+
+	mic::types::MatrixXfPtr matrix_ptr;
+	matrix_ptr = MAKE_MATRIX_PTR(float, nm);
+
 	// Initialize vector.
 	mic::types::VectorXf vect(N);
 	vect.setRandom();

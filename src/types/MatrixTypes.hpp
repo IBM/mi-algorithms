@@ -14,6 +14,11 @@
 
 #include <types/MatrixXiSpecializations.hpp>
 
+/*!
+ * \brief Macro for initialization of values of vector pointer.
+ * \author tkornuta
+ */
+#define MAKE_MATRIX_PTR(eT, ...) std::make_shared<mic::types::Matrix<eT> >( mic::types::Matrix<eT> (__VA_ARGS__))
 
 
 #endif /* SRC_TYPES_MATRIXTYPES_HPP_ */

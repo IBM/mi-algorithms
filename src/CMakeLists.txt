@@ -165,30 +165,30 @@ if(${BUILD_TEST_CHAR_ENCODER})
 endif(${BUILD_TEST_CHAR_ENCODER})
 
 
-## =======================================================================
-## Build and install - matrix test application.
-## =======================================================================
-#
-#set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
-#
-#if(${BUILD_TEST_MATRIX})
-#	# Create exeutable.
-#	ADD_EXECUTABLE(matrix_test tests/matrix_test.cpp)
-#	# Link it with shared libraries.
-#	target_link_libraries(matrix_test 
-#		types
-#		${Boost_LIBRARIES}
-#		${EIGEN_LIBRARIES} 
-#		)
-#	if(OpenBLAS_FOUND)
-#		target_link_libraries(matrix_test  ${OpenBLAS_LIB} )
-#	endif(OpenBLAS_FOUND)
-#
-#	# install test to bin directory
-#	install(TARGETS matrix_test RUNTIME DESTINATION bin)
-#
-#endif(${BUILD_TEST_MATRIX})
-#
+# =======================================================================
+# Build and install - matrix test application.
+# =======================================================================
+
+set(BUILD_TEST_MATRIX ON CACHE BOOL "Build the application for testing matrix multiplication")
+
+if(${BUILD_TEST_MATRIX})
+	# Create exeutable.
+	ADD_EXECUTABLE(matrix_test tests/matrix_test.cpp)
+	# Link it with shared libraries.
+	target_link_libraries(matrix_test 
+		types
+		${Boost_LIBRARIES}
+		${EIGEN_LIBRARIES} 
+		)
+	if(OpenBLAS_FOUND)
+		target_link_libraries(matrix_test  ${OpenBLAS_LIB} )
+	endif(OpenBLAS_FOUND)
+
+	# install test to bin directory
+	install(TARGETS matrix_test RUNTIME DESTINATION bin)
+
+endif(${BUILD_TEST_MATRIX})
+
 # =======================================================================
 # Build and install - tensor test application.
 # =======================================================================

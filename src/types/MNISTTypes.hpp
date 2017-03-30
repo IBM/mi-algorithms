@@ -39,10 +39,25 @@ namespace types {
 typedef mic::types::Sample<mic::types::MatrixXf, unsigned int> MNISTSample;
 
 /*!
+ * \brief Pointer to the <MatrixXf-uint> sample type used by e.g. MNISTImporter.
+ * \author tkornuta
+ */
+typedef std::shared_ptr<mic::types::MNISTSample> MNISTSamplePtr;
+
+
+/*!
  * \brief The <MatrixXf-uint> batch type used by e.g. MNISTImporter.
  * \author tkornuta
  */
 typedef mic::types::Batch<mic::types::MatrixXf, unsigned int> MNISTBatch;
+
+
+/*!
+ * \brief Pointer to the <MatrixXf-uint> batch type used by e.g. MNISTImporter.
+ * \author tkornuta
+ */
+typedef std::shared_ptr<mic::types::MNISTBatch> MNISTBatchPtr;
+
 
 }//: namespace types
 }//: namespace mic
