@@ -129,6 +129,21 @@ public:
 		return sample_data.size();
 	}
 
+	/*!
+	 * Sets the batch size.
+	 * @param batch_size_ Batch size.
+	 */
+	void setBatchSize(size_t batch_size_) {
+		batch_size = batch_size_;
+	}
+
+
+	/*!
+	 * Returns the size of the batch.
+	 */
+	size_t getBatchSize() {
+		return batch_size;
+	}
 
 
 	/*!
@@ -223,14 +238,6 @@ public:
 		return batch;
 	}
 
-
-	/*!
-	 * Sets the batch size.
-	 * @param batch_size_ Batch size.
-	 */
-	void setBatchSize(size_t batch_size_ = 1) {
-		batch_size = batch_size_;
-	}
 
 	/*!
 	 * Checks if the returned batch was the last possible one.

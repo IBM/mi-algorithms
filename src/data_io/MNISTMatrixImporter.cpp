@@ -113,6 +113,7 @@ bool MNISTMatrixImporter::importData(){
 		// Instead - skip it.
 		data_file.seekg (offset_bytes, std::ios::beg);
 
+		//size_t sample_number = 0;
 		// While not reached end of file.
 		while(!data_file.eof()) {
 
@@ -135,6 +136,8 @@ bool MNISTMatrixImporter::importData(){
 
 				}//: for
 
+				//sample_number ++;
+				//if (sample_number > 5400)
 				sample_data.push_back(mat);
 			}//: if !eof
 
