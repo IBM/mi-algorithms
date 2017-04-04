@@ -29,12 +29,13 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 	// Make sure that there are some layers in the nn!
 	assert(layers.size() != 0);
 
-	LOG(LDEBUG) << "Inputs size: " << input_data.cols() << "x" << input_data.rows();
-	LOG(LDEBUG) << "First layer input matrix size: " <<  layers[0]->s['x']->cols() << "x" << layers[0]->s['x']->rows();
+	// Boost::Matrix is col major!
+	LOG(LDEBUG) << "Inputs size: " << input_data.rows() << "x" << input_data.cols();
+	LOG(LDEBUG) << "First layer input matrix size: " <<  layers[0]->s['x']->rows() << "x" << layers[0]->s['x']->cols();
 
 	// Make sure that the dimensions are ok.
-	assert((layers[0]->s['x'])->cols() == input_data.cols());
 	assert((layers[0]->s['x'])->rows() == input_data.rows());
+	assert((layers[0]->s['x'])->cols() == input_data.cols());
 
 	//LOG(LDEBUG) <<" input_data: " << input_data.transpose();
 

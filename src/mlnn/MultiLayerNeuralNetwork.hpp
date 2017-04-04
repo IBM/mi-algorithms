@@ -69,13 +69,31 @@ public:
 	/*!
 	 * Adds layer to neural network.
 	 * @param layer_ptr_ Pointer to the newly created layer.
-	 * @tparam layer_ptr_ Pointer to the newly created layer.
+	 * @tparam layer_ptr_ Layer type.
 	 */
 	template <typename LayerType>
 	void addLayer( LayerType* layer_ptr_){
 		layers.push_back(std::shared_ptr <LayerType> (layer_ptr_));
 		connected = false;
 	}
+
+	/*!
+	 * Returns n-th layer of the neural network.
+	 * @param layer_ptr_ Pointer to the newly created layer.
+	 * @tparam layer_ptr_ Layer type.
+	 */
+	template <typename LayerType>
+	std::shared_ptr<LayerType> getLayer(size_t index_){
+		assert(index_ < layers.size());
+		/*std::shared_ptr<Layer> layer = (layers[index_]);
+		LayerType* l_ptr = (LayerType*)layer.get();
+		return std::shared_ptr <LayerType> (l_ptr);*/
+
+		// Cast the pointer to LayerType.
+		return std::dynamic_pointer_cast< LayerType >( layers[index_] );
+		//return layers[index_];
+	}
+
 
 	/*!
 	 * Removes the last neural network layer.

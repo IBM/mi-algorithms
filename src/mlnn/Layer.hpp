@@ -107,6 +107,9 @@ public:
 
 	virtual void applyGrads(double alpha_, double decay_) {};
 
+	/*!
+	 * Virtual destructor - required for the correct destruction of objects of derived classes.
+	 */
 	virtual ~Layer() {};
 
 	// Duplicated entries fix, TO BE REMOVED when "proper serialization" will be implemented.
@@ -124,6 +127,13 @@ public:
 	/// Returns name of the layer.
 	const std::string name() const {
 		return layer_name;
+	}
+
+	/*!
+	 * Returns the pointer to a parameter (matrix of floats) (or throws an exception!)
+	 */
+	mic::types::MatrixXfPtr getParam(std::string name_) {
+		return p[name_];
 	}
 
 	/*!

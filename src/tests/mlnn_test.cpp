@@ -79,6 +79,14 @@ int main() {
 		//std::cout << "[" << iteration++ << "]: sample (" << sample.index() << "): "<< sample.data()->transpose() << "->" << sample.label()->transpose() << std::endl;
 
 		float loss = nn.train(sample.data(), sample.label(), 0.005, 0.0);
+
+		std::shared_ptr<Linear> layer1 = nn.getLayer<Linear>	(0);
+		std::cout<<"Layer1: " << *layer1  << std::endl;
+		std::shared_ptr<ReLU> layer2 = nn.getLayer<ReLU>	(1);
+		std::cout<<"Layer2: " << *layer2  << std::endl;
+
+		std::cout << (*layer1->getParam("W"))  <<std::endl;
+
 		// Compare results
 		MatrixXf predictions = (*nn.getPredictions());
 		if (iteration % 1000 == 0){
