@@ -34,13 +34,9 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 	LOG(LDEBUG) << "First layer input matrix size: " <<  layers[0]->s['x']->rows() << "x" << layers[0]->s['x']->cols();
 
 	// Make sure that the dimensions are ok.
+	// Check only rows, as cols determine the batch size - and we allow them to be dynamically changing!.
 	assert((layers[0]->s['x'])->rows() == input_data.rows());
-	assert((layers[0]->s['x'])->cols() == input_data.cols());
-
 	//LOG(LDEBUG) <<" input_data: " << input_data.transpose();
-
-	// Copy inputs to the lowest point in the network.
-	(*(layers[0]->s['x'])) = input_data;
 
 	// Connect layers by setting the input matrices pointers to point the output matrices.
 	// There will not need to be copy data between layers anymore.
@@ -53,6 +49,12 @@ void MultiLayerNeuralNetwork::forward(mic::types::MatrixXf& input_data, bool ski
 		connected = true;
 	}
 
+	//assert((layers[0]->s['x'])->cols() == input_data.cols());
+	// Change the size of batch - if required.
+	setBatchSize(input_data.cols());
+
+	// Copy inputs to the lowest point in the network.
+	(*(layers[0]->s['x'])) = input_data;
 
 	// Compute the forward activations.
 	for (size_t i = 0; i < layers.size(); i++) {
@@ -148,6 +150,23 @@ float MultiLayerNeuralNetwork::test(mic::types::MatrixXfPtr encoded_batch_, mic:
 //	return countCorrectPredictions(*(getPredictions()), *encoded_targets_);
 
 }
+
+
+void MultiLayerNeuralNetwork::setBatchSize(size_t batch_size_) {
+	if ((size_t)(layers[0]->s['x'])->cols() != batch_size_) {
+		(layers[0]->s['x'])->resize((layers[0]->s['x'])->rows(), batch_size_);
+		//... and all outputs.
+		for (size_t i = 0; i < layers.size(); i++) {
+			// Change the "value". (depricated)
+			layers[i]->batch_size = batch_size_;
+			// Reshape the inputs...
+			(layers[i]->s['x'])->resize((layers[i]->s['x'])->rows(), batch_size_);
+			// ... and outputs.
+			(layers[i]->g['y'])->resize((layers[i]->s['y'])->rows(), batch_size_);
+		}//: for
+	}
+}
+
 
 float MultiLayerNeuralNetwork::calculateLossFunction(mic::types::MatrixXfPtr encoded_targets_, mic::types::MatrixXfPtr encoded_predictions_) {
 	mic::types::MatrixXf diff;

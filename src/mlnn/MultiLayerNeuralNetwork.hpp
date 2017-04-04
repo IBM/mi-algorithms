@@ -154,6 +154,12 @@ public:
 	float test(mic::types::MatrixXfPtr encoded_batch_, mic::types::MatrixXfPtr encoded_targets_);
 
 	/*!
+	 * Changes the size of the batch.
+	 * @param New size of the batch.
+	 */
+	void setBatchSize(size_t batch_size_);
+
+	/*!
 	 * Calculates the loss function according to the selected function type.
 	 * @param encoded_targets_ Targets (labels) encoded in the form of pointer to matrix of size [label_size x batch_size].
 	 * @param encoded_predictions_ Predicted outputs of the network encoded in the form of pointer to matrix of size [label_size x batch_size].
@@ -214,6 +220,10 @@ public:
 			// Create an output archive
 			std::ofstream ofs(filename_);
 			boost::archive::text_oarchive ar(ofs);
+
+			// Change batch size to 1 - fastening the save/load procedures.
+			//setBatchSize(1);
+
 			// Write data
 			ar & (*this);
 			LOG(LINFO) << "Network " << name << " properly saved to file " << filename_;
