@@ -12,6 +12,7 @@
 
 namespace mic {
 namespace mlnn {
+namespace activation_function {
 
 /*!
  * \author krocki
@@ -30,7 +31,7 @@ public:
 private:
 
 	// Adds the nn class the access to protected fields of class layer.
-	friend class MultiLayerNeuralNetwork;
+	friend class mic::mlnn::MultiLayerNeuralNetwork;
 
 	/*!
 	 * Private constructor, used only during the serialization.
@@ -39,6 +40,7 @@ private:
 
 };
 
+} /* activation_function */
 } /* namespace mlnn */
 } /* namespace mic */
 

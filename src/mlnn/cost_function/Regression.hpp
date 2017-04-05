@@ -12,6 +12,8 @@
 
 namespace mic {
 namespace mlnn {
+namespace cost_function {
+
 
 /*!
  * \brief Regression layer
@@ -31,7 +33,7 @@ public:
 private:
 
 	// Adds the nn class the access to protected fields of class layer.
-	friend class MultiLayerNeuralNetwork;
+	friend class mic::mlnn::MultiLayerNeuralNetwork;
 
 	/*!
 	 * Private constructor, used only during the serialization.
@@ -40,6 +42,7 @@ private:
 
 };
 
+} /* namespace cost_function */
 } /* namespace mlnn */
 } /* namespace mic */
 

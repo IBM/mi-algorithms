@@ -8,26 +8,39 @@
 #ifndef SRC_MLNN_LAYERTYPES_HPP_
 #define SRC_MLNN_LAYERTYPES_HPP_
 
-#include <mlnn/Linear.hpp>
+// Activation functions - implemented as layers.
 
-#include <mlnn/Pooling.hpp>
+#include <mlnn/activation_function/ELU.hpp>
 
-#include <mlnn/Convolution.hpp>
+#include <mlnn/activation_function/ReLU.hpp>
 
-#include <mlnn/Sigmoid.hpp>
+#include <mlnn/activation_function/Sigmoid.hpp>
 
-#include <mlnn/Identity.hpp>
+// Convolution-related lyers.
 
-#include <mlnn/ReLU.hpp>
+#include <mlnn/convolution/Convolution.hpp>
 
-#include <mlnn/ELU.hpp>
+#include <mlnn/convolution/Pooling.hpp>
 
-#include <mlnn/Softmax.hpp>
+#include <mlnn/convolution/Padding.hpp>
 
-#include <mlnn/Dropout.hpp>
 
-#include <mlnn/Padding.hpp>
+// Cost functions - implemented as layers.
 
-#include <mlnn/Regression.hpp>
+#include <mlnn/cost_function/Softmax.hpp>
+
+#include <mlnn/cost_function/Regression.hpp>
+
+// Fully connected layers.
+
+#include <mlnn/fully_connected/Linear.hpp>
+
+#include <mlnn/fully_connected/SparseLinear.hpp>
+
+#include <mlnn/fully_connected/Identity.hpp>
+
+// Regularisation layers.
+
+#include <mlnn/regularisation/Dropout.hpp>
 
 #endif /* SRC_MLNN_LAYERTYPES_HPP_ */

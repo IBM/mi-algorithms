@@ -9,15 +9,7 @@
 #define SRC_MLNN_MULTILAYERNEURALNETWORK_HPP_
 
 #include <types/MatrixTypes.hpp>
-
 #include <mlnn/LayerTypes.hpp>
-
-/*#include <boost/serialization/serialization.hpp>
-// include this header to serialize vectors
-#include <boost/serialization/vector.hpp>
-// include this header to serialize arrays
-#include <boost/serialization/array.hpp>
-#include <boost/serialization/version.hpp>*/
 
 #include <fstream>
 // Include headers that implement a archive in simple text format
@@ -37,6 +29,12 @@ class access;
 namespace mic {
 namespace mlnn {
 
+using namespace activation_function;
+using namespace convolution;
+using namespace cost_function;
+using namespace fully_connected;
+using namespace regularisation;
+
 /*!
  * \brief Enumeration of possible loss function types.
  * \author tkornuta
@@ -50,7 +48,7 @@ enum class LossFunctionType : short
 
 /*!
  * \brief Class representing a multi-layer neural network.
- * \author krocki/tkornuta
+ * \author tkornuta/kmrocki
  */
 class MultiLayerNeuralNetwork {
 public:
@@ -72,7 +70,7 @@ public:
 	 * @tparam layer_ptr_ Layer type.
 	 */
 	template <typename LayerType>
-	void addLayer( LayerType* layer_ptr_){
+	void pushLayer( LayerType* layer_ptr_){
 		layers.push_back(std::shared_ptr <LayerType> (layer_ptr_));
 		connected = false;
 	}
@@ -85,29 +83,16 @@ public:
 	template <typename LayerType>
 	std::shared_ptr<LayerType> getLayer(size_t index_){
 		assert(index_ < layers.size());
-		/*std::shared_ptr<Layer> layer = (layers[index_]);
-		LayerType* l_ptr = (LayerType*)layer.get();
-		return std::shared_ptr <LayerType> (l_ptr);*/
-
 		// Cast the pointer to LayerType.
 		return std::dynamic_pointer_cast< LayerType >( layers[index_] );
-		//return layers[index_];
 	}
 
-
-	/*!
-	 * Removes the last neural network layer.
-	 */
-	void removeLastLayer( ){
-		layers.pop_back();
-		connected = false;
-	}
 
 	/*!
 	 * Removes several last layers of the neural network.
 	 * @param number_of_layers_ Number of layers to be removed.
 	 */
-	void removeLastLayers(size_t number_of_layers_){
+	void popLayer(size_t number_of_layers_ = 1){
 		assert(number_of_layers_ <= layers.size());
 		//layers.erase(layers.back() - number_of_layers_, layers.back());
 		for (size_t i=0; i <number_of_layers_; i++)
@@ -183,16 +168,18 @@ public:
 	 */
 	size_t countCorrectPredictions(mic::types::MatrixXfPtr targets_, mic::types::MatrixXfPtr predictions_);
 
-	/// Returns the size (length) of inputs of the last (i.e. previously added) layer.
-	size_t lastLayerInputsSize();
 
-	/// Returns the size (length) of outputs of the last (i.e. previously added) layer.
-	size_t lastLayerOutputsSize();
+	size_t lastLayerInputsSize() {
+		return layers.back()->inputsSize();
+	}
 
-	/// Returns the size (length) of (mini)batch of the last (i.e. previously added) layer.
-	size_t lastLayerBatchSize();
+	size_t lastLayerOutputsSize() {
+		return layers.back()->outputsSize();
+	}
 
-	void save_to_files(std::string prefix);
+	size_t lastLayerBatchSize() {
+		return layers.back()->batchSize();
+	}
 
 	/*!
 	 * Stream operator enabling to print neural network.
@@ -338,10 +325,24 @@ private:
 
 			std::shared_ptr<Layer> layer_ptr;
 			switch(lt) {
-			case(LayerTypes::Linear):
-				//ar.template register_type<mic::mlnn::Linear>();
-				layer_ptr = std::make_shared<Linear>(Linear());
-				LOG(LDEBUG) <<  "Linear";
+			// activation_function
+			case(LayerTypes::ELU):
+				layer_ptr = std::make_shared<ELU>(ELU());
+				LOG(LDEBUG) <<  "ELU";
+				break;
+			case(LayerTypes::ReLU):
+				layer_ptr = std::make_shared<ReLU>(ReLU());
+				LOG(LDEBUG) <<  "ReLU";
+				break;
+			case(LayerTypes::Sigmoid):
+				layer_ptr = std::make_shared<Sigmoid>(Sigmoid());
+				LOG(LDEBUG) <<  "Sigmoid";
+				break;
+
+			// convolution
+			case(LayerTypes::Padding):
+				layer_ptr = std::make_shared<Padding>(Padding());
+				LOG(LERROR) <<  "Padding Layer serialization not implemented (some params are not serialized)!";
 				break;
 			case(LayerTypes::Pooling):
 				layer_ptr = std::make_shared<Pooling>(Pooling());
@@ -351,38 +352,38 @@ private:
 				layer_ptr = std::make_shared<Convolution>(Convolution());
 				LOG(LERROR) <<  "Convolution Layer serialization not implemented (some params are not serialized)!";
 				break;
-			case(LayerTypes::Sigmoid):
-				layer_ptr = std::make_shared<Sigmoid>(Sigmoid());
-				LOG(LDEBUG) <<  "Sigmoid";
-				break;
-			case(LayerTypes::Identity):
-				layer_ptr = std::make_shared<Identity>(Identity());
-				LOG(LDEBUG) <<  "Identity";
-				break;
-			case(LayerTypes::ReLU):
-				layer_ptr = std::make_shared<ReLU>(ReLU());
-				LOG(LDEBUG) <<  "ReLU";
-				break;
-			case(LayerTypes::ELU):
-				layer_ptr = std::make_shared<ELU>(ELU());
-				LOG(LDEBUG) <<  "ELU";
-				break;
+
+			// cost_function
 			case(LayerTypes::Softmax):
 				layer_ptr = std::make_shared<Softmax>(Softmax());
 				LOG(LDEBUG) <<  "Softmax";
-				break;
-			case(LayerTypes::Dropout):
-				layer_ptr = std::make_shared<Dropout>(Dropout());
-				LOG(LERROR) <<  "Dropout Layer serialization not implemented (some params are not serialized)!";
-				break;
-			case(LayerTypes::Padding):
-				layer_ptr = std::make_shared<Padding>(Padding());
-				LOG(LERROR) <<  "Padding Layer serialization not implemented (some params are not serialized)!";
 				break;
 			case(LayerTypes::Regression):
 				layer_ptr = std::make_shared<Regression>(Regression());
 				LOG(LDEBUG) <<  "Regression";
 				break;
+
+			// fully_connected
+			case(LayerTypes::Linear):
+				//ar.template register_type<mic::mlnn::Linear>();
+				layer_ptr = std::make_shared<Linear>(Linear());
+				LOG(LDEBUG) <<  "Linear";
+				break;
+			case(LayerTypes::SparseLinear):
+				layer_ptr = std::make_shared<SparseLinear>(SparseLinear());
+				LOG(LDEBUG) <<  "SparseLinear";
+				break;
+			case(LayerTypes::Identity):
+				layer_ptr = std::make_shared<Identity>(Identity());
+				LOG(LDEBUG) <<  "Identity";
+				break;
+
+			// regularisation
+			case(LayerTypes::Dropout):
+				layer_ptr = std::make_shared<Dropout>(Dropout());
+				LOG(LERROR) <<  "Dropout Layer serialization not implemented (some params are not serialized)!";
+				break;
+
 			default:
 				LOG(LERROR) <<  "Undefined Layer type detected during deserialization!";
 			}//: switch
@@ -405,7 +406,7 @@ private:
  * @tparam layer_ptr_ Pointer to the newly created layer.
  */
 template <>
-void MultiLayerNeuralNetwork::addLayer<Regression>( mic::mlnn::Regression* layer_ptr_){
+void MultiLayerNeuralNetwork::pushLayer<mic::mlnn::cost_function::Regression>( mic::mlnn::cost_function::Regression* layer_ptr_){
 	layers.push_back(std::shared_ptr <Regression> (layer_ptr_));
 	loss_type = LossFunctionType::RegressionQuadratic;
 }
@@ -416,7 +417,7 @@ void MultiLayerNeuralNetwork::addLayer<Regression>( mic::mlnn::Regression* layer
  * @tparam layer_ptr_ Pointer to the newly created layer.
  */
 template <>
-void MultiLayerNeuralNetwork::addLayer<Softmax>( mic::mlnn::Softmax* layer_ptr_){
+void MultiLayerNeuralNetwork::pushLayer<mic::mlnn::cost_function::Softmax>( mic::mlnn::cost_function::Softmax* layer_ptr_){
 	layers.push_back(std::shared_ptr <Softmax> (layer_ptr_));
 	loss_type = LossFunctionType::ClassificationEntropy;
 }

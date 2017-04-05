@@ -5,10 +5,11 @@
  * \date Apr 12, 2016
  */
 
-#include <mlnn/Dropout.hpp>
+#include <mlnn/regularisation/Dropout.hpp>
 
 namespace mic {
 namespace mlnn {
+namespace regularisation {
 
 Dropout::Dropout(size_t inputs, size_t outputs, size_t batch_size, float _ratio, std::string name_) :
 	Layer(inputs, outputs, batch_size, LayerTypes::Dropout, name_),  keep_ratio(_ratio) {
@@ -45,5 +46,7 @@ void Dropout::backward() {
 	g['x']->array() = g['y']->array() * dropout_mask.array();
 }
 
+
+} /* regularisation */
 } /* namespace mlnn */
 } /* namespace mic */

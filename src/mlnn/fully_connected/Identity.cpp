@@ -5,10 +5,11 @@
  * \date Mar 31, 2016
  */
 
-#include <mlnn/Identity.hpp>
+#include <mlnn/fully_connected/Identity.hpp>
 
 namespace mic {
 namespace mlnn {
+namespace fully_connected {
 
 
 Identity::Identity(size_t inputs, size_t outputs, size_t batch_size, std::string name_) :
@@ -30,5 +31,6 @@ void Identity::backward() {
 
 }
 
+} /* namespace fully_connected */
 } /* namespace mlnn */
 } /* namespace mic */

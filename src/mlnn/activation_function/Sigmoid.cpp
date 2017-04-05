@@ -1,39 +1,38 @@
 /*!
- * \file ReLU.cpp
+ * \file Sigmoid.cpp
  * \brief 
  * \author tkornut
  * \date Mar 31, 2016
  */
 
-#include <mlnn/ReLU.hpp>
+#include <mlnn/activation_function/Sigmoid.hpp>
 
 namespace mic {
 namespace mlnn {
+namespace activation_function {
 
+Sigmoid::Sigmoid(size_t inputs, size_t outputs, size_t batch_size, std::string name_) :
+	Layer(inputs, outputs, batch_size, LayerTypes::Sigmoid, name_) {
 
-ReLU::ReLU(size_t inputs, size_t outputs, size_t batch_size, std::string name_) :
-	Layer(inputs, outputs, batch_size, LayerTypes::ReLU, name_) {
+};
 
-}
+void Sigmoid::forward(bool apply_dropout) {
 
-
-void ReLU::forward(bool apply_dropout) {
-
-	// y = rectify(x);
+	// y = logistic(x);
 
 	// Access the data of both matrices.
 	float* x = s['x']->data();
 	float* y = s['y']->data();
 
 	for (int i = 0; i < s['x']->rows() * s['x']->cols(); i++) {
-		y[i] = fmaxf(x[i], 0.0f);
+		y[i] = 1.0f / (1.0f +::expf(-x[i]));
 	}//: for
 
 }
 
-void ReLU::backward() {
+void Sigmoid::backward() {
 
-	// dx.array() = derivative_ReLU(y).array() * dy.array();
+	//dx.array() = dy.array() * y.array() * (1.0 - y.array()).array();
 
 	// Access the data of matrices.
 	float* gx = g['x']->data();
@@ -42,14 +41,13 @@ void ReLU::backward() {
 
 	for (int i = 0; i < g['x']->rows() * g['x']->cols(); i++) {
 
-		// Calculate the ReLU y derivative.
-		float dy = (float)(y[i] > 0);
 		// Calculate the gradient.
-		gx[i] = dy * gy[i];
+		gx[i] = gy[i] * y[i] * (1.0 - y[i]);
 
 	}//: for
 
 }
 
+} /* activation_function */
 } /* namespace mlnn */
 } /* namespace mic */

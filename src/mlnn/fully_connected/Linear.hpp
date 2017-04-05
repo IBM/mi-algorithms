@@ -12,19 +12,20 @@
 
 namespace mic {
 namespace mlnn {
+namespace fully_connected {
 
 /*!
- * \brief Class implementing a linear, fully connecteed layer.
- * \author krocki
+ * \brief Class implementing a linear, fully connected layer.
+ * \author krocki/tkornuta
  */
 class Linear : public mic::mlnn::Layer {
 public:
 	/*!
 	 * Default constructor used for creation of the layer.
-	 * @param inputs_
-	 * @param outputs_
-	 * @param batch_size_
-	 * @param name_
+	 * @param inputs_ Length of the input vector.
+	 * @param outputs_ Length of the output vector.
+	 * @param batch_size_ Size of the batch.
+	 * @param name_ Name of the layer.
 	 */
 	Linear(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_ = "Linear");
 
@@ -41,7 +42,7 @@ public:
 private:
 
 	// Adds the nn class the access to protected fields of class layer.
-	friend class MultiLayerNeuralNetwork;
+	friend class mic::mlnn::MultiLayerNeuralNetwork;
 
 	/*!
 	 * Private constructor, used only during the serialization.
@@ -50,6 +51,8 @@ private:
 
 };
 
+
+} /* namespace fully_connected */
 } /* namespace mlnn */
 } /* namespace mic */
 

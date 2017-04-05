@@ -12,6 +12,8 @@
 
 namespace mic {
 namespace mlnn {
+namespace convolution {
+
 
 /*!
  * \author krocki
@@ -80,7 +82,7 @@ protected:
 private:
 
 	// Adds the nn class the access to protected fields of class layer.
-	friend class MultiLayerNeuralNetwork;
+	friend class mic::mlnn::MultiLayerNeuralNetwork;
 
 	/*!
 	 * Private constructor, used only during the serialization.
@@ -89,6 +91,7 @@ private:
 
 };
 
+} /* namespace convolution */
 } /* namespace mlnn */
 } /* namespace mic */
 

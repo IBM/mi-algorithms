@@ -12,6 +12,7 @@
 
 namespace mic {
 namespace mlnn {
+namespace activation_function {
 
 /*!
  * \brief Class implementing the layer with Exponential Linear Unit (ELU).
@@ -32,7 +33,7 @@ public:
 private:
 
 	// Adds the nn class the access to protected fields of class layer.
-	friend class MultiLayerNeuralNetwork;
+	friend class mic::mlnn::MultiLayerNeuralNetwork;
 
 	/*!
 	 * Private constructor, used only during the serialization.
@@ -41,6 +42,7 @@ private:
 
 };
 
+} /* activation_function */
 } /* namespace mlnn */
 } /* namespace mic */
 

@@ -212,32 +212,6 @@ size_t MultiLayerNeuralNetwork::countCorrectPredictions(mic::types::MatrixXfPtr 
 }
 
 
-
-/* TODO: serialization */
-
-void MultiLayerNeuralNetwork::save_to_files(std::string prefix) {
-
-	for (size_t i = 0; i < layers.size(); i++) {
-
-		std::ostringstream ss;
-		ss << std::setw(3) << std::setfill('0') << i + 1;
-		layers[i]->save_to_files(prefix + "_" + ss.str() + "_" + layers[i]->layer_name);
-	}
-
-}
-
-size_t MultiLayerNeuralNetwork::lastLayerInputsSize() {
-	return layers.back()->inputsSize();
-}
-
-size_t MultiLayerNeuralNetwork::lastLayerOutputsSize() {
-	return layers.back()->outputsSize();
-}
-
-size_t MultiLayerNeuralNetwork::lastLayerBatchSize() {
-	return layers.back()->batchSize();
-}
-
 mic::types::MatrixXfPtr MultiLayerNeuralNetwork::getPredictions() {
 	return layers.back()->s['y'];
 }

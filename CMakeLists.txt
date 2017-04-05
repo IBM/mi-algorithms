@@ -3,19 +3,26 @@ project(MIAlgorithms CXX C)
 
 #  Set current version number.
 set (MIAlgorithms_MAJOR_VERSION 1)
-set (MIAlgorithms_MINOR_VERSION 1)
+set (MIAlgorithms_MINOR_VERSION 2)
 set (MIAlgorithms_PATCH_VERSION 0)
 set (MIAlgorithms_VERSION ${MIAlgorithms_MAJOR_VERSION}.${MIAlgorithms_MINOR_VERSION}.${MIAlgorithms_PATCH_VERSION})
 
 # CMake required version.
 cmake_minimum_required(VERSION 2.8)
 
+# =======================================================================
+# Set compiler/linker flags.
+# =======================================================================
+
 # Add C++11 dependency.
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fopenmp -Wall")
 
+# Check, whether all necessary libraries are linked
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ") 
+
 
 # =======================================================================
-# Create CMAKE variables storing preprocessor commands
+# Create CMAKE variables storing preprocessor commands - FOR HTM! DEPRICATED!
 # =======================================================================
 
 # Default length of SDR !!DEPRICATED - TO BE REMOVED!!
@@ -56,7 +63,7 @@ endif(NOT OpenBLAS_FOUND)
 find_package(MIToolchain 1.0 REQUIRED)
 
 # =======================================================================
-# RPATH settings.
+# RPATH settings
 # =======================================================================
 # use, i.e. don't skip the full RPATH for the build tree
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
@@ -74,7 +81,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # =======================================================================
 # Cmake configuration
 # =======================================================================
-# Create the cached variable for sstoring all library names.
+# Create the cached variable for storing all library names.
 set(MIAlgorithms_LIBRARIES "" CACHE INTERNAL "" FORCE)
 
 # add subdirectory.

@@ -5,10 +5,11 @@
  * \date Mar 31, 2016
  */
 
-#include <mlnn/Pooling.hpp>
+#include <mlnn/convolution/Pooling.hpp>
 
 namespace mic {
 namespace mlnn {
+namespace convolution {
 
 Pooling::Pooling(size_t inputs_, size_t window_size_, size_t channels_, size_t batch_size_, std::string name_) :
 	Layer(inputs_, channels_ * (sqrt(inputs_ / channels_) / window_size_) * (sqrt(inputs_ / channels_) / window_size_), batch_size_, LayerTypes::Pooling, name_),
@@ -183,5 +184,6 @@ void Pooling::save_to_files(std::string prefix) {
 
 }
 
+} /* namespace convolution */
 } /* namespace mlnn */
 } /* namespace mic */

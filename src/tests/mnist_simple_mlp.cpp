@@ -34,8 +34,8 @@ int main() {
 	// Load the MNIST training...
 	mic::data_io::MNISTMatrixImporter training;
 	// Manually set paths. DEPRICATED! Used here only for simplification of the test.
-	training.setDataFilename("../../../data/mnist/train-images-idx3-ubyte");
-	training.setLabelsFilename("../../../data/mnist/train-labels-idx1-ubyte");
+	training.setDataFilename("../data/mnist/train-images.idx3-ubyte");
+	training.setLabelsFilename("../data/mnist/train-labels.idx1-ubyte");
 	training.setBatchSize(batch_size);
 
 	if (!training.importData())
@@ -44,8 +44,8 @@ int main() {
 	// ... and test datasets.
 	mic::data_io::MNISTMatrixImporter test;
 	// Manually set paths. DEPRICATED! Used here only for simplification of the test.
-	test.setDataFilename("../../../data/mnist/t10k-images-idx3-ubyte");
-	test.setLabelsFilename("../../../data/mnist/t10k-labels-idx1-ubyte");
+	test.setDataFilename("../data/mnist/t10k-images.idx3-ubyte");
+	test.setLabelsFilename("../data/mnist/t10k-labels.idx1-ubyte");
 	test.setBatchSize(batch_size);
 
 	if (!test.importData())
@@ -58,12 +58,12 @@ int main() {
 	// Create a simple NN for classification (should give around 95.3% accuracy)
 	//MNIST - 28x28 -> 256 -> 100 -> 10
 	MultiLayerNeuralNetwork nn;
-	nn.addLayer(new Linear(28 * 28, 256, batch_size));
-	nn.addLayer(new ReLU(256, 256, batch_size));
-	nn.addLayer(new Linear(256, 100, batch_size));
-	nn.addLayer(new ReLU(100, 100, batch_size));
-	nn.addLayer(new Linear(100, 10, batch_size));
-	nn.addLayer(new Softmax(10, 10, batch_size));
+	nn.pushLayer(new Linear(28 * 28, 256, batch_size));
+	nn.pushLayer(new ReLU(256, 256, batch_size));
+	nn.pushLayer(new Linear(256, 100, batch_size));
+	nn.pushLayer(new ReLU(100, 100, batch_size));
+	nn.pushLayer(new Linear(100, 10, batch_size));
+	nn.pushLayer(new Softmax(10, 10, batch_size));
 
 
 	// LOG(LSTATUS) << "Before training..." << std::endl;
@@ -76,7 +76,7 @@ int main() {
 
 	// Perform the training.
 	for (size_t ii = 0; ii < iterations; ii++) {
-		LOG(LINFO) << "[" << std::setw(4) << ii << "/" << std::setw(4) << iterations << "] ";
+		LOG(LINFO) << "Batch " << std::setw(4) << ii << "/" << std::setw(4) << iterations;
 
 		// Get random batch [784 x batch_size].
 		MNISTBatch rand_batch = training.getRandomBatch();

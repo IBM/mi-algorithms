@@ -48,7 +48,8 @@ enum class LayerTypes : short
 	Softmax,
 	Dropout,
 	Padding,
-	Regression
+	Regression,
+	SparseLinear
 };
 
 

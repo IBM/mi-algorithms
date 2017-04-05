@@ -12,6 +12,8 @@
 
 namespace mic {
 namespace mlnn {
+namespace regularisation {
+
 
 /*!
  * \brief Droput layer - a layer used for the regularization of neural network by randomly dropping neurons during training.
@@ -41,7 +43,7 @@ protected:
 private:
 
 	// Adds the nn class the access to protected fields of class layer.
-	friend class MultiLayerNeuralNetwork;
+	friend class mic::mlnn::MultiLayerNeuralNetwork;
 
 	/*!
 	 * Private constructor, used only during the serialization.
@@ -51,6 +53,8 @@ private:
 
 };
 
+
+} /* regularisation */
 } /* namespace mlnn */
 } /* namespace mic */
 

@@ -5,10 +5,11 @@
  * \date Mar 31, 2016
  */
 
-#include <mlnn/ELU.hpp>
+#include <mlnn/activation_function/ELU.hpp>
 
 namespace mic {
 namespace mlnn {
+namespace activation_function {
 
 ELU::ELU(size_t inputs, size_t outputs, size_t batch_size, std::string name_) :
 	Layer(inputs, outputs, batch_size, LayerTypes::ELU, name_) {
@@ -48,5 +49,6 @@ void ELU::backward() {
 
 }
 
+} /* namespace activation_function */
 } /* namespace mlnn */
 } /* namespace mic */

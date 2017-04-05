@@ -12,6 +12,8 @@
 
 namespace mic {
 namespace mlnn {
+namespace fully_connected {
+
 
 /*!
  * \brief Identity layer - passes inputs/gradients without any modifications.
@@ -32,7 +34,7 @@ public:
 private:
 
 	// Adds the nn class the access to protected fields of class layer.
-	friend class MultiLayerNeuralNetwork;
+	friend class mic::mlnn::MultiLayerNeuralNetwork;
 
 	/*!
 	 * Private constructor, used only during the serialization.
@@ -40,6 +42,9 @@ private:
 	Identity() : Layer () { }
 
 };
+
+
+} /* namespace fully_connected */
 } /* namespace mlnn */
 } /* namespace mic */
 

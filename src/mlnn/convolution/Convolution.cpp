@@ -5,10 +5,11 @@
  * \date Mar 31, 2016
  */
 
-#include <mlnn/Convolution.hpp>
+#include <mlnn/convolution/Convolution.hpp>
 
 namespace mic {
 namespace mlnn {
+namespace convolution {
 
 #define ADDRESS_3D_TO_1D(i, j, k, cols, channel_size) ((i) + (j) * (cols) + (k) * (channel_size))
 
@@ -290,5 +291,6 @@ void Convolution::save_to_files(std::string prefix) {
 
 }
 
+} /* convolution */
 } /* namespace mlnn */
 } /* namespace mic */

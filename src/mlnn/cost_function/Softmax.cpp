@@ -5,10 +5,12 @@
  * \date Mar 31, 2016
  */
 
-#include <mlnn/Softmax.hpp>
+#include <mlnn/cost_function/Softmax.hpp>
 
 namespace mic {
 namespace mlnn {
+namespace cost_function {
+
 
 Softmax::Softmax(size_t inputs_, size_t outputs_, size_t batch_size_, std::string name_) :
 	Layer(inputs_, outputs_, batch_size_, LayerTypes::Softmax, name_) {
@@ -40,5 +42,6 @@ void Softmax::backward() {
 }
 
 
+} /* namespace cost_function */
 } /* namespace mlnn */
 } /* namespace mic */

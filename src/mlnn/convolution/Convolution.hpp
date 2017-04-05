@@ -10,8 +10,12 @@
 
 #include <mlnn/Layer.hpp>
 
+#include<types/MatrixTypes.hpp>
+#include<types/MatrixArray.hpp>
+
 namespace mic {
 namespace mlnn {
+namespace convolution {
 
 /*!
  * \brief Class representing a convolution layer.
@@ -67,7 +71,7 @@ protected:
 private:
 
 	// Adds the nn class the access to protected fields of class layer.
-	friend class MultiLayerNeuralNetwork;
+	friend class mic::mlnn::MultiLayerNeuralNetwork;
 
 	/*!
 	 * Private constructor, used only during the serialization.
@@ -76,6 +80,7 @@ private:
 
 };
 
+} /* convolution */
 } /* namespace mlnn */
 } /* namespace mic */
 
