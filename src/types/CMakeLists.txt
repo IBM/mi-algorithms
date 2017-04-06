@@ -9,7 +9,9 @@ FILE(GLOB files *.hpp )
 install(FILES ${files} DESTINATION include/types)
 
 # Create shared library containing CORE TYPES and related functions.
-file(GLOB types_src *.cpp)
+set(types_src 
+	image_types.cpp
+	)
 add_library(types SHARED ${types_src})
 target_link_libraries(types logger ${Boost_LIBRARIES} )
 if(OpenBLAS_FOUND)
@@ -21,3 +23,48 @@ set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "types" CACHE INTERNAL "" F
 
 # Install target library.
 install(TARGETS types LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+
+# =======================================================================
+# Build matrix tests
+# =======================================================================
+
+# Link tests with GTest
+if(GTEST_FOUND AND BUILD_UNIT_TESTS)
+
+	add_executable(unit_tests_matrix MatrixTests.cpp)
+	target_link_libraries(unit_tests_matrix
+		${GTEST_LIBRARIES}
+		${Boost_LIBRARIES}
+		${ARMADILLO_LIBRARIES})
+	if(OpenBLAS_FOUND)
+		target_link_libraries(unit_tests_matrix  ${OpenBLAS_LIB} )
+	endif(OpenBLAS_FOUND)
+		
+	add_test(unit_tests_matrix ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unit_tests_matrix)
+
+	install(TARGETS unit_tests_matrix LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+
+endif(GTEST_FOUND AND BUILD_UNIT_TESTS)
+
+
+# =======================================================================
+# Build matrix array tests
+# =======================================================================
+
+# Link tests with GTest
+if(GTEST_FOUND AND BUILD_UNIT_TESTS)
+
+	add_executable(unit_tests_matrix_array MatrixArrayTests.cpp)
+	target_link_libraries(unit_tests_matrix_array
+		${GTEST_LIBRARIES}
+		${Boost_LIBRARIES}
+		${ARMADILLO_LIBRARIES})
+	if(OpenBLAS_FOUND)
+		target_link_libraries(unit_tests_matrix_array  ${OpenBLAS_LIB} )
+	endif(OpenBLAS_FOUND)
+		
+	add_test(unit_tests_matrix_array ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unit_tests_matrix_array)
+
+	install(TARGETS unit_tests_matrix_array LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+
+endif(GTEST_FOUND AND BUILD_UNIT_TESTS)

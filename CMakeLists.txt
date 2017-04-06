@@ -62,6 +62,20 @@ endif(NOT OpenBLAS_FOUND)
 # Find MIC Toolchain
 find_package(MIToolchain 1.0 REQUIRED)
 
+# Locate GTest
+find_package(GTest)
+
+if(NOT GTEST_FOUND)
+    message(WARNING "--   GTest not found!")
+else(NOT GTEST_FOUND)
+	include_directories(${GTEST_INCLUDE_DIRS})
+	# This must be set in the root directory for the tests to be run by 'make test' or ctest.
+	enable_testing()
+endif(NOT GTEST_FOUND)
+
+# Add additional option to cmake.
+set(BUILD_UNIT_TESTS ON CACHE BOOL "Build unit tests.")
+
 # =======================================================================
 # RPATH settings
 # =======================================================================

@@ -4,8 +4,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Get list of subdirectories.
 FILE(GLOB children RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
 
-message("children = ${children}")
-
 # First, add "main" directory
 SET(mlnn_INCLUDE_DIRS ".")
 FOREACH(child ${children})
@@ -13,8 +11,6 @@ FOREACH(child ${children})
         LIST(APPEND mlnn_INCLUDE_DIRS ${child})
     ENDIF()
 ENDFOREACH()
-
-message("mlnn_INCLUDE_DIRS = ${mlnn_INCLUDE_DIRS}")
 
 # Iterate through subdirectories...
 foreach (dir ${mlnn_INCLUDE_DIRS})

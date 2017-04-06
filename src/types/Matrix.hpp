@@ -164,6 +164,18 @@ public:
 	}
 
 	/*!
+	 * Enumerates - sets values of elements to their indices.
+	 */
+	void enumerate() {
+		// Get access to data.
+		T* data_ptr = this->data();
+
+#pragma omp parallel for
+		for (size_t i = 0; i < (size_t)this->size(); i++)
+			data_ptr[i] = i;
+	}
+
+	/*!
 	 * Set values of all matrix elements to random with a normal distribution.
 	 * @param mean Mean
 	 * @param stddev Variance
