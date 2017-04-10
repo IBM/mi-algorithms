@@ -391,7 +391,22 @@ public:
 		return ce;
 	}
 
+	/****************** ARMADILLO COMPATIBILITY *********************************/
 
+	/*!
+	 * Set zeros.
+	 */
+	void zeros (){
+		this->setZero();
+	}
+
+    T& operator [](int idx) {
+        return this->data()[idx];
+    }
+
+    T operator [](int idx) const {
+        return this->data()[idx];
+    }
 
 private:
 

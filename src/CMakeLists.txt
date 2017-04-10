@@ -24,8 +24,6 @@ add_subdirectory(htm)
 
 add_subdirectory(rbm)
 
-add_subdirectory(mlnn)
-
 # Not working.
 #add_subdirectory(gru)
 #add_subdirectory(lstm)

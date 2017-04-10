@@ -139,6 +139,17 @@ public:
 	}
 
 	/*!
+	 * Adds a single matrix to array.
+	 * @param name_ Name of the matrix.
+	 * @param input_ Input length.
+	 * @param output_ Output length.
+	 */
+	void add ( std::string name_, size_t input_, size_t output_) {
+		keys_map[name_] = matrices.size();
+		matrices.push_back ( std::make_shared<mic::types::Matrix<T> > ( mic::types::Matrix<T> ( input_, output_ ) ) );
+	}
+
+	/*!
 	 * Returns the matrix with given number.
 	 * @param number_ Number of the matrix.
 	 * @return Pointer to a matrix.

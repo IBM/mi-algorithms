@@ -86,6 +86,21 @@ TEST(Matrix, Enumeration4x5) {
 		ASSERT_EQ(nm(i), i);
 }
 
+/*!
+ * Tests functions added to make Eigen-derived Matrix as much compatible to Armadillo-derived Matrix as possible.
+ */
+TEST(Matrix, ArmadilloCompatibilityTest) {
+	// Default sizes of matrices.
+	const size_t N = 4;
+	const size_t M = 5;
+
+	mic::types::Matrix<float> nm(N, M);
+	nm.zeros();
+
+	for (size_t i =0; i< N*M; i++)
+		ASSERT_EQ(nm[i], i);
+}
+
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

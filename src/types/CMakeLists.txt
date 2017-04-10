@@ -35,7 +35,7 @@ if(GTEST_FOUND AND BUILD_UNIT_TESTS)
 	target_link_libraries(unit_tests_matrix
 		${GTEST_LIBRARIES}
 		${Boost_LIBRARIES}
-		${ARMADILLO_LIBRARIES})
+		)
 	if(OpenBLAS_FOUND)
 		target_link_libraries(unit_tests_matrix  ${OpenBLAS_LIB} )
 	endif(OpenBLAS_FOUND)
@@ -58,7 +58,7 @@ if(GTEST_FOUND AND BUILD_UNIT_TESTS)
 	target_link_libraries(unit_tests_matrix_array
 		${GTEST_LIBRARIES}
 		${Boost_LIBRARIES}
-		${ARMADILLO_LIBRARIES})
+		)
 	if(OpenBLAS_FOUND)
 		target_link_libraries(unit_tests_matrix_array  ${OpenBLAS_LIB} )
 	endif(OpenBLAS_FOUND)
