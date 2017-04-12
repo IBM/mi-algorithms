@@ -1,7 +1,11 @@
 # Include current dir
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+include_directories(${CMAKE_ADD_INCLUDE_PATH} ${CMAKE_INSTALL_PREFIX}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+# Also add library paths
+link_directories(${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_ADD_LIB_PATH})
 
 # =======================================================================
 # Add subdirectories
