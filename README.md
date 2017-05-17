@@ -27,7 +27,7 @@ On Linux (Ubuntu 14.04):
 
     sudo apt-get install git cmake cmake-curses-gui doxygen libboost1.54-all-dev libeigen3-dev
 
-##Main modules
+## Main modules
 
    * types - core types and classes (image, tensor, matrix, vector etc.)
    * data_io - data i/o classes and functions (e.g. data importers)
@@ -41,10 +41,13 @@ On Linux (Ubuntu 14.04):
 
    * char_encoder_test - examplary 1-of-k Char Encoder test application.
    * data_collector_test - program for testing data collector.
-   * matrix_test - program for testing multiplication of matrices with/without OpenBLAS.
    * tensor_test - program for testing tensor functionality.
-   * convnet_minst - program for training MNIST using convolution neural nets?
-   
+
+## Unit tests
+
+   *  types/matrixTestsRunner -- dense (Eigen-derived) matrix unit tests
+   *  types/matrixArrayTestsRunner -- dense array of matrices matrix unit tests
+ 
 ## Installation
 
 In order to download, configure, make and install new "clean" version of mi-algorithms please execute the following:
