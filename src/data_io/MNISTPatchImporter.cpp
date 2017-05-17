@@ -64,7 +64,7 @@ bool MNISTPatchImporter::importData(){
 
 	// Skip label header.
 	labels_file.seekg (label_offset_bytes, std::ios::beg);
-	// Skip header.
+	// Skip data header.
 	data_file.seekg (data_offset_bytes , std::ios::beg);
 
 	// Import loop.

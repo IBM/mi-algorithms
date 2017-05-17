@@ -74,6 +74,11 @@ private:
 	 */
 	mic::configuration::Property<std::string> labels_filename;
 
+	/*!
+	 * Property: maximum number of samples (limitation, from 1 to 60000). If <=0 then there is no limitation.
+	 */
+	mic::configuration::Property<int> samples_limit;
+
 };
 
 
