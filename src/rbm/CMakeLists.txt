@@ -15,3 +15,6 @@ target_link_libraries(rbm types data_utils)
 
 # Add to variable storing all libraries/targets.
 set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "rbm" CACHE INTERNAL "" FORCE)
+
+# Install target library.
+install(TARGETS rbm LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
