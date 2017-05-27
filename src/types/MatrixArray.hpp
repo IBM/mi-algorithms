@@ -232,7 +232,7 @@ public:
 	/*!
 	 * Returns the size of vector.
 	 */
-	std::string size() {
+	size_t size() {
 		return matrices.size();
 	}
 
