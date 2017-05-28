@@ -150,6 +150,16 @@ public:
 	}
 
 	/*!
+	 * Adds a pointer to an existing matrix to array.
+	 * @param name_ Name of the matrix.
+	 * @param matrix_ptr_ Pointer to the existing array.
+	 */
+	void add ( std::string name_, std::shared_ptr<mic::types::Matrix<T> > matrix_ptr_) {
+		keys_map[name_] = matrices.size();
+		matrices.push_back ( matrix_ptr_);
+	}
+
+	/*!
 	 * Returns the matrix with given number.
 	 * @param number_ Number of the matrix.
 	 * @return Pointer to a matrix.
