@@ -10,6 +10,7 @@
 #include <string>
 #include <map>
 #include <stdio.h>
+#include <exception>
 
 
 // Forward declaration of class boost::serialization::access
@@ -165,11 +166,28 @@ public:
 	 * @return Pointer to a matrix.
 	 */
 	mic::types::MatrixPtr<T>& operator[] ( size_t number_ ) {
-		// TODO: throw exception when out of the scope?
+		if (number_ >= matrices.size())
+			throw std::range_error("MatrixArray " + array_name + " size is smaller than: " + std::to_string(number_));
 
 		return matrices[number_];
-
 	}
+
+	/*!
+	 * Checks whether matrix indexed by a given key exists.
+	 * @param key_ Key as a single character.
+	 */
+	inline bool keyExists(char key_) {
+		return (keys_map.find ( std::to_string(key_) ) == keys_map.end());
+	}
+
+	/*!
+	 * Checks whether matrix indexed by a given key exists.
+	 * @param key_ Key as string.
+	 */
+	inline bool keyExists(std::string key_) {
+		return keys_map.find ( key_ ) != keys_map.end();
+	}
+
 
 	/*!
 	 * Returns the matrix with given key (id).
@@ -177,10 +195,10 @@ public:
 	 * @return Pointer to a matrix.
 	 */
 	mic::types::MatrixPtr<T>& operator[] ( char key_ ) {
-		// TODO: throw exception when out of the scope?
+		if ( !keyExists(key_) )
+			throw std::range_error("MatrixArray " + array_name + " does not have a key " + key_);
 
 		return ( *this ) [std::string ( 1, key_ )];
-
 	}
 
 	/*!
@@ -188,16 +206,11 @@ public:
 	 * @param number_ Matrix key.
 	 * @return Pointer to a matrix.
 	 */
-	mic::types::MatrixPtr<T>& operator[] ( std::string key ) {
+	mic::types::MatrixPtr<T>& operator[] ( std::string key_ ) {
+		if ( !keyExists(key_) )
+			throw std::range_error("MatrixArray " + array_name + " does not have a key " + key_);
 
-		if ( keys_map.find ( key ) == keys_map.end() )
-			std::cout << "Warning !!! " << array_name <<
-					  "::[] - key not found:" << key << std::endl;
-
-		// TODO: throw exception when out of the scope?
-
-		return matrices[keys_map[key]];
-
+		return matrices[keys_map[key_]];
 	}
 
 	/*!
