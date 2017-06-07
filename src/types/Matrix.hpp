@@ -185,7 +185,7 @@ public:
 		// Initialize random number generator with normal distribution.
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::normal_distribution<double> dist(mean, stddev);
+		std::normal_distribution<T> dist(mean, stddev);
 
 		// Get access to data.
 		T* data_ptr = this->data();
@@ -207,7 +207,7 @@ public:
 		// Initialize random number generator with normal distribution.
 		std::random_device rd;
 		std::mt19937 mt(rd());
-		std::uniform_real_distribution<double> dist(min, max);
+		std::uniform_real_distribution<T> dist(min, max);
 
 		// Get access to data.
 		T* data_ptr = this->data();
