@@ -1,8 +1,11 @@
 /*!
  * \file Tensor.hpp
- * \brief File contaning a template class being a View on tensor.
+ * \brief File contaning a template tensor class.
  * \author tkornuta
  * \date Mar 7, 2016
+ *
+ * Copyright (c) 2016, Tomasz Kornuta, IBM Corporation. All rights reserved.
+ *
  */
 
 #ifndef SRC_TYPES_TENSOR_HPP_
@@ -37,13 +40,13 @@ class Matrix;
 
 /*!
  * \brief Template class representing an nD (n-Dimensional) tensor.
+ * Tensor is row-major, i.e. first dimension is height (rows), second is width (cols), third is depth (channels) etc.
  * \author tkornuta
  * \tparam T template parameter denoting data type stored in tensor.
  */
 template<class T>
 class Tensor {
 public:
-
 
 	/*!
 	 * Default constructor (empty).

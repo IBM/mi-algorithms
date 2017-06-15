@@ -54,6 +54,17 @@ int main(int argc, char* argv[]) {
 	const size_t K = 4;
 
 	// Create new tensor.
+	mic::types::TensorXd t0({N, M});
+	t0.enumerate();
+	std::cout << "t0 = " << t0 << std::endl;
+	for(size_t row=0; row<N; row++) {
+		for(size_t col=0; col<M; col++)
+			std::cout << " t0(" << row << "," << col << ") = " << t0({row,col});
+		std::cout << std::endl;
+	}//: for
+
+
+	// Create new tensor.
 	mic::types::TensorXd t1({N*M*K});
 	t1.enumerate();
 	// Different methods of setting the new value of data.
