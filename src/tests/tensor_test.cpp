@@ -129,28 +129,6 @@ int main(int argc, char* argv[]) {
 	mic::types::TensorXd t4 = mat;
 	std::cout << "tensor from matrix = " << t4 << std::endl;
 
-	const char* fileName = "saved.txt";
-
-	// Save data
-	{
-		// Create an output archive
-		std::ofstream ofs(fileName);
-		boost::archive::text_oarchive ar(ofs);
-		// Write data
-		ar & t4;
-	}
-
-	// Restore data
-	mic::types::TensorXd restored_t5;
-
-	{
-		// Create and input archive
-		std::ifstream ifs(fileName);
-		boost::archive::text_iarchive ar(ifs);
-		// Load data
-		ar & restored_t5;
-		std::cout << "restored = " << restored_t5 << std::endl;
-	}
 
 	// Tensor pointer.
 	mic::types::TensorXfPtr ten_ptr (new mic::types::TensorXf({N, M, K}));

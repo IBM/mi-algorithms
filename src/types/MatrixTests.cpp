@@ -9,12 +9,14 @@
 
 #include <gtest/gtest.h>
 
-#include <types/Matrix.hpp>
-
 #include <fstream>
 // Include headers that implement a archive in simple text format
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+
+// Redefine word "public" so every class field/method will be accessible for tests.
+#define private public
+#include <types/Matrix.hpp>
 
 /*!
  * Tests whether matrix has proper dimensions (2x5).
