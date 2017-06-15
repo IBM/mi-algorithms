@@ -128,13 +128,30 @@ public:
 		    // From Bitmap information header.
 		    uint32_t biWidth = *reinterpret_cast<uint32_t *>(&header[18]);
 		    uint32_t biHeight = *reinterpret_cast<uint32_t *>(&header[22]);
-		    //uint16_t biBitCount = *reinterpret_cast<uint16_t *>(&header[28]);
+		    // Number of bits per pixel for colors: 1,4,8 or 24.
+		    uint16_t biBitCount = *reinterpret_cast<uint16_t *>(&header[28]);
 
-		    /*std::cout << "fileSize: " << bfSize << std::endl;
-		    std::cout << "dataOffset: " << bfOffBits << std::endl;
-		    std::cout << "width: " << biWidth << std::endl;
-		    std::cout << "height: " << biHeight << std::endl;
-		    std::cout << "depth: " << biBitCount << "-bit" << std::endl;*/
+		    LOG(LDEBUG) << "fileSize: " << bfSize;
+		    LOG(LDEBUG) << "dataOffset: " << bfOffBits;
+		    LOG(LDEBUG) << "width: " << biWidth;
+		    LOG(LDEBUG) << "height: " << biHeight;
+		    LOG(LDEBUG) << "depth: " << biBitCount << "-bit";
+
+		    // Set values depending on BitCount.
+		    // Number of image channels (3 or 4).
+		    size_t img_channels = biBitCount/8;
+		    size_t roff, goff, boff;
+		    if (biBitCount == 24) {
+		    	roff = 2;
+		    	goff = 1;
+		    	boff = 0;
+		    } else if (biBitCount == 32) {
+		    	roff = 3;
+		    	goff = 2;
+		    	boff = 1;
+		    } else {
+		    	LOG(LERROR) << "Unhandel number of bits per pixel: " << biBitCount << "-bit";
+		    }
 
 		    // Skip the rest of header.
 		    std::vector<char> rest(bfOffBits - HEADER_SIZE);
@@ -146,15 +163,15 @@ public:
 
 		    // padWidth is the width of the image plus the extra padding.
 		    // Initially set both to the width of the image.
-		    size_t padWidth= (size_t)(3*biWidth);
+		    size_t padWidth= (size_t)(img_channels*biWidth);
 
 		    // And add any extra space to bring each line to a DWORD boundary
 		    while(padWidth%4!=0) {
 		       padWidth++;
 		    }
-		    //std::cout << "padWidth: " << padWidth << std::endl;
+		    LOG(LDEBUG) << "padWidth: " << padWidth;
 
-		    // Prepare output tensor.
+		    // Prepare output tensoroff, goff, boffr.
 		    mic::types::TensorPtr<float> ptr = MAKE_TENSOR_PTR(float, biHeight, biWidth, 3 );
 		    ptr->zeros();
 		    // Get data.
@@ -163,9 +180,9 @@ public:
 		    // Iterate through rows...
 		    for (size_t h =0; h < biHeight; h++){
 		    	// ... and cols.
-		        for (size_t w =0; w < padWidth; w+=3) {
+		        for (size_t w =0; w < padWidth; w+=img_channels) {
 		        	 // Skip the padding.
-		        	 if (w >= 3*biWidth) {
+		        	 if (w >= img_channels*biWidth) {
 		        		 continue;
 		        	 }
 		        	size_t i = h*padWidth + w;
@@ -175,13 +192,13 @@ public:
 
 		        	// Red
 		           	//(*ptr)({biHeight-1 - h,w/3,0}) = (int(img[i + 2] & 0xff)) / (255.0);
-		        	data_ptr[(biHeight-1 - h)*biWidth + w/3] = (int(img[i + 2] & 0xff)) / (255.0);
+		        	data_ptr[(biHeight-1 - h)*biWidth + w/img_channels] = (int(img[i + roff] & 0xff)) / (255.0);
 		           	// Green
 		           	//(*ptr)({biHeight-1 - h,w/3,1}) = (int(img[i + 1] & 0xff)) / (255.0);
-		        	data_ptr[(biHeight-1 - h)*biWidth + w/3 + 1*biWidth*biHeight] = (int(img[i + 1] & 0xff)) / (255.0);
+		        	data_ptr[(biHeight-1 - h)*biWidth + w/img_channels + 1*biWidth*biHeight] = (int(img[i + goff] & 0xff)) / (255.0);
 		           	// Blue
 		           	//(*ptr)({biHeight-1 - h,w/3,2}) = (int(img[i] & 0xff)) / (255.0);
-		        	data_ptr[(biHeight-1 - h)*biWidth + w/3 + 2*biWidth*biHeight] = (int(img[i + 0] & 0xff)) / (255.0);
+		        	data_ptr[(biHeight-1 - h)*biWidth + w/img_channels + 2*biWidth*biHeight] = (int(img[i + boff] & 0xff)) / (255.0);
 
 		        }
 		    }
