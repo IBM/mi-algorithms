@@ -78,7 +78,7 @@ public:
     		LOG(LSTATUS) << "Opening file: " << names_array[fi];
     		std::ifstream file(names_array[fi], std::ios::in | std::ios::binary);
     		if (!file.is_open()) {
-    			LOG(LFATAL) << "Oops! Couldn't find file: " << file;
+    			LOG(LFATAL) << "Oops! Couldn't find file: " << names_array[fi];
     			return false;
     		}//: else
 

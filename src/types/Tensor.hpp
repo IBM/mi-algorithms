@@ -346,6 +346,44 @@ public:
 
 
 	/*!
+	 * Set values of all matrix elements to random with a normal distribution.
+	 * @param mean Mean
+	 * @param stddev Variance
+	 */
+	void randn(T mean = 0, T stddev = 1) {
+
+		// Initialize random number generator with normal distribution.
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::normal_distribution<T> dist(mean, stddev);
+
+#pragma omp parallel for
+		for (size_t i = 0; i < elements; i++) {
+			data_ptr[i] = (T)dist(mt);
+		}
+	}
+
+	/*!
+	 * Set values of all matrix elements to random numbers from range <min, max> - uniform distribution.
+	 * @param min Min value.
+	 * @param max Max value.
+	 * @return Random real value.
+	 */
+	void rand(T min = 0, T max = 1) {
+
+		// Initialize random number generator with normal distribution.
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::uniform_real_distribution<T> dist(min, max);
+
+#pragma omp parallel for
+		for (size_t i = 0; i < elements; i++) {
+			data_ptr[i] = (T)dist(rd);
+		}
+	}
+
+
+	/*!
 	 * Operator returning new tensor being the sum of two tensors.
 	 * @param obj_ The second tensor (on the right side of the +).
 	 * @return New, resulting tensor being the sum.
@@ -464,7 +502,7 @@ public:
 	 * @param coordinates_ nD vector of element coordinates ({ }, vector<size_t> etc.).
 	 * @return Index of the element.
 	 */
-	size_t getIndex(std::vector<size_t> coordinates_) {
+	inline size_t getIndex(std::vector<size_t> coordinates_) {
 		// Dimensions must match!
 		assert(dims().size() == coordinates_.size());
 		// Do the magic - iterate through all dimensions in order to compute the index.
@@ -624,6 +662,7 @@ public:
 		dimensions[0] += added_zero_dim;
 		elements += new_block_size;
 	}
+
 
 
 private:

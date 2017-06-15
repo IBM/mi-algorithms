@@ -68,3 +68,28 @@ if(GTEST_FOUND AND BUILD_UNIT_TESTS)
 	install(TARGETS unit_tests_matrix_array LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
 
 endif(GTEST_FOUND AND BUILD_UNIT_TESTS)
+
+
+# =======================================================================
+# Build tensor tests
+# =======================================================================
+
+# Link tests with GTest
+if(GTEST_FOUND AND BUILD_UNIT_TESTS)
+
+	add_executable(unit_tests_tensor TensorTests.cpp)
+	target_link_libraries(unit_tests_tensor
+		${GTEST_LIBRARIES}
+		${Boost_LIBRARIES}
+		)
+	if(OpenBLAS_FOUND)
+		target_link_libraries(unit_tests_tensor  ${OpenBLAS_LIB} )
+	endif(OpenBLAS_FOUND)
+		
+	add_test(unit_tests_tensor ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/unit_tests_tensor)
+
+	install(TARGETS unit_tests_tensor LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+
+endif(GTEST_FOUND AND BUILD_UNIT_TESTS)
+
+

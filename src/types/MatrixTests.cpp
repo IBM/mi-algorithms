@@ -28,6 +28,7 @@ TEST(Matrix, Dimensions2x5) {
 
 	ASSERT_EQ(nm.rows(), N);
 	ASSERT_EQ(nm.cols(), M);
+
 }
 
 
@@ -68,22 +69,45 @@ TEST(Matrix, Serialization) {
 
 	for (size_t i =0; i< (size_t)nm.size(); i++)
 		ASSERT_EQ(nm(i), restored_mat(i));
+
 }
 
 
 /*!
  * Tests enumeration.
  */
-TEST(Matrix, Enumeration4x5) {
+TEST(Matrix, Enumeration2x3) {
 	// Default sizes of matrices.
-	const size_t N = 4;
-	const size_t M = 5;
+	const size_t N = 2;
+	const size_t M = 3;
 
 	mic::types::Matrix<float> nm(N, M);
 	nm.enumerate();
 
 	for (size_t i =0; i< N*M; i++)
 		ASSERT_EQ(nm(i), i);
+
+	for(size_t row=0; row<N; row++) {
+		for(size_t col=0; col<M; col++)
+			std::cout << " nm(" << row << "," << col << ") = " << nm(row,col);
+		std::cout << std::endl;
+	}//: for
+
+	ASSERT_EQ(nm(0,0), 0);
+	ASSERT_EQ(nm(0,1), 2);
+	ASSERT_EQ(nm(0,2), 4);
+	ASSERT_EQ(nm(1,0), 1);
+	ASSERT_EQ(nm(1,1), 3);
+	ASSERT_EQ(nm(1,2), 5);
+
+	nm.resize(M,N);
+
+	for(size_t row=0; row<M; row++) {
+		for(size_t col=0; col<N; col++)
+			std::cout << " nm(" << row << "," << col << ") = " << nm(row,col);
+		std::cout << std::endl;
+	}//: for
+
 }
 
 /*!
@@ -98,7 +122,7 @@ TEST(Matrix, ArmadilloCompatibilityTest) {
 	nm.zeros();
 
 	for (size_t i =0; i< N*M; i++)
-		ASSERT_EQ(nm[i], i);
+		ASSERT_EQ(nm[i], 0);
 }
 
 
