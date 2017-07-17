@@ -8,7 +8,7 @@
 #ifndef SRC_AUTO_ENCODERS_DUMMYCHARENCODER_HPP_
 #define SRC_AUTO_ENCODERS_DUMMYCHARENCODER_HPP_
 
-#include <encoders/MatrixXfSDREncoder.hpp>
+#include <encoders/MatrixSDREncoder.hpp>
 
 namespace mic {
 namespace encoders {
@@ -18,13 +18,13 @@ namespace encoders {
  * A 1-of-k encoder, i.e. it simply encodes char to ASCII and turns on that bit, i.e. there is no learning.
  * \author tkornuta
  */
-class CharMatrixXfEncoder: public mic::encoders::MatrixXfSDREncoder<char> {
+class CharMatrixXfEncoder: public mic::encoders::MatrixSDREncoder<char, float> {
 public:
 	/*!
 	 * Default constructor.
 	 * @param sdr_length_ SDR length.
 	 */
-	CharMatrixXfEncoder(size_t sdr_length_) : MatrixXfSDREncoder(sdr_length_) {
+    CharMatrixXfEncoder(size_t sdr_length_) : MatrixSDREncoder(sdr_length_) {
 //		std::cout<<" Hello CharMatrixXfEncoder\n";
 	};
 

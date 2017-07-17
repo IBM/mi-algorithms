@@ -22,27 +22,29 @@ namespace types {
  * \brief The <MatrixXf-uint> sample type used by e.g. MNISTImporter.
  * \author tkornuta
  */
-typedef mic::types::Sample<mic::types::MatrixXf, unsigned int> MNISTSample;
+template <typename inputDataType = float>
+using MNISTSample = mic::types::Sample<mic::types::Matrix<inputDataType>, unsigned int>;
 
 /*!
  * \brief Pointer to the <MatrixXf-uint> sample type used by e.g. MNISTImporter.
  * \author tkornuta
  */
-typedef std::shared_ptr<mic::types::MNISTSample> MNISTSamplePtr;
-
+template <typename inputDataType = float>
+using MNISTSamplePtr = std::shared_ptr<mic::types::MNISTSample<inputDataType> >;
 
 /*!
  * \brief The <MatrixXf-uint> batch type used by e.g. MNISTImporter.
  * \author tkornuta
  */
-typedef mic::types::Batch<mic::types::MatrixXf, unsigned int> MNISTBatch;
-
+template <typename inputDataType = float>
+using MNISTBatch = mic::types::Batch<mic::types::Matrix<inputDataType>, unsigned int>;
 
 /*!
  * \brief Pointer to the <MatrixXf-uint> batch type used by e.g. MNISTImporter.
  * \author tkornuta
  */
-typedef std::shared_ptr<mic::types::MNISTBatch> MNISTBatchPtr;
+template <typename inputDataType = float>
+using MNISTBatchPtr = std::shared_ptr<mic::types::MNISTBatch<inputDataType> >;
 
 
 }//: namespace types
