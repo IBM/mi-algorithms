@@ -20,12 +20,24 @@ Additionally it depends on the following external libraries:
    * Boost - library of free (open source) peer-reviewed portable C++ source libraries.
    * Eigen - a C++ template library for linear algebra: matrices, vectors, numerical solvers, and related algorithms.
    * OpenBlas (optional) - An optimized library implementing BLAS routines. If present - used for fastening operation on matrices.
+   * Doxygen (optional) - Tool for generation of documentation.
+   * GTest (optional) - Framework for unit testing.
 
 ### Installation of the dependencies/required tools
 
 On Linux (Ubuntu 14.04): 
 
-    sudo apt-get install git cmake cmake-curses-gui doxygen libboost1.54-all-dev libeigen3-dev
+    sudo apt-get install git cmake doxygen libboost1.54-all-dev libeigen3-dev
+
+On Mac (OS X 10.14): 
+
+    brew install git cmake doxygen boost eigen
+
+To install GTest on MAC OS X:
+
+    brew install --HEAD https://gist.githubusercontent.com/Kronuz/96ac10fbd8472eb1e7566d740c4034f8/raw/gtest.rb
+
+
 
 ## Main modules
 
