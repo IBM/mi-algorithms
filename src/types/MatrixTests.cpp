@@ -104,11 +104,11 @@ TEST(Matrix, Enumeration2x3) {
 	for (size_t i =0; i< N*M; i++)
 		ASSERT_EQ(nm(i), i);
 
-	for(size_t row=0; row<N; row++) {
+	/*for(size_t row=0; row<N; row++) {
 		for(size_t col=0; col<M; col++)
 			std::cout << " nm(" << row << "," << col << ") = " << nm(row,col);
 		std::cout << std::endl;
-	}//: for
+	}//: for*/
 
 	ASSERT_EQ(nm(0,0), 0);
 	ASSERT_EQ(nm(0,1), 2);
@@ -119,11 +119,11 @@ TEST(Matrix, Enumeration2x3) {
 
 	nm.resize(M,N);
 
-	for(size_t row=0; row<M; row++) {
+	/*for(size_t row=0; row<M; row++) {
 		for(size_t col=0; col<N; col++)
 			std::cout << " nm(" << row << "," << col << ") = " << nm(row,col);
 		std::cout << std::endl;
-	}//: for
+	}//: for*/
 
 }
 
