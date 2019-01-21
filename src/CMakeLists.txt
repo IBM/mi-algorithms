@@ -40,7 +40,7 @@ add_subdirectory(encoders)
  
 add_subdirectory(classifiers)
 
-add_subdirectory(htm)
+#add_subdirectory(htm)
 
 add_subdirectory(rbm)
 
