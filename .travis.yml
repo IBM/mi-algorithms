@@ -1,0 +1,73 @@
+# Copyright (C) tkornuta, IBM Corporation 2015-2019
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+language: cpp
+
+# This will run on Travis' 'new' container-based infrastructure
+# https://docs.travis-ci.com/user/migrating-from-legacy/#How-can-I-use-container-based-infrastructure%3F
+# 
+# Additionally, first job will build documentation using doxygen and deploy it to gh pages. 
+# https://gist.github.com/vidavidorra/548ffbcdae99d752da02
+
+# This will run on Travis' 'new' container-based infrastructure
+sudo: false
+
+# Safelist: focus Travis' attention on the master branch.
+branches:
+  only:
+    - master
+
+# Define matrix of build environments.
+jobs:
+  include:
+    # 1. Ubuntu 14.04 g++-4.8
+    - stage: "Compilation"
+      os: linux
+      dist: trusty
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libboost-all-dev
+            - g++-4.8
+      env:
+        - OS=Ubuntu-14.04
+        - COMPILER=g++-4.8
+      script: ./build.sh
+
+
+    # 5. Deploy
+    - stage: "Deploy: GitHub Pages"
+      addons:
+        apt:
+          packages:
+            - doxygen
+            - doxygen-doc
+            - doxygen-latex
+            - doxygen-gui
+            - graphviz
+      script: 
+        - doxygen mi-toolchain.doxyfile
+
+      # Deploy using travis builtin GitHub Pages support
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        local_dir: $TRAVIS_BUILD_DIR/html
+        github_token: $GITHUB_TOKEN
+
+
+
