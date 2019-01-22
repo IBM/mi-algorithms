@@ -1,7 +1,26 @@
-language: cpp c
+# Copyright (C) tkornuta, IBM Corporation 2015-2019
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+language: cpp
 
 # This will run on Travis' 'new' container-based infrastructure
 # https://docs.travis-ci.com/user/migrating-from-legacy/#How-can-I-use-container-based-infrastructure%3F
+# 
+# Additionally, first job will build documentation using doxygen and deploy it to gh pages. 
+# https://gist.github.com/vidavidorra/548ffbcdae99d752da02
+
+# This will run on Travis' 'new' container-based infrastructure
 sudo: false
 
 # Safelist: focus Travis' attention on the master branch.
@@ -9,25 +28,27 @@ branches:
   only:
     - master
 
-# Environment variables
-env:
-  global:
-    - GH_REPO_NAME: mi-algorithms
-    - DOXYFILE: $TRAVIS_BUILD_DIR/mi-algorithms.doxyfile
-    - GH_REPO_REF: github.ibm.com:tkornut/mi-algorithms.git
-  matrix:
-   # Workaround for https://github.com/travis-ci/travis-ci/issues/4681
-   - TRAVIS_4681_WORKAROUND=1
-
-
-# Define matrix of test environments.
-matrix:
-  # Travis workaround - disable "main" test environment.
-  exclude:
-    - env: TRAVIS_4681_WORKAROUND=1
-
+# Define matrix of build environments.
+jobs:
   include:
     # 1. Ubuntu 14.04 g++-4.8
+    - stage: "Compilation"
+      os: linux
+      dist: trusty
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libboost-all-dev
+            - g++-4.8
+      env:
+        - OS=Ubuntu-14.04
+        - COMPILER=g++-4.8
+      script: ./build.sh
+
+    # 2. Ubuntu 14.04 g++5
     - os: linux
       dist: trusty
       compiler: gcc
@@ -37,35 +58,16 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - libboost-all-dev
-            - libeigen3-dev
-            - g++-4.8
-            - doxygen
-            - doxygen-doc
-            - doxygen-latex
-            - doxygen-gui
-            - graphviz
+            - g++-5
       env:
         - OS=Ubuntu-14.04
-        - COMPILER=g++-4.8
+        - COMPILER=g++-5
+        - CC=gcc-5
+        - CXX=g++-5
+      script: 
+        - ./build.sh
 
-      # Generate and deploy documentation - only once, for this test environment.
-      after_success:
-      - cd $TRAVIS_BUILD_DIR
-      - chmod +x generateDocumentationAndDeploy.sh
-      - ./generateDocumentationAndDeploy.sh
-
-#   # 2. OS X 10.11 clang++ - doesn't work - cannot switch to OSX!
-#    - os: osx
-#      osx_image: xcode8.0
-#      compiler: clang
-#      env:
-#        - OS=OSX-10.11
-#        - COMPILER=clang++
-#      addons:
-#        apt:
-#          packages: ['libboost-all-dev', 'libeigen3-dev']
-
-   # 3. Ubuntu 14.04 clang++
+    # 3. Ubuntu 14.04 clang++
     - os: linux
       dist: trusty
       compiler: clang
@@ -75,44 +77,41 @@ matrix:
       addons:
         apt:
           sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
-          packages: ['libboost-all-dev', 'libeigen3-dev']
+          packages: ['libboost-all-dev']
+      script: ./build.sh 
 
-#   # 4. Ubuntu 14.04 clang-3.8 - doesn't work - not supporting openMP
-#    - os: linux
-#      compiler: clang++
-#      addons:
-#        apt:
-#          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.8']
-#          packages: ['clang-3.8', 'libboost-all-dev', 'libeigen3-dev']
-#      env: COMPILER=clang++-3.8
+    # 4. OSX clang
+    - os: osx
+      osx_image: xcode10.1
+      compiler: clang
+      env:
+        - OS=MacOS 10.13
+        - COMPILER=clang++
+      addons:
+        homebrew:
+          packages:   
+            - boost  
+      script: ./build.sh 
+
+    # 5. Deploy
+    - stage: "Deploy: GitHub Pages"
+      addons:
+        apt:
+          packages:
+            - doxygen
+            - doxygen-doc
+            - doxygen-latex
+            - doxygen-gui
+            - graphviz
+      script: 
+        - doxygen mi-toolchain.doxyfile
+
+      # Deploy using travis builtin GitHub Pages support
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        local_dir: $TRAVIS_BUILD_DIR/html
+        github_token: $GITHUB_TOKEN
 
 
-
-# Configure cmake and prepare installation dir.
-before_script:
-  # Make mic output
-  - mkdir $TRAVIS_BUILD_DIR/../mic/
-  # Clone, configure and install mi-toolchain
-  - cd $TRAVIS_BUILD_DIR/..
-  # "https://${GH_REPO_TOKEN}@${GH_REPO_REF}"
-  # f3cf58e97c9d0599d37121d9a1411552288a6e59
-  # git clone https://<token>@github.com/owner/repo.git
-  # git clone git@github.ibm.com:tkornut/mi-toolchain.git
-  - git clone https://f3cf58e97c9d0599d37121d9a1411552288a6e59@github.ibm.com/tkornut/mi-toolchain.git
-  - mkdir mi-toolchain/build
-  - cd mi-toolchain/build
-  # Overwrite compiler!
-  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
-  - cmake .. -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../mic/
-  - make install
-  # Make mi-algorithms
-  - mkdir $TRAVIS_BUILD_DIR/build
-  - cd $TRAVIS_BUILD_DIR/build
-  # Overwrite compiler!
-  - if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
-  - cmake .. -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../mic/
-
-# Build and install.
-script:
-  - make install VERBOSE=1
 
