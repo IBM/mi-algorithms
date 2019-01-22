@@ -39,16 +39,19 @@ jobs:
       addons:
         apt:
           sources:
-            - ubuntu-toolchain-r-test
+            - 'ubuntu-toolchain-r-test'
           packages:
-            - libboost-all-dev
-            - g++-4.8
+            - 'libboost-all-dev'
+            - 'libeigen3-dev'
+            - 'g++-4.8'
       env:
         - OS=Ubuntu-14.04
         - COMPILER=g++-4.8
       before_script:
-        - ./download_build_deps.sh
+        # Make mic output
+        - mkdir $TRAVIS_BUILD_DIR/../mic/
+        - ./scripts/download_build_deps.sh
       script:
-        - ./build.sh
+        - ./scripts/build.sh
 
 
