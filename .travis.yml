@@ -50,8 +50,10 @@ jobs:
       before_script:
         # Make mic output
         - mkdir $TRAVIS_BUILD_DIR/../mic/
+        - cd $TRAVIS_BUILD_DIR
         - ./scripts/download_build_deps.sh
       script:
+        - cd $TRAVIS_BUILD_DIR
         - ./scripts/build.sh
 
 
