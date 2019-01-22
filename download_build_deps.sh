@@ -17,7 +17,7 @@ mkdir $TRAVIS_BUILD_DIR/../mic/
 # Clone, configure and install mi-toolchain
 cd $TRAVIS_BUILD_DIR/..
 # "https://${GH_REPO_TOKEN}@${GH_REPO_REF}"
-git clone git@github.com:IBM/mi-toolchain.git
+git clone https://github.com/IBM/mi-toolchain.git
 mkdir mi-toolchain/build
 cd mi-toolchain/build
 # Overwrite compiler!
