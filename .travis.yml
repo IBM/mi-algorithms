@@ -46,28 +46,9 @@ jobs:
       env:
         - OS=Ubuntu-14.04
         - COMPILER=g++-4.8
-      script: ./build.sh
-
-
-    # 5. Deploy
-    - stage: "Deploy: GitHub Pages"
-      addons:
-        apt:
-          packages:
-            - doxygen
-            - doxygen-doc
-            - doxygen-latex
-            - doxygen-gui
-            - graphviz
-      script: 
-        - doxygen mi-toolchain.doxyfile
-
-      # Deploy using travis builtin GitHub Pages support
-      deploy:
-        provider: pages
-        skip_cleanup: true
-        local_dir: $TRAVIS_BUILD_DIR/html
-        github_token: $GITHUB_TOKEN
-
+      before_script:
+        - ./download_build_deps.sh
+      script:
+        - ./build.sh
 
 
