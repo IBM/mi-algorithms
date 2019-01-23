@@ -20,8 +20,8 @@
  * \date Mar 27, 2017
  */
 
-#ifndef SRC_DATA_IO_MNISTIMAGEIMPORTER_HPP_
-#define SRC_DATA_IO_MNISTIMAGEIMPORTER_HPP_
+#ifndef SRC_DATA_IO_MNISTPATCHIMAGEIMPORTER_HPP_
+#define SRC_DATA_IO_MNISTPATCHIMAGEIMPORTER_HPP_
 
 #include <data_io/Importer.hpp>
 #include <types/MNISTTypes.hpp>
@@ -114,4 +114,4 @@ private:
 } /* namespace mic */
 
 
-#endif /* SRC_DATA_IO_MNISTIMAGEIMPORTER_HPP_ */
+#endif /* SRC_DATA_IO_MNISTPATCHIMAGEIMPORTER_HPP_ */
