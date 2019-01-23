@@ -41,15 +41,17 @@ jobs:
       dist: trusty
       addons:
         apt:
-          sources:
-            - 'ubuntu-toolchain-r-test'
+          #sources:
+          #  - 'ubuntu-toolchain-r-test'
           packages:
             - 'libboost-all-dev'
             - 'libeigen3-dev'
       env:
         - OS=Ubuntu-14.04
       # Return true.
-      script: true
+      script: 
+        - dpkg -L libboost-all-dev
+        - true
 
     # 1. Ubuntu 14.04 g++-4.8
     - stage: "Compilation"
@@ -58,8 +60,8 @@ jobs:
       compiler: gcc
       addons:
         apt:
-          sources:
-            - 'ubuntu-toolchain-r-test'
+          #sources:
+          #  - 'ubuntu-toolchain-r-test'
           packages:
             - 'libboost-all-dev'
             - 'libeigen3-dev'
@@ -78,8 +80,8 @@ jobs:
       compiler: gcc
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
+          #sources:
+          #  - ubuntu-toolchain-r-test
           packages:
             - libboost-all-dev
             - 'libeigen3-dev'
@@ -103,7 +105,7 @@ jobs:
         - COMPILER=clang++
       addons:
         apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
+          #sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
           packages:
             - libboost-all-dev
             - 'libeigen3-dev'
