@@ -109,7 +109,30 @@ jobs:
       script:
         - ./scripts/build.sh
 
-    # 5. Deploy
+    # 5. Unit tests
+    - stage: "Tests"               
+      name: "Unit Tests"
+      os: linux
+      dist: trusty
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - 'ubuntu-toolchain-r-test'
+          packages:
+            - 'libboost-all-dev'
+            - 'libeigen3-dev'
+            - 'g++-4.8'
+      env:
+        - OS=Ubuntu-14.04
+        - COMPILER=g++-4.8
+      before_script:
+        - ./scripts/download_build_deps.sh
+      script:
+        - ./scripts/build.sh
+        - ./scripts/unit-tests.sh
+
+    # 6. Deploy
     - stage: "Deploy: GitHub Pages"
       addons:
         apt:
