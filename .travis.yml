@@ -51,6 +51,9 @@ jobs:
       # Return true.
       script: 
         - dpkg -L libboost
+        - dpkg -L libboost1.54-tools-dev
+        - dpkg -L libboost-all-dev
+        - dpkg -L libeigen3-dev
         - true
 
     # 1. Ubuntu 14.04 g++-4.8
