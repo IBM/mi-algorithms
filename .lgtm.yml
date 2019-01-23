@@ -18,11 +18,9 @@ extraction:
   cpp:
     configure:
       command:
-        - mkdir _build
-        - cd _build
-        - cmake ..
+        - ./scripts/download_build_deps.sh
+
     index:
         build_command:
-            - cd _build
-            - make
+          - ./scripts/build.sh
 

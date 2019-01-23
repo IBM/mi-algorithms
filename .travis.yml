@@ -48,12 +48,8 @@ jobs:
         - OS=Ubuntu-14.04
         - COMPILER=g++-4.8
       before_script:
-        # Make mic output
-        - mkdir $TRAVIS_BUILD_DIR/../mic/
-        - cd $TRAVIS_BUILD_DIR
         - ./scripts/download_build_deps.sh
       script:
-        - cd $TRAVIS_BUILD_DIR
         - ./scripts/build.sh
 
     # 2. Ubuntu 14.04 g++5
@@ -74,12 +70,8 @@ jobs:
         - CC=gcc-5
         - CXX=g++-5
       before_script:
-        # Make mic output
-        - mkdir $TRAVIS_BUILD_DIR/../mic/
-        - cd $TRAVIS_BUILD_DIR
         - ./scripts/download_build_deps.sh
       script:
-        - cd $TRAVIS_BUILD_DIR
         - ./scripts/build.sh
 
     # 3. Ubuntu 14.04 clang++
@@ -96,12 +88,8 @@ jobs:
             - libboost-all-dev
             - 'libeigen3-dev'
       before_script:
-        # Make mic output
-        - mkdir $TRAVIS_BUILD_DIR/../mic/
-        - cd $TRAVIS_BUILD_DIR
         - ./scripts/download_build_deps.sh
       script:
-        - cd $TRAVIS_BUILD_DIR
         - ./scripts/build.sh
 
     # 4. OSX clang
@@ -117,12 +105,8 @@ jobs:
             - boost 
             - eigen 
       before_script:
-        # Make mic output
-        - mkdir $TRAVIS_BUILD_DIR/../mic/
-        - cd $TRAVIS_BUILD_DIR
         - ./scripts/download_build_deps.sh
       script:
-        - cd $TRAVIS_BUILD_DIR
         - ./scripts/build.sh
 
     # 5. Deploy

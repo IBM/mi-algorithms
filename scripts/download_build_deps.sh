@@ -16,13 +16,23 @@
 # Stop the script on first error.
 set -e
 
-# Assumes that $TRAVIS_BUILD_DIR/../mic/ exists.
+# Assumes that:
+# - ROOT_DIR is the root of mi-algorithms project. 
+# - ROOT_DIR/deps/ DOES NOT exist.
+# - ROOT_DIR/mic/ DOES NOT exist.
+# - script is executed in ROOT_DIR (starts and ends in that dir).
+
+# Make dirs.
+mkdir mic
+mkdir deps
+
+cd deps
 # Clone, configure and install mi-toolchain.
-cd $TRAVIS_BUILD_DIR/..
 git clone https://github.com/IBM/mi-toolchain.git
 mkdir mi-toolchain/build
 cd mi-toolchain/build
 # Overwrite compiler!
 if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
-cmake .. -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../mic/
+cmake .. -DCMAKE_INSTALL_PREFIX=../../mic/
 make install
+cd ../..

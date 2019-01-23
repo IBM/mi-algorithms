@@ -16,13 +16,17 @@
 # Stop the script on first error.
 set -e
 
-# Assumes that $TRAVIS_BUILD_DIR/../mic/ exists.
+# Assumes that:
+# - ROOT_DIR is the root of mi-algorithms project. 
+# - ROOT_DIR/mic/ exists.
+# - script is executed in ROOT_DIR (starts and ends in that dir).
+
 # Configure cmake and prepare installation dir.
-cd $TRAVIS_BUILD_DIR
 mkdir build
 cd build
 # Overwrite compiler!
 if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
-cmake .. -DCMAKE_INSTALL_PREFIX=$TRAVIS_BUILD_DIR/../mic/
+cmake .. -DCMAKE_INSTALL_PREFIX=../mic/
 # Build and install.
 make install VERBOSE=1
+cd ..
