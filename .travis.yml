@@ -28,6 +28,7 @@ cache:
   apt: true
   directories:
     - /usr/include/eigen3
+    - /usr/include/boost
 
 # Safelist: focus Travis' attention on the master branch.
 branches:
@@ -85,7 +86,7 @@ jobs:
       compiler: gcc
       addons:
         apt:
-          #sources:
+          sources:
             - ubuntu-toolchain-r-test
           packages:
             - libboost-all-dev
