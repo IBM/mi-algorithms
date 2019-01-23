@@ -33,6 +33,6 @@ mkdir mi-toolchain/build
 cd mi-toolchain/build
 # Overwrite compiler!
 if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
-cmake .. -DCMAKE_INSTALL_PREFIX=../../mic/
+cmake .. -DCMAKE_INSTALL_PREFIX=../../../mic/
 make install
-cd ../..
+cd ../../..
