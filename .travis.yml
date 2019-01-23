@@ -26,6 +26,8 @@ sudo: false
 # Use cache for boost and eigen.
 cache:
   apt: true
+  directories:
+    - /usr/include/eigen3
 
 # Safelist: focus Travis' attention on the master branch.
 branches:
@@ -50,10 +52,10 @@ jobs:
         - OS=Ubuntu-14.04
       # Return true.
       script: 
-        - dpkg -L libboost
-        - dpkg -L libboost1.54-tools-dev
-        - dpkg -L libboost-all-dev
-        - dpkg -L libeigen3-dev
+        #- dpkg -L libboost
+        #- dpkg -L libboost1.54-tools-dev
+        #- dpkg -L libboost-all-dev
+        #- dpkg -L libeigen3-dev
         - true
 
     # 1. Ubuntu 14.04 g++-4.8
