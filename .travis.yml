@@ -50,7 +50,7 @@ jobs:
         - OS=Ubuntu-14.04
       # Return true.
       script: 
-        - dpkg -L libboost-all-dev
+        - dpkg -L boost
         - true
 
     # 1. Ubuntu 14.04 g++-4.8
