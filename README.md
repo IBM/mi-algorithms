@@ -3,7 +3,8 @@
 ![Language](https://img.shields.io/badge/language-C%2B%2B-blue.svg)
 [![GitHub license](https://img.shields.io/github/license/IBM/mi-toolchain.svg)](https://github.com/IBM/mi-toolchain/blob/master/LICENSE)
 [![Build Status](https://travis-ci.com/IBM/mi-algorithms.svg?branch=master)](https://travis-ci.com/IBM/mi-algorithms)
-
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/IBM/mi-algorithms.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/IBM/mi-algorithms/context:cpp)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/IBM/mi-algorithms.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/IBM/mi-algorithms/alerts/)
 
 ## Description
 
