@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Assumes that $TRAVIS_BUILD_DIR/../mic/ exists.
 # Configure cmake and prepare installation dir.
-mkdir $TRAVIS_BUILD_DIR/../mic/
+cd $TRAVIS_BUILD_DIR
 mkdir build
 cd build
 # Overwrite compiler!
