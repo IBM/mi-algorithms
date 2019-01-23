@@ -50,7 +50,7 @@ jobs:
         - OS=Ubuntu-14.04
       # Return true.
       script: 
-        - dpkg -L boost
+        - dpkg -L libboost
         - true
 
     # 1. Ubuntu 14.04 g++-4.8
