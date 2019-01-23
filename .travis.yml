@@ -45,6 +45,10 @@ jobs:
           packages:
             - 'libboost-all-dev'
             - 'libeigen3-dev'
+      env:
+        - OS=Ubuntu-14.04
+      # Return true.
+      script: true
 
     # 1. Ubuntu 14.04 g++-4.8
     - stage: "Compilation"
