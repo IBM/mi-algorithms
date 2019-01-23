@@ -23,6 +23,9 @@ language: cpp
 # This will run on Travis' 'new' container-based infrastructure
 sudo: false
 
+# Use cache for boost and eigen.
+cache: bundler
+
 # Safelist: focus Travis' attention on the master branch.
 branches:
   only:
@@ -31,6 +34,18 @@ branches:
 # Define matrix of build environments.
 jobs:
   include:
+    # 0. cache
+    - stage: prepare cache
+      os: linux
+      dist: trusty
+      addons:
+        apt:
+          sources:
+            - 'ubuntu-toolchain-r-test'
+          packages:
+            - 'libboost-all-dev'
+            - 'libeigen3-dev'
+
     # 1. Ubuntu 14.04 g++-4.8
     - stage: "Compilation"
       os: linux
