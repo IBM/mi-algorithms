@@ -13,7 +13,7 @@ The project contains core types and several machine intelligence algorithms, suc
 
 ## MIC dependencies
 
-   * MIToolchain - the core of MIC framework.
+   * [MIToolchain](https://github.com/IBM/mi-toolchain) - the core of MIC framework.
 
 ## External dependencies
 
@@ -26,11 +26,11 @@ Additionally it depends on the following external libraries:
 
 ### Installation of the dependencies/required tools
 
-#### On Linux (Ubuntu 14.04): 
+#### On Linux (Ubuntu 14.04):
 
     sudo apt-get install git cmake doxygen libboost1.54-all-dev libeigen3-dev
 
-#### On Mac (OS X 10.14): (Access date: Jan/22/2019)
+#### On Mac (OS X 10.14): (last tested on: Jan/22/2019)
 
     brew install git cmake doxygen boost eigen
 
@@ -81,7 +81,7 @@ In order to generate a "living" documentation of the code please run Doxygen:
     doxygen mi-algorithms.doxyfile
     firefox html/index.html
 
-The current documentation (generated straight from the code and automatically uploaded to GH pages by Travis) is available at:
+The current documentation (generated straight from the code) is available at github pages:
 
 https://ibm.github.io/mi-algorithms/
 

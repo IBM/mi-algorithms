@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright (C) tkornuta, IBM Corporation 2015-2019
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Stop the script on first error.
+set -e
+
 # Assumes that $TRAVIS_BUILD_DIR/../mic/ exists.
 # Clone, configure and install mi-toolchain.
 cd $TRAVIS_BUILD_DIR/..
-# "https://${GH_REPO_TOKEN}@${GH_REPO_REF}"
 git clone https://github.com/IBM/mi-toolchain.git
 mkdir mi-toolchain/build
 cd mi-toolchain/build
