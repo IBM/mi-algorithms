@@ -130,10 +130,11 @@ jobs:
         - ./scripts/download_build_deps.sh
       script:
         - ./scripts/build.sh
-        - ./scripts/unit-tests.sh
+        - ./scripts/unit_tests.sh
 
     # 6. Deploy
-    - stage: "Deploy: GitHub Pages"
+    - stage: "Deploy"
+      name: "GitHub Pages"
       addons:
         apt:
           packages:

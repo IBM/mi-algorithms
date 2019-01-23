@@ -81,7 +81,7 @@ In order to generate a "living" documentation of the code please run Doxygen:
     doxygen mi-algorithms.doxyfile
     firefox html/index.html
 
-The current documentation (generated straight from the code) is available at github pages:
+The current documentation (generated straight from the code and automatically uploaded to github pages by Travis) is available at:
 
 https://ibm.github.io/mi-algorithms/
 
