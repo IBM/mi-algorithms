@@ -24,8 +24,9 @@ download_latest_release () {
     echo "Downloading latest release from: ${user}/${repo}"
 
     # Find the archive.
-    version=$( curl --silent "https://api.github.com/repos/${user}/${repo}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' )
-    echo "Found version: ${version}"
+    #version=$( curl --silent "https://api.github.com/repos/${user}/${repo}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' )
+    #echo "Found version: ${version}"
+    version="v.1.1.0"
 
     # Download the archive.
     echo "Downloading. Please wait..."
