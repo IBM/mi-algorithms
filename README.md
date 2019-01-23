@@ -1,8 +1,9 @@
-#Machine Intelligence Core: Algorithms
+# Machine Intelligence Core: Algorithms
 
-Status of Travis Continuous Integration:
+![Language](https://img.shields.io/badge/language-C%2B%2B-blue.svg)
+[![GitHub license](https://img.shields.io/github/license/IBM/mi-toolchain.svg)](https://github.com/IBM/mi-toolchain/blob/master/LICENSE)
+[![Build Status](https://travis-ci.com/IBM/mi-algorithms.svg?branch=master)](https://travis-ci.com/IBM/mi-algorithms)
 
-[![Build Status](https://travis.ibm.com/tkornut/mi-algorithms.svg?token=9XHfj7QaSbmFqHsyaQes&branch=master)](https://travis.ibm.com/tkornut/mi-algorithms)
 
 ## Description
 
@@ -25,15 +26,15 @@ Additionally it depends on the following external libraries:
 
 ### Installation of the dependencies/required tools
 
-On Linux (Ubuntu 14.04): 
+#### On Linux (Ubuntu 14.04): 
 
     sudo apt-get install git cmake doxygen libboost1.54-all-dev libeigen3-dev
 
-On Mac (OS X 10.14): 
+#### On Mac (OS X 10.14): (Access date: Jan/22/2019)
 
     brew install git cmake doxygen boost eigen
 
-To install GTest on MAC OS X:
+To install GTest on Mac OS X:
 
     brew install --HEAD https://gist.githubusercontent.com/Kronuz/96ac10fbd8472eb1e7566d740c4034f8/raw/gtest.rb
 
@@ -65,7 +66,7 @@ To install GTest on MAC OS X:
 In order to download, configure, make and install new "clean" version of mi-algorithms please execute the following:
 
     cd ~/workspace
-    git clone git@github.ibm.com:tkornut/mi-algorithms.git
+    git clone git@github.com:ibm/mi-algorithms.git
     cd mi-algorithms
     mkdir build
     cd build
@@ -82,7 +83,7 @@ In order to generate a "living" documentation of the code please run Doxygen:
 
 The current documentation (generated straight from the code and automatically uploaded to GH pages by Travis) is available at:
 
-https://pages.github.ibm.com/tkornut/mi-algorithms/
+https://ibm.github.io/mi-algorithms/
 
 ## Maintainer
 
