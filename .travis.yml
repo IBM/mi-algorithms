@@ -43,8 +43,8 @@ jobs:
       dist: trusty
       addons:
         apt:
-          #sources:
-          #  - 'ubuntu-toolchain-r-test'
+          sources:
+            - 'ubuntu-toolchain-r-test'
           packages:
             - 'libboost-all-dev'
             - 'libeigen3-dev'
@@ -65,8 +65,8 @@ jobs:
       compiler: gcc
       addons:
         apt:
-          #sources:
-          #  - 'ubuntu-toolchain-r-test'
+          sources:
+            - 'ubuntu-toolchain-r-test'
           packages:
             - 'libboost-all-dev'
             - 'libeigen3-dev'
@@ -86,7 +86,7 @@ jobs:
       addons:
         apt:
           #sources:
-          #  - ubuntu-toolchain-r-test
+            - ubuntu-toolchain-r-test
           packages:
             - libboost-all-dev
             - 'libeigen3-dev'
@@ -110,7 +110,7 @@ jobs:
         - COMPILER=clang++
       addons:
         apt:
-          #sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
+          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
           packages:
             - libboost-all-dev
             - 'libeigen3-dev'
