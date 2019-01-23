@@ -22,17 +22,29 @@ set -e
 # - ROOT_DIR/mic/ DOES NOT exist.
 # - script is executed in ROOT_DIR (starts and ends in that dir).
 
+source ./scripts/download_release.sh
+modules=( mi-toolchain )
+
 # Make dirs.
+rm -Rf deps mic # just in case
 mkdir mic
 mkdir deps
 
 cd deps
-# Clone, configure and install mi-toolchain.
-git clone https://github.com/IBM/mi-toolchain.git
-mkdir mi-toolchain/build
-cd mi-toolchain/build
-# Overwrite compiler!
-if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
-cmake .. -DCMAKE_INSTALL_PREFIX=../../../mic/
-make install
-cd ../../..
+# Iterate over list of modules.
+for module in "${modules[@]}"
+do
+    # Clone, configure and install mi-toolchain.
+    download_latest_release IBM ${module}
+    #git clone https://github.com/IBM/mi-toolchain.git
+    mkdir ${module}/build
+    cd ${module}/build
+    echo "Compile "
+    # Overwrite compiler!
+    if [[ "${COMPILER}" != "" ]]; then export CXX=${COMPILER}; fi
+    cmake .. -DCMAKE_INSTALL_PREFIX=../../../mic/
+    make install
+    cd ../..
+    echo "${module} installed"
+done
+cd ..
