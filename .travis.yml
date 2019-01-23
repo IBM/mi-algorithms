@@ -24,8 +24,7 @@ language: cpp
 sudo: false
 
 # Use cache for boost and eigen.
-#cache:
-#  apt: true
+cache:
 #  directories:
 #    - /usr/include/eigen3
 #    - /usr/include/boost
@@ -74,28 +73,30 @@ jobs:
         - ./scripts/download_build_deps.sh
       script:
         - ./scripts/build.sh
+      after_script:
+        - ./scripts/unit_tests.sh
 
     # 2. Ubuntu 14.04 g++5
-    - os: linux
-      dist: trusty
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - libboost-all-dev
-            - 'libeigen3-dev'
-            - g++-5
-      env:
-        - OS=Ubuntu-14.04
-        - COMPILER=g++-5
-        - CC=gcc-5
-        - CXX=g++-5
-      before_script:
-        - ./scripts/download_build_deps.sh
-      script:
-        - ./scripts/build.sh
+    #- os: linux
+    #  dist: trusty
+    #  compiler: gcc
+    #  addons:
+    #    apt:
+    #      sources:
+    #        - ubuntu-toolchain-r-test
+    #      packages:
+    #        - libboost-all-dev
+    #        - 'libeigen3-dev'
+    #        - g++-5
+    #  env:
+    #    - OS=Ubuntu-14.04
+    #    - COMPILER=g++-5
+    #    - CC=gcc-5
+    #    - CXX=g++-5
+    #  before_script:
+    #    - ./scripts/download_build_deps.sh
+    #  script:
+    #    - ./scripts/build.sh
 
     # 3. Ubuntu 14.04 clang++
     - os: linux
@@ -133,27 +134,28 @@ jobs:
         - ./scripts/build.sh
 
     # 5. Unit tests
-    - stage: "Tests"               
-      name: "Unit Tests"
-      os: linux
-      dist: trusty
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-            - 'ubuntu-toolchain-r-test'
-          packages:
-            - 'libboost-all-dev'
-            - 'libeigen3-dev'
-            - 'g++-4.8'
-      env:
-        - OS=Ubuntu-14.04
-        - COMPILER=g++-4.8
-      before_script:
-        - ./scripts/download_build_deps.sh
-      script:
-        - ./scripts/build.sh
-        - ./scripts/unit_tests.sh
+    #- stage: "Tests"               
+    #  name: "Unit Tests"
+    #  os: linux
+    #  dist: trusty
+    #  compiler: gcc
+    #  addons:
+    #    apt:
+    #      sources:
+    #        - 'ubuntu-toolchain-r-test'
+    #      packages:
+    #        - 'libboost-all-dev'
+    #        - 'libeigen3-dev'
+    #        - 'g++-4.8'
+    #  env:
+    #    - OS=Ubuntu-14.04
+    #    - COMPILER=g++-4.8
+    #  before_script:
+    #    - ./scripts/download_build_deps.sh
+    #  script:
+    #    - ./scripts/build.sh
+    #  after_script:
+    #    - ./scripts/unit_tests.sh
 
     # 6. Deploy
     - stage: "Deploy"

@@ -20,21 +20,20 @@ set -e
 # Setting a return status for a function
 download_latest_release () {
     user=$1
-    repo=$2    
-    echo "Downloading latest release from: ${user}/${repo}"
+    repo=$2
+    version=$3  
+    echo "Downloading the ${version} release from: ${user}/${repo}. Please wait..."
 
     # Find the archive.
     #version=$( curl --silent "https://api.github.com/repos/${user}/${repo}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' )
     #echo "Found version: ${version}"
-    version="v.1.1.0"
+    #version="v.1.1.0"
 
     # Download the archive.
-    echo "Downloading. Please wait..."
     curl -sOL "https://github.com/${user}/${repo}/archive/${version}.tar.gz"
 
     # Unpack the archive.
     echo "Unpacking the archive"
-    #mkdir ${repo}
     tar xzvf ${version}.tar.gz
     # Rename directory.
     mv ${repo}-${version} ${repo}

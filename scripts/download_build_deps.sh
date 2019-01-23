@@ -23,7 +23,8 @@ set -e
 # - script is executed in ROOT_DIR (starts and ends in that dir).
 
 source ./scripts/download_release.sh
-modules=( mi-toolchain )
+modules=( "mi-toolchain" )
+versions=( "v.1.1.0" )
 
 # Make dirs.
 rm -Rf deps mic # just in case
@@ -32,10 +33,14 @@ mkdir deps
 
 cd deps
 # Iterate over list of modules.
-for module in "${modules[@]}"
+
+#for module in "${modules[@]}"
+for ((i=0;i<${#modules[@]};++i))
 do
+    module=${modules[i]}
+    version=${versions[i]}
     # Clone, configure and install mi-toolchain.
-    download_latest_release IBM ${module}
+    download_latest_release IBM ${module} ${version}
     #git clone https://github.com/IBM/mi-toolchain.git
     mkdir ${module}/build
     cd ${module}/build
