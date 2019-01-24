@@ -72,12 +72,12 @@ private:
 	/*!
      * Width of STL-10 image.
 	 */
-	int image_width;
+	size_t image_width;
 
 	/*!
      * Height of STL-10 image.
 	 */
-	int image_height;
+	size_t image_height;
 
 	/*!
 	 * Property: directory/Name of file containing images (binary datafile).
