@@ -76,8 +76,8 @@ jobs:
         - cd googletest
         - mkdir gbuild && cd gbuild && cmake .. && make && cd ..
         - sudo cp -r googletest/include/gtest /usr/local/include
-        - sudo cp gbuild/googlemock/gtest/lib*.a /usr/local/lib
-        - sudo cp gbuild/googlemock/lib*.a /usr/local/lib
+        - sudo cp -r googlemock/include/gmock /usr/local/include
+        - sudo cp gbuild/lib*.a /usr/local/lib
         - cd ..
         #- sudo wget https://github.com/google/googletest/archive/release-1.8.1.tar.gz
         #- sudo tar xf release-1.8.1.tar.gz
