@@ -42,7 +42,7 @@ typedef enum { NONE, AREA, BILINEAR} interpolation_type;
 typedef enum { THRESHOLDING, ADAPTIVE_THRESHOLDING, PROBABILITY} binarization_type;
 
 
-void alloc_image(image* img, image_type type, unsigned width, unsigned height);
+void alloc_image(image* img, image_type type, size_t width, size_t height);
 void free_image(image* img);
 void copy_image(const image* src, image* dst);
 

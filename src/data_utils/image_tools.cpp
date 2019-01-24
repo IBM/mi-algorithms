@@ -26,9 +26,9 @@ namespace mic {
 namespace data_utils {
 
 
-void alloc_image(image* img, image_type type, unsigned width, unsigned height) {
+void alloc_image(image* img, image_type type, size_t width, size_t height) {
 
-	unsigned pixel_size;
+	size_t pixel_size;
 
 	img->width = width;
 	img->height = height;
@@ -59,7 +59,7 @@ void alloc_image(image* img, image_type type, unsigned width, unsigned height) {
 
 	if (!img->image_data) {
 
-		fprintf(stderr, "alloc_image: out of memory! (Requested %u B)\n", pixel_size * img->width * img->height);
+		fprintf(stderr, "alloc_image: out of memory! (Requested %u B)\n", (unsigned int)(pixel_size * img->width * img->height));
 		exit(0);
 
 	}
