@@ -14,11 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Assumes that:
+# - script is executed in ROOT_DIR/deps (starts and ends in that dir).
+
 # Stop the script on first error.
 set -e
 
-# Setting a return status for a function
+# Function downloads given release from the github user/repository.
 download_latest_release () {
+    # Read input arguments.
     user=$1
     repo=$2
     version=$3  
@@ -41,6 +45,8 @@ download_latest_release () {
     # Cleanup.
     rm ${version}.tar.gz
     echo "Done"
+
+    # Setting a return status for a function: success.
     return 0
 }
 

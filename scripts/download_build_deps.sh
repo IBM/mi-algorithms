@@ -13,14 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stop the script on first error.
-set -e
-
 # Assumes that:
-# - ROOT_DIR is the root of mi-algorithms project. 
+# - ROOT_DIR is the root of the project. 
 # - ROOT_DIR/deps/ DOES NOT exist.
 # - ROOT_DIR/mic/ DOES NOT exist.
 # - script is executed in ROOT_DIR (starts and ends in that dir).
+
+# Stop the script on first error.
+set -e
 
 source ./scripts/download_release.sh
 modules=( "mi-toolchain" )
@@ -31,10 +31,8 @@ rm -Rf deps mic # just in case
 mkdir mic
 mkdir deps
 
-cd deps
 # Iterate over list of modules.
-
-#for module in "${modules[@]}"
+cd deps
 for ((i=0;i<${#modules[@]};++i))
 do
     module=${modules[i]}

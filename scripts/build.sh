@@ -13,13 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Stop the script on first error.
-set -e
-
 # Assumes that:
-# - ROOT_DIR is the root of mi-algorithms project. 
+# - ROOT_DIR is the root of the project. 
 # - ROOT_DIR/mic/ exists.
 # - script is executed in ROOT_DIR (starts and ends in that dir).
+
+# Stop the script on first error.
+set -e
 
 # Configure cmake and prepare installation dir.
 mkdir build
