@@ -89,6 +89,27 @@ TEST(Matrix, Serialization) {
 
 }
 
+/*!
+ * Tests assignment operator.
+ */
+TEST(Matrix, OperatorAssignmentFloat) {
+	// Default sizes of matrices.
+	const size_t N = 2;
+	const size_t M = 5;
+
+	mic::types::Matrix<float> nm(N, M);
+	for (size_t i= 0; i<N; i++)
+		for (size_t j= 0; j<M; j++)
+			nm(i,j) = i*j;
+	
+
+	mic::types::Matrix<float> nm2 = nm;
+	for (size_t i= 0; i<N; i++)
+		for (size_t j= 0; j<M; j++)
+			ASSERT_EQ(nm2(i,j), i*j);
+
+}
+
 
 /*!
  * Tests enumeration.
@@ -126,6 +147,9 @@ TEST(Matrix, Enumeration2x3) {
 	}//: for*/
 
 }
+
+
+
 
 /*!
  * Tests functions added to make Eigen-derived Matrix as much compatible to Armadillo-derived Matrix as possible.

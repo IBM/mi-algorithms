@@ -68,6 +68,9 @@
    email: m-mat @ math.sci.hiroshima-u.ac.jp (remove spaces)
 */
 
+#ifndef __MTRND_H__
+#define __MTRND_H__
+
 #include <stdio.h>
 
 namespace mic {
@@ -109,3 +112,4 @@ double genrand64_real_range(double max);
 }//: namespace data_utils
 }//: namespace mic
 
+#endif

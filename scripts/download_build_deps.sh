@@ -24,7 +24,7 @@ set -e
 
 source ./scripts/download_release.sh
 modules=( "mi-toolchain" )
-versions=( "v.1.1.0" )
+versions=( "v1.1.1" )
 
 # Make dirs.
 rm -Rf deps mic # just in case

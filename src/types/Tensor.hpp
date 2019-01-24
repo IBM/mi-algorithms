@@ -161,7 +161,7 @@ public:
 			elements = t.elements;
 			// Allocate memory.
 			if (data_ptr != nullptr)
-				delete (data_ptr);
+				delete[] data_ptr;
 			data_ptr = new T[t.elements];
 		}//: if
 
@@ -182,7 +182,7 @@ public:
 	~Tensor() {
 		// Free memory.
 		if (data_ptr)
-			delete (data_ptr);
+			delete[] data_ptr;
 	}
 	/*!
 	 * Flattens the tensor - sets dimensions to [ n ].
@@ -249,7 +249,7 @@ public:
 			// Copy data.
 			memcpy(data_ptr, old_prt, sizeof(T) * block_size);
 			// Free the old block.
-			delete (old_prt);
+			delete[] old_prt;
 		} //: if
 		//: else: do nothing;)
 	}
@@ -631,7 +631,7 @@ public:
 		memcpy(data_ptr + elements, obj_.data_ptr, sizeof(T) * obj_.elements);
 
 		// Free the old block.
-		delete (old_prt);
+		delete[] old_prt;
 
 		// Adjust the dimensions.
 		dimensions[0] += obj_.dimensions[0];
@@ -664,7 +664,7 @@ public:
 		// Copy old data.
 		memcpy(data_ptr, old_prt, sizeof(T) * elements);
 		// Free the old block.
-		delete (old_prt);
+		delete[] old_prt;
 
 		// Copy the rest.
 		size_t block_end = elements;
@@ -830,7 +830,7 @@ private:
 		ar & dimensions;
 		// Allocate memory.
 		if (data_ptr != nullptr)
-			delete (data_ptr);
+			delete[] data_ptr;
 		data_ptr = new T[elements];
 		ar & boost::serialization::make_array<T>(data_ptr, elements);
      }

@@ -2,6 +2,7 @@
 
 ![Language](https://img.shields.io/badge/language-C%2B%2B-blue.svg)
 [![GitHub license](https://img.shields.io/github/license/IBM/mi-toolchain.svg)](https://github.com/IBM/mi-toolchain/blob/master/LICENSE)
+![](https://img.shields.io/github/release/IBM/mi-algorithms.svg)
 [![Build Status](https://travis-ci.com/IBM/mi-algorithms.svg?branch=master)](https://travis-ci.com/IBM/mi-algorithms)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/IBM/mi-algorithms.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/IBM/mi-algorithms/context:cpp)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/IBM/mi-algorithms.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/IBM/mi-algorithms/alerts/)
@@ -31,6 +32,10 @@ Additionally it depends on the following external libraries:
 
     sudo apt-get install git cmake doxygen libboost1.54-all-dev libeigen3-dev
 
+To install GTest on Ubuntu:
+
+    sudo apt-get install libgtest-dev
+
 #### On Mac (OS X 10.14): (last tested on: Jan/22/2019)
 
     brew install git cmake doxygen boost eigen
@@ -38,8 +43,6 @@ Additionally it depends on the following external libraries:
 To install GTest on Mac OS X:
 
     brew install --HEAD https://gist.githubusercontent.com/Kronuz/96ac10fbd8472eb1e7566d740c4034f8/raw/gtest.rb
-
-
 
 ## Main modules
 

@@ -148,7 +148,8 @@ public:
 	EIGEN_STRONG_INLINE
 	Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& operator =(const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>& mat_) {
 		// Using base EIGEN operator =
-		return Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
+		Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>::operator=(mat_);
+		return *this;
 	}
 
 

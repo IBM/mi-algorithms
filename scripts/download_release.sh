@@ -40,7 +40,7 @@ download_latest_release () {
     echo "Unpacking the archive"
     tar xzvf ${version}.tar.gz
     # Rename directory.
-    mv ${repo}-${version} ${repo}
+    mv ${repo}* ${repo}
 
     # Cleanup.
     rm ${version}.tar.gz

@@ -18,7 +18,7 @@ project(MIAlgorithms CXX C)
 #  Set current version number.
 set (MIAlgorithms_MAJOR_VERSION 1)
 set (MIAlgorithms_MINOR_VERSION 2)
-set (MIAlgorithms_PATCH_VERSION 0)
+set (MIAlgorithms_PATCH_VERSION 1)
 set (MIAlgorithms_VERSION ${MIAlgorithms_MAJOR_VERSION}.${MIAlgorithms_MINOR_VERSION}.${MIAlgorithms_PATCH_VERSION})
 
 # CMake required version.
