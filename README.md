@@ -32,6 +32,10 @@ Additionally it depends on the following external libraries:
 
     sudo apt-get install git cmake doxygen libboost1.54-all-dev libeigen3-dev
 
+To install GTest on Ubuntu:
+
+    sudo apt-get install libgtest-dev
+
 #### On Mac (OS X 10.14): (last tested on: Jan/22/2019)
 
     brew install git cmake doxygen boost eigen
@@ -39,8 +43,6 @@ Additionally it depends on the following external libraries:
 To install GTest on Mac OS X:
 
     brew install --HEAD https://gist.githubusercontent.com/Kronuz/96ac10fbd8472eb1e7566d740c4034f8/raw/gtest.rb
-
-
 
 ## Main modules
 
