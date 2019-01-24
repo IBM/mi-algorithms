@@ -21,7 +21,7 @@ language: cpp
 # https://gist.github.com/vidavidorra/548ffbcdae99d752da02
 
 # This will run on Travis' 'new' container-based infrastructure
-sudo: false
+#sudo: false
 
 # Use cache for boost and eigen.
 cache:
@@ -65,13 +65,25 @@ jobs:
           packages:
             - libboost-all-dev
             - libeigen3-dev
-            - libgtest-dev # GTest!
+            #- libgtest-dev # GTest!
             - g++-4.8
       env:
         - OS=Ubuntu-14.04
         - COMPILER=g++-4.8
       before_script:
+        # Install GTest.
+        - sudo apt-get install -y libgtest-dev
+        - sudo wget https://github.com/google/googletest/archive/release-1.8.1.tar.gz
+        - sudo tar xf release-1.8.1.tar.gz
+        - cd googletest-release-1.8.1
+        - sudo cmake -DBUILD_SHARED_LIBS=ON .
+        - sudo make
+        - sudo cp -a include/gtest /usr/include
+        - sudo cp -a libgtest_main.so libgtest.so /usr/lib/
+        - cd ..
+        # Install MI-* dependencies.
         - ./scripts/download_build_deps.sh
+
       script:
         - ./scripts/build.sh
       after_script:
