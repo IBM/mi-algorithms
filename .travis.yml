@@ -63,9 +63,9 @@ jobs:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - libboost-all-dev
-            - libeigen3-dev
-            - g++-4.8
+            #- libboost-all-dev
+            #- libeigen3-dev
+            #- g++-4.8
             #- libgtest-dev # GTest! This is not working!
       env:
         - OS=Ubuntu-14.04
