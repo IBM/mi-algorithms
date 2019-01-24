@@ -338,7 +338,7 @@ public:
 	mic::types::Sample<DataType, LabelType> getSampleDirect(size_t index_) {
 
 		// Check index.
-		if ((index_ < 0) || (index_ >= sample_data.size())){
+		if (index_ >= sample_data.size()){
 			// Reset index.
 			throw std::out_of_range("Sample index out of range!");
 		}//: if

@@ -133,7 +133,7 @@ void permute(int permutation[], unsigned n) {
   unsigned i;
   for (i = 0; i < n; i++) {
     unsigned j = uniform(i, n - 1);
-    if (j<0) j=0;
+    // if (j<0) j=0; // Makes on sense as j is unsigned. :]
     if (j>n-1) j=n-1;
     int swap = permutation[i];
     permutation[i] = permutation[j];
