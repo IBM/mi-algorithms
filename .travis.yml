@@ -63,10 +63,10 @@ jobs:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - libboost-all-dev
-            - libeigen3-dev
+            #- libboost-all-dev
+            #- libeigen3-dev
             #- libgtest-dev # GTest!
-            - g++-4.8
+            #- g++-4.8
       env:
         - OS=Ubuntu-14.04
         - COMPILER=g++-4.8
@@ -74,7 +74,7 @@ jobs:
         # Install GTest.
         - git clone https://github.com/google/googletest.git
         - cd googletest
-        - mkdir gbuild && cd gbuild && cmake .. && make
+        - mkdir gbuild && cd gbuild && cmake .. && make && cd ..
         - cp -r googletest/include/gtest /usr/local/include
         - cp gbuild/googlemock/gtest/lib*.a /usr/local/lib
         - cp gbuild/googlemock/lib*.a /usr/local/lib
@@ -94,105 +94,3 @@ jobs:
         - ./scripts/build.sh
       after_script:
         - ./scripts/unit_tests.sh
-
-    # 2. Ubuntu 14.04 g++5
-    #- os: linux
-    #  dist: trusty
-    #  compiler: gcc
-    #  addons:
-    #    apt:
-    #      sources:
-    #        - ubuntu-toolchain-r-test
-    #      packages:
-    #        - libboost-all-dev
-    #        - 'libeigen3-dev'
-    #        - g++-5
-    #  env:
-    #    - OS=Ubuntu-14.04
-    #    - COMPILER=g++-5
-    #    - CC=gcc-5
-    #    - CXX=g++-5
-    #  before_script:
-    #    - ./scripts/download_build_deps.sh
-    #  script:
-    #    - ./scripts/build.sh
-
-    # 3. Ubuntu 14.04 clang++
-    - os: linux
-      dist: trusty
-      compiler: clang
-      env:
-        - OS=Ubuntu-14.04
-        - COMPILER=clang++
-      addons:
-        apt:
-          sources: ['ubuntu-toolchain-r-test', 'llvm-toolchain-precise-3.5']
-          packages:
-            - libboost-all-dev
-            - 'libeigen3-dev'
-      before_script:
-        - ./scripts/download_build_deps.sh
-      script:
-        - ./scripts/build.sh
-
-    # 4. OSX clang
-    - os: osx
-      osx_image: xcode10.1
-      compiler: clang
-      env:
-        - OS=MacOS 10.13
-        - COMPILER=clang++
-      addons:
-        homebrew:
-          packages:   
-            - boost 
-            - eigen 
-      before_script:
-        - ./scripts/download_build_deps.sh
-      script:
-        - ./scripts/build.sh
-
-    # 5. Unit tests
-    #- stage: "Tests"               
-    #  name: "Unit Tests"
-    #  os: linux
-    #  dist: trusty
-    #  compiler: gcc
-    #  addons:
-    #    apt:
-    #      sources:
-    #        - 'ubuntu-toolchain-r-test'
-    #      packages:
-    #        - 'libboost-all-dev'
-    #        - 'libeigen3-dev'
-    #        - 'g++-4.8'
-    #  env:
-    #    - OS=Ubuntu-14.04
-    #    - COMPILER=g++-4.8
-    #  before_script:
-    #    - ./scripts/download_build_deps.sh
-    #  script:
-    #    - ./scripts/build.sh
-    #  after_script:
-    #    - ./scripts/unit_tests.sh
-
-    # 6. Deploy
-    - stage: "Deploy"
-      name: "GitHub Pages"
-      addons:
-        apt:
-          packages:
-            - doxygen
-            - doxygen-doc
-            - doxygen-latex
-            - doxygen-gui
-            - graphviz
-      script: 
-        - doxygen mi-algorithms.doxyfile
-
-      # Deploy using travis builtin GitHub Pages support
-      deploy:
-        provider: pages
-        skip_cleanup: true
-        local_dir: $TRAVIS_BUILD_DIR/html
-        github_token: $GITHUB_TOKEN
