@@ -49,6 +49,7 @@ if(GTEST_FOUND AND BUILD_UNIT_TESTS)
 	target_link_libraries(unit_tests_matrix
 		${GTEST_LIBRARIES}
 		${Boost_LIBRARIES}
+		${CMAKE_THREAD_LIBS_INIT}
 		)
 	if(OpenBLAS_FOUND)
 		target_link_libraries(unit_tests_matrix  ${OpenBLAS_LIB} )
@@ -72,6 +73,7 @@ if(GTEST_FOUND AND BUILD_UNIT_TESTS)
 	target_link_libraries(unit_tests_matrix_array
 		${GTEST_LIBRARIES}
 		${Boost_LIBRARIES}
+		${CMAKE_THREAD_LIBS_INIT}
 		)
 	if(OpenBLAS_FOUND)
 		target_link_libraries(unit_tests_matrix_array  ${OpenBLAS_LIB} )
@@ -95,6 +97,7 @@ if(GTEST_FOUND AND BUILD_UNIT_TESTS)
 	target_link_libraries(unit_tests_tensor
 		${GTEST_LIBRARIES}
 		${Boost_LIBRARIES}
+		${CMAKE_THREAD_LIBS_INIT}
 		)
 	if(OpenBLAS_FOUND)
 		target_link_libraries(unit_tests_tensor  ${OpenBLAS_LIB} )
