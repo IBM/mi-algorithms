@@ -106,7 +106,7 @@ public:
     		LOG(LSTATUS) << "Opening file containing CIFAR file: " << names_array[fi];
     		std::ifstream cifar_file(names_array[fi], std::ios::in | std::ios::binary);
     		if (!cifar_file.is_open()) {
-    			LOG(LFATAL) << "Oops! Couldn't find file: " << cifar_file;
+    			LOG(LFATAL) << "Oops! Couldn't find file: " << names_array[fi];
     			return false;
     		}//: else
 
