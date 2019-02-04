@@ -81,9 +81,9 @@ jobs:
         - sudo cp gbuild/lib/lib*.a /usr/local/lib
         - cd ..
         # Install MI-* dependencies.
-        - ./scripts/download_build_deps.sh
+        - ./scripts/install_mic_deps.sh
       script:
-        - ./scripts/build.sh
+        - ./scripts/build_mic_module.sh
       after_script:
         - ./scripts/unit_tests.sh
 
@@ -105,9 +105,9 @@ jobs:
     #    - CC=gcc-5
     #    - CXX=g++-5
     #  before_script:
-    #    - ./scripts/download_build_deps.sh
+    #    - ./scripts/install_mic_deps.sh
     #  script:
-    #    - ./scripts/build.sh
+    #    - ./scripts/build_mic_module.sh
 
     # 3. Ubuntu 14.04 clang++ (WORKING, BUT COMMENTED FOR SPEED-UP)
     # - os: linux
@@ -123,9 +123,9 @@ jobs:
     #        - libboost-all-dev
     #        - 'libeigen3-dev'
     #  before_script:
-    #    - ./scripts/download_build_deps.sh
+    #    - ./scripts/install_mic_deps.sh
     #  script:
-    #    - ./scripts/build.sh
+    #    - ./scripts/build_mic_module.sh
 
     # 4. OSX clang
     - os: osx
@@ -140,9 +140,9 @@ jobs:
             - boost 
             - eigen 
       before_script:
-        - ./scripts/download_build_deps.sh
+        - ./scripts/install_mic_deps.sh
       script:
-        - ./scripts/build.sh
+        - ./scripts/build_mic_module.sh
 
     # 5. Unit tests (WORKING, BUT COMMENTED FOR SPEED-UP)
     #- stage: "Tests"               
@@ -170,9 +170,9 @@ jobs:
     #    - sudo cp -r googlemock/include/gmock /usr/local/include
     #    - sudo cp gbuild/lib/lib*.a /usr/local/lib
     #    - cd ..
-    #    - ./scripts/download_build_deps.sh
+    #    - ./scripts/install_mic_deps.sh
     #  script:
-    #    - ./scripts/build.sh
+    #    - ./scripts/build_mic_module.sh
     #  after_script:
     #    - ./scripts/unit_tests.sh
 
