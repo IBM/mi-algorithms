@@ -25,7 +25,7 @@ install(FILES ${files} DESTINATION include/data_io)
 # Create shared library containing DATA IO.
 file(GLOB data_io_src *.cpp)
 add_library(data_io SHARED ${data_io_src})
-target_link_libraries(data_io types data_utils configuration)
+target_link_libraries(data_io data_utils configuration logger )
 
 # Add to variable storing all libraries/targets.
 set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "data_io" CACHE INTERNAL "" FORCE)

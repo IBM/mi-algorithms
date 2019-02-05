@@ -28,7 +28,6 @@ if(${BUILD_TEST_CHAR_ENCODER})
 	target_link_libraries(char_encoder_test 
 		logger
 		application
-		types
 		data_io
 		encoders
 		configuration
@@ -51,7 +50,6 @@ if(${BUILD_TEST_TENSOR})
 	ADD_EXECUTABLE(tensor_test tensor_test.cpp)
 	# Link it with shared libraries.
 	target_link_libraries(tensor_test 
-		types
 		${Boost_LIBRARIES}
 		${EIGEN_LIBRARIES} 
 		)
@@ -76,7 +74,6 @@ if(${BUILD_TEST_COLLECTOR})
 	# Link it with shared libraries.
 	target_link_libraries(data_collector_test 
 		configuration
-		types
 		data_io
 		${Boost_LIBRARIES}
 		)

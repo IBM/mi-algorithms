@@ -23,10 +23,8 @@
 #include <boost/thread/thread.hpp>
 #include <boost/bind.hpp>
 
-#include <data_utils/image_tools.hpp>
-#include <data_utils/rand.hpp>
-using namespace mic::data_utils;
 
+#include <types/Color.hpp>
 #include <data_io/RawTextImporter.hpp>
 
 #include <encoders/CharMatrixXfEncoder.hpp>
@@ -80,7 +78,7 @@ int main(int argc, char* argv[]) {
 				APP_STATE->pressPause();
 
 			// Random select sample.
-			CharSample sample = importer.getRandomSample();
+			mic::types::CharSample sample = importer.getRandomSample();
 
 			// Encode the selected sample into SDR.
 			std::shared_ptr<mic::types::MatrixXf> sdr = encoder.encodeSample(sample.data());
@@ -92,7 +90,7 @@ int main(int argc, char* argv[]) {
 			LOG(LINFO)<<" Orig = '" << *(sample.data()) << "' decoded SDR = '" << (*dec_char) << "' label = '" << *(sample.label()) << "'";
 
 			// Get next batch.
-			CharBatch batch = importer.getNextBatch();
+			mic::types::CharBatch batch = importer.getNextBatch();
 			LOG(LINFO)<<" Batch: ";
 			for (size_t i=0; i < batch.size(); i++ ) {
 				LOG(LINFO)<<" ["<<i<< "] = '" << *(batch.data(i)) <<"'";

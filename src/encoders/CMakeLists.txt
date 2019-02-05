@@ -25,7 +25,7 @@ install(FILES ${files} DESTINATION include/encoders)
 # Create shared library containing AUTO ENCODERS.
 file(GLOB encoders_src *.cpp)
 add_library(encoders SHARED ${encoders_src})
-target_link_libraries(encoders types)
+target_link_libraries(encoders logger ${Boost_LIBRARIES})
 
 # Add to variable storing all libraries/targets.
 set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "encoders" CACHE INTERNAL "" FORCE)

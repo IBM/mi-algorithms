@@ -32,8 +32,7 @@
 
 #include<logger/Log.hpp>
 
-#include <types/image_types.hpp>
-
+#include <types/Color.hpp>
 #include <types/MatrixTypes.hpp>
 
 namespace mic {

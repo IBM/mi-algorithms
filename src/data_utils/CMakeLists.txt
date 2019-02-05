@@ -25,7 +25,7 @@ install(FILES ${files} DESTINATION include/data_utils)
 # Create shared library containing DATA UTILS.
 file(GLOB data_utils_src *.cpp)
 add_library(data_utils SHARED ${data_utils_src})
-target_link_libraries(data_utils types )
+target_link_libraries(data_utils logger ${Boost_LIBRARIES} )
 
 # Add to variable storing all libraries/targets.
 set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "data_utils" CACHE INTERNAL "" FORCE)
