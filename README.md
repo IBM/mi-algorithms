@@ -62,7 +62,7 @@ To install GTest on Mac OS X:
 
 ## MIC dependencies
 
-   * [MIToolchain](https://github.com/IBM/mi-toolchain) - the core of MIC framework.
+   * [MI-Toolchain](https://github.com/IBM/mi-toolchain) - the core of MIC framework.
 
 ### Installation of all MIC dependencies (optional)
 
