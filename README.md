@@ -77,6 +77,11 @@ In order to download, configure, make and install new "clean" version of mi-algo
     cmake .. -DCMAKE_INSTALL_PREFIX=~/workspace/mic/
     make -j4 install
 
+
+
+
+
+
 ## Documentation
 
 In order to generate a "living" documentation of the code please run Doxygen:
@@ -91,5 +96,6 @@ https://ibm.github.io/mi-algorithms/
 
 ## Maintainer
 
-Tomasz Kornuta (tkornut@us.ibm.com)
+[tkornuta](http://github.com/tkornut)
 
+[![HitCount](http://hits.dwyl.io/tkornut/ibm/mi-algorithms.svg)](http://hits.dwyl.io/tkornut/ibm/mi-algorithms)

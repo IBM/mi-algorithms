@@ -27,5 +27,5 @@ LINK_DIRECTORIES(${MIAlgorithms_LIB_DIR})
 # Provide the variable containing list of libraries to the caller
 SET(MIAlgorithms_LIBRARIES "@MIAlgorithms_LIBRARIES@")
 
-message("-- MI Algorithms version: ${MIToolchain_VERSION}")
+message("-- MI Algorithms version: ${MIAlgorithms_VERSION}")
 message("-- Found the following MI Algorithms libraries:\n--   ${MIAlgorithms_LIBRARIES} ")

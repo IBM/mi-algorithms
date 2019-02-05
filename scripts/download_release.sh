@@ -15,38 +15,32 @@
 # limitations under the License.
 
 # Assumes that:
-# - script is executed in ROOT_DIR/deps (starts and ends in that dir).
+# - Download source code from github to ROOT_DIR/${repo} directory.
 
 # Stop the script on first error.
 set -e
 
-# Function downloads given release from the github user/repository.
-download_latest_release () {
-    # Read input arguments.
-    user=$1
-    repo=$2
-    version=$3  
-    echo "Downloading the ${version} release from: ${user}/${repo}. Please wait..."
+# Script downloads given release from the github user/repository.
+# Read input arguments.
+user=$1
+repo=$2
+version=$3  
+echo "Downloading the ${version} release from: ${user}/${repo}. Please wait..."
 
-    # Find the archive.
-    #version=$( curl --silent "https://api.github.com/repos/${user}/${repo}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' )
-    #echo "Found version: ${version}"
-    #version="v.1.1.0"
+# Find the archive. (NOT WORKING IN LGTM! :])
+#version=$( curl --silent "https://api.github.com/repos/${user}/${repo}/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' )
+#echo "Found version: ${version}"
 
-    # Download the archive.
-    curl -sOL "https://github.com/${user}/${repo}/archive/${version}.tar.gz"
+# Download the archive.
+curl -sOL "https://github.com/${user}/${repo}/archive/${version}.tar.gz"
 
-    # Unpack the archive.
-    echo "Unpacking the archive"
-    tar xzvf ${version}.tar.gz
-    # Rename directory.
-    mv ${repo}* ${repo}
+# Unpack the archive.
+echo "Unpacking the archive"
+tar xzvf ${version}.tar.gz
+# Rename directory.
+mv ${repo}* ${repo}
 
-    # Cleanup.
-    rm ${version}.tar.gz
-    echo "Done"
-
-    # Setting a return status for a function: success.
-    return 0
-}
+# Cleanup.
+rm ${version}.tar.gz
+echo "Done"
 

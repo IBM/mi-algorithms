@@ -18,9 +18,8 @@ extraction:
   cpp:
     configure:
       command:
-        - ./scripts/download_build_deps.sh
+        - ./scripts/install_mic_deps.sh
 
     index:
-        build_command:
-          - ./scripts/build.sh
-
+      build_command:
+        - ./scripts/build_mic_module.sh
