@@ -11,16 +11,16 @@
 
 A subproject of Machine Intelligence Core framework.
 
-The project contains core types and several tool useful when training different models and working with different problems, such as importers ()
+The project contains core types (sample, batch, matrix tensor) and tools (MNIST/CIFAR/STL/RawText importers, encoders etc.) useful when training different models and working with different problems.
 
 ### Main modules
 
    * types - core types and classes (sample, batch, matrix, tensor, position2D, action2D etc.)
-   * data_io - data i/o classes and functions (e.g. various data importers, data collector)
-   * data_utils - data utils (random generator, timer etc.)
+   * importers - data i/o classes, various data importers (MNIST, CIFAR, STL10, BMP, IBMFont, RawText etc.)
    * encoders - tools for changing data format from one to another (mostly from/to Matrix)
+   * utils - few useful tools (random generator, timer, data collector)
 
-### Applications
+### Applications (tests)
 
    * char_encoder_test - examplary 1-of-k Char Encoder test application.
    * data_collector_test - program for testing data collector.
@@ -28,8 +28,9 @@ The project contains core types and several tool useful when training different 
 
 ### Unit tests
 
-   *  types/matrixTestsRunner -- dense (Eigen-derived) matrix unit tests
-   *  types/matrixArrayTestsRunner -- dense array of matrices matrix unit tests
+   *  types/unit_tests_matrix -- dense (Eigen-derived) matrix unit tests
+   *  types/unit_tests_matrix_array -- dense array of matrices matrix unit tests
+   *  types/unit_tests_tensor -- few unit tests of Tensor class
 
 
 ## External dependencies
