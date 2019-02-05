@@ -20,12 +20,12 @@
  * \date Dec 22, 2015
  */
 
-#include <data_io/RawTextImporter.hpp>
+#include <importers/RawTextImporter.hpp>
 
 #include <fstream>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 RawTextImporter::RawTextImporter(std::string node_name_) : Importer (node_name_),
 		data_filename("data_filename","data_filename")
@@ -82,5 +82,5 @@ bool RawTextImporter::importData(){
 	return true;
 }
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */

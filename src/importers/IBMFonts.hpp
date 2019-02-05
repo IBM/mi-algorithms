@@ -20,11 +20,11 @@
  * \date Dec 22, 2015
  */
 
-#ifndef SRC_DATA_IO_IBMFONTS_HPP_
-#define SRC_DATA_IO_IBMFONTS_HPP_
+#ifndef SRC_importers_IBMFONTS_HPP_
+#define SRC_importers_IBMFONTS_HPP_
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 
 
@@ -351,10 +351,10 @@ const char font_labels_table[] = {
     '~'
 };
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
 
 
 
-#endif /* SRC_DATA_IO_IBMFONTS_HPP_ */
+#endif /* SRC_importers_IBMFONTS_HPP_ */

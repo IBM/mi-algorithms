@@ -24,7 +24,7 @@
 #define SRC_DATA_UTILS_TIMER_HPP_
 
 namespace mic {
-namespace data_utils {
+namespace utils {
 
 /*!
  * \brief Timer class.
@@ -65,7 +65,7 @@ class Timer {
 		struct timeval e;
 };
 
-}//: namespace data_utils
+}//: namespace utils
 }//: namespace mic
 
 

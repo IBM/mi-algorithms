@@ -20,12 +20,12 @@
  * \date Dec 24, 2015
  */
 
-#include  <data_utils/RandomGenerator.hpp>
+#include  <utils/RandomGenerator.hpp>
 
 #include <logger/Log.hpp>
 
 namespace mic {
-namespace data_utils {
+namespace utils {
 
 // Init generator instance - as NULL.
 boost::atomic<RandomGenerator*> RandomGenerator::instance_(NULL);
@@ -84,5 +84,5 @@ double RandomGenerator::normRandReal(double mean, double variance) {
 }
 
 
-} /* namespace data_utils */
+} /* namespace utils */
 } /* namespace mic */

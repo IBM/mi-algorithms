@@ -20,8 +20,8 @@
  * \date Dec 21, 2015
  */
 
-#ifndef SRC_DATA_IO_IMPORTER_HPP_
-#define SRC_DATA_IO_IMPORTER_HPP_
+#ifndef SRC_importers_IMPORTER_HPP_
+#define SRC_importers_IMPORTER_HPP_
 
 #include <vector>
 #include <stdexcept>
@@ -34,11 +34,11 @@
 namespace mic {
 
 /**
- * \namespace mic::data_io
+ * \namespace mic::importers
  * \brief Namespace containing data import/export classess and procedures.
  * \author tkornuta
  */
-namespace data_io {
+namespace importers {
 
 /*!
  * @brief Parent class for all data importers.
@@ -74,7 +74,7 @@ public:
 
 };
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
-#endif /* SRC_DATA_IO_IMPORTER_HPP_ */
+#endif /* SRC_importers_IMPORTER_HPP_ */

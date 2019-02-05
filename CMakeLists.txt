@@ -17,8 +17,8 @@ project(MIAlgorithms CXX C)
 
 #  Set current version number.
 set (MIAlgorithms_MAJOR_VERSION 1)
-set (MIAlgorithms_MINOR_VERSION 2)
-set (MIAlgorithms_PATCH_VERSION 1)
+set (MIAlgorithms_MINOR_VERSION 3)
+set (MIAlgorithms_PATCH_VERSION 0)
 set (MIAlgorithms_VERSION ${MIAlgorithms_MAJOR_VERSION}.${MIAlgorithms_MINOR_VERSION}.${MIAlgorithms_PATCH_VERSION})
 
 # CMake required version.
@@ -34,20 +34,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 # Check, whether all necessary libraries are linked
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ") 
 
-
-# =======================================================================
-# Create CMAKE variables storing preprocessor commands - FOR HTM! DEPRICATED!
-# =======================================================================
-
-# Default length of SDR !!DEPRICATED - TO BE REMOVED!!
-set(DEFAULT_SDR_LENGTH 1024 CACHE STRING "Default length of SDR")
-add_definitions(-DDEFAULT_SDR_LENGTH=${DEFAULT_SDR_LENGTH})
-
-# Debug !!DEPRICATED - TO BE REMOVED!!
-set(DEBUG_RUN ON CACHE BOOL "Debug run - set DEBUG_RUN variable")
-if (${DEBUG_RUN})
-	add_definitions(-DDEBUG_RUN=1)
-endif(${DEBUG_RUN})
 
 # =======================================================================
 # Find packages
@@ -74,7 +60,7 @@ else(NOT OpenBLAS_FOUND)
 endif(NOT OpenBLAS_FOUND)
 
 # Find MIC Toolchain
-find_package(MIToolchain 1.0 REQUIRED)
+find_package(MIToolchain 1.3 REQUIRED)
 
 # Locate GTest
 find_package(GTest)

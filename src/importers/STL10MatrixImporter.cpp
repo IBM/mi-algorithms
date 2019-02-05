@@ -21,12 +21,12 @@
  */
 
 
-#include <data_io/STL10MatrixImporter.hpp>
+#include <importers/STL10MatrixImporter.hpp>
 
 #include <fstream>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 STL10MatrixImporter::STL10MatrixImporter(std::string node_name_, std::string data_filename_, std::string labels_filename_) : Importer (node_name_),
     data_filename("data_filename",data_filename_),
@@ -156,5 +156,5 @@ bool STL10MatrixImporter::importData(){
 
 
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */

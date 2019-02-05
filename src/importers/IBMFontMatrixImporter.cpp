@@ -20,12 +20,12 @@
  * \date Dec 22, 2015
  */
 
-#include <data_io/IBMFontMatrixImporter.hpp>
+#include <importers/IBMFontMatrixImporter.hpp>
 
-#include <data_io/IBMFonts.hpp>
+#include <importers/IBMFonts.hpp>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 IBMFontMatrixImporter::IBMFontMatrixImporter(std::string node_name_) : Importer (node_name_),
 		font_type("font_type",font16x16_type)
@@ -92,5 +92,5 @@ bool IBMFontMatrixImporter::importData(){
 }
 
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */

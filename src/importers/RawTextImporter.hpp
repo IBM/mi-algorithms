@@ -20,19 +20,19 @@
  * \date Dec 22, 2015
  */
 
-#ifndef SRC_DATA_IO_RAWTEXTIMPORTER_HPP_
-#define SRC_DATA_IO_RAWTEXTIMPORTER_HPP_
+#ifndef SRC_importers_RAWTEXTIMPORTER_HPP_
+#define SRC_importers_RAWTEXTIMPORTER_HPP_
 
-#include <data_io/Importer.hpp>
+#include <importers/Importer.hpp>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 /*!
  * \brief Importer responsible for importing/loading raw text files and returning characters one by one, the character denotes the label on its own.
  * \author tkornuta
  */
-class RawTextImporter: public mic::data_io::Importer<char, char> {
+class RawTextImporter: public mic::importers::Importer<char, char> {
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.
@@ -70,7 +70,7 @@ private:
 };
 
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
 namespace mic {
@@ -91,4 +91,4 @@ typedef mic::types::Batch<char, char> CharBatch;
 }//: namespace types
 }//: namespace mic
 
-#endif /* SRC_DATA_IO_RAWTEXTIMPORTER_HPP_ */
+#endif /* SRC_importers_RAWTEXTIMPORTER_HPP_ */

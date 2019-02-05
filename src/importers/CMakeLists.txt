@@ -20,15 +20,15 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # =======================================================================
 
 FILE(GLOB files *.hpp)
-install(FILES ${files} DESTINATION include/data_io)
+install(FILES ${files} DESTINATION include/importers)
 
 # Create shared library containing DATA IO.
-file(GLOB data_io_src *.cpp)
-add_library(data_io SHARED ${data_io_src})
-target_link_libraries(data_io data_utils configuration logger )
+file(GLOB importers_src *.cpp)
+add_library(importers SHARED ${importers_src})
+target_link_libraries(importers data_utils configuration logger )
 
 # Add to variable storing all libraries/targets.
-set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "data_io" CACHE INTERNAL "" FORCE)
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "importers" CACHE INTERNAL "" FORCE)
 
 # Install target library.
-install(TARGETS data_io LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+install(TARGETS importers LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)

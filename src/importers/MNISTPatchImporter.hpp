@@ -20,20 +20,20 @@
  * \date Mar 27, 2017
  */
 
-#ifndef SRC_DATA_IO_MNISTPATCHIMAGEIMPORTER_HPP_
-#define SRC_DATA_IO_MNISTPATCHIMAGEIMPORTER_HPP_
+#ifndef SRC_importers_MNISTPATCHIMAGEIMPORTER_HPP_
+#define SRC_importers_MNISTPATCHIMAGEIMPORTER_HPP_
 
-#include <data_io/Importer.hpp>
+#include <importers/Importer.hpp>
 #include <types/MNISTTypes.hpp>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 /*!
  * \brief Importer responsible for importing/loading MNIST images with labels.
  * \author tkornuta
  */
-class MNISTPatchImporter : public mic::data_io::Importer<mic::types::MatrixXf, unsigned int> {
+class MNISTPatchImporter : public mic::importers::Importer<mic::types::MatrixXf, unsigned int> {
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.
@@ -110,8 +110,8 @@ private:
 	mic::configuration::Property<int> samples_limit;
 };
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
 
-#endif /* SRC_DATA_IO_MNISTPATCHIMAGEIMPORTER_HPP_ */
+#endif /* SRC_importers_MNISTPATCHIMAGEIMPORTER_HPP_ */

@@ -20,14 +20,14 @@
  * \date Mar 27, 2017
  */
 
-#include <data_io/MNISTPatchImporter.hpp>
+#include <importers/MNISTPatchImporter.hpp>
 #include <logger/Log.hpp>
 
 
 #include <fstream>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 MNISTPatchImporter::MNISTPatchImporter(std::string node_name_) : Importer (node_name_),
 		data_filename("data_filename","images-idx3-ubyte"),
@@ -154,5 +154,5 @@ bool MNISTPatchImporter::importData(){
 	return true;
 }
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */

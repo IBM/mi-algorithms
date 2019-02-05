@@ -26,11 +26,11 @@
 #define CIFARIMPORTER_HPP_
 
 
-#include <data_io/Importer.hpp>
+#include <importers/Importer.hpp>
 #include <types/TensorTypes.hpp>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 /*!
  * \brief Class responsible for importing CIFAR images.
@@ -38,7 +38,7 @@ namespace data_io {
  * \author tkornuta
  */
 template <typename eT>
-class CIFARImporter: public mic::data_io::Importer< mic::types::Tensor<eT>, unsigned int > {
+class CIFARImporter: public mic::importers::Importer< mic::types::Tensor<eT>, unsigned int > {
 public:
 	/*!
 	 * Constructor. Sets CIFAR image default properties. Registers properties.
@@ -242,7 +242,7 @@ private:
 };
 
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
 

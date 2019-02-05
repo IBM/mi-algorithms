@@ -20,8 +20,8 @@
  * \date Feb 22, 2016
  */
 
-#ifndef SRC_DATA_IO_DATACOLLECTOR_HPP_
-#define SRC_DATA_IO_DATACOLLECTOR_HPP_
+#ifndef SRC_UTILS_DATACOLLECTOR_HPP_
+#define SRC_UTILS_DATACOLLECTOR_HPP_
 
 #include <vector>
 #include <string>
@@ -36,7 +36,7 @@
 #include <types/MatrixTypes.hpp>
 
 namespace mic {
-namespace data_io {
+namespace utils {
 
 /*!
  * Template container type used in data collector.
@@ -397,11 +397,11 @@ protected:
  * \author tkornuta
  */
 template<class LABEL_TYPE, class DATA_TYPE>
-using DataCollectorPtr = typename std::shared_ptr<mic::data_io::DataCollector<LABEL_TYPE, DATA_TYPE > >;
+using DataCollectorPtr = typename std::shared_ptr<mic::utils::DataCollector<LABEL_TYPE, DATA_TYPE > >;
 
 
 
-} /* namespace data_io */
+} /* namespace utils */
 } /* namespace mic */
 
-#endif /* SRC_DATA_IO_DATACOLLECTOR_HPP_ */
+#endif /* SRC_UTILS_DATACOLLECTOR_HPP_ */

@@ -29,9 +29,9 @@ link_directories(${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_ADD_LIB_PATH})
 
 add_subdirectory(types)
 
-add_subdirectory(data_utils)
+add_subdirectory(utils)
 
-add_subdirectory(data_io)
+add_subdirectory(importers)
 
 add_subdirectory(encoders)
  

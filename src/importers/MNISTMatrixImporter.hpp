@@ -21,18 +21,18 @@
  */
 
 
-#ifndef SRC_DATA_IO_MNISTMATRIXIMPORTER_HPP_
-#define SRC_DATA_IO_MNISTMATRIXIMPORTER_HPP_
+#ifndef SRC_importers_MNISTMATRIXIMPORTER_HPP_
+#define SRC_importers_MNISTMATRIXIMPORTER_HPP_
 
-#include <data_io/Importer.hpp>
+#include <importers/Importer.hpp>
 #include <types/MNISTTypes.hpp>
 #include <fstream>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 template<typename T=float>
-class MNISTMatrixImporter: public mic::data_io::Importer< mic::types::Matrix<T>, unsigned int > {
+class MNISTMatrixImporter: public mic::importers::Importer< mic::types::Matrix<T>, unsigned int > {
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.
@@ -206,8 +206,8 @@ private:
 };
 
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
 
-#endif /* SRC_DATA_IO_MNISTMATRIXIMPORTER_HPP_ */
+#endif /* SRC_importers_MNISTMATRIXIMPORTER_HPP_ */

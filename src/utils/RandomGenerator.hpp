@@ -29,7 +29,7 @@
 #include <random>
 
 namespace mic {
-namespace data_utils {
+namespace utils {
 
 /*!
  * \brief Random generator - defined in the form of a singleton, with double-checked locking pattern (DCLP) based access to instance.
@@ -108,10 +108,10 @@ private:
  * \brief Macro returning random generator instance.
  * \author tkornuta
  */
-#define RAN_GEN mic::data_utils::RandomGenerator::getInstance()
+#define RAN_GEN mic::utils::RandomGenerator::getInstance()
 
 
-} /* namespace data_utils */
+} /* namespace utils */
 } /* namespace mic */
 
 #endif /* SRC_DATA_UTILS_RANDOMGENERATOR_HPP_ */

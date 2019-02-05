@@ -21,16 +21,16 @@
  */
 
 
-#ifndef SRC_DATA_IO_STL10MatrixImporter_HPP_
-#define SRC_DATA_IO_STL10MatrixImporter_HPP_
+#ifndef SRC_importers_STL10MatrixImporter_HPP_
+#define SRC_importers_STL10MatrixImporter_HPP_
 
 #include <types/MatrixTypes.hpp>
-#include <data_io/Importer.hpp>
+#include <importers/Importer.hpp>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
-class STL10MatrixImporter: public mic::data_io::Importer< mic::types::MatrixXf, unsigned int > {
+class STL10MatrixImporter: public mic::importers::Importer< mic::types::MatrixXf, unsigned int > {
 public:
 	/*!
      * Constructor. Sets STL-10 image default properties. Registers properties.
@@ -98,8 +98,8 @@ private:
 };
 
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
 
-#endif /* SRC_DATA_IO_STL10MatrixImporter_HPP_ */
+#endif /* SRC_importers_STL10MatrixImporter_HPP_ */

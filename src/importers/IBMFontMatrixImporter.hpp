@@ -20,14 +20,14 @@
  * \date Dec 22, 2015
  */
 
-#ifndef SRC_DATA_IO_IBMFONTMATRIXIMPORTER_HPP_
-#define SRC_DATA_IO_IBMFONTMATRIXIMPORTER_HPP_
+#ifndef SRC_importers_IBMFONTMATRIXIMPORTER_HPP_
+#define SRC_importers_IBMFONTMATRIXIMPORTER_HPP_
 
-#include <data_io/Importer.hpp>
+#include <importers/Importer.hpp>
 #include <types/MatrixTypes.hpp>
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 /*!
  * \brief IBM font type.
@@ -39,7 +39,7 @@ enum IBMfont_t
 	font16x16_type  = 16 ///< Loads characters of size 16x16.
 };
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
 namespace mic {
@@ -51,9 +51,9 @@ namespace configuration {
  * \author tkornuta
  */
 template<>
-class LexicalTranslator<mic::data_io::IBMfont_t> {
+class LexicalTranslator<mic::importers::IBMfont_t> {
 public:
-	static std::string toStr(const mic::data_io::IBMfont_t & val) {
+	static std::string toStr(const mic::importers::IBMfont_t & val) {
 		try {
 			return boost::lexical_cast<std::string>((unsigned int)val);
 		} catch(...) {
@@ -64,17 +64,17 @@ public:
 		return "";
 	}
 
-	static mic::data_io::IBMfont_t fromStr(const std::string & str) {
+	static mic::importers::IBMfont_t fromStr(const std::string & str) {
 		try {
-			return (mic::data_io::IBMfont_t) boost::lexical_cast<unsigned int>(str);
+			return (mic::importers::IBMfont_t) boost::lexical_cast<unsigned int>(str);
 		} catch (...) {
 			std::stringstream ss(str);
 			unsigned int ret;
 			ss >> ret;
-			return (mic::data_io::IBMfont_t) ret;
+			return (mic::importers::IBMfont_t) ret;
 		}
 		// If failed, return 8x8.
-		return mic::data_io::font8x8_type;
+		return mic::importers::font8x8_type;
 	}
 };
 
@@ -83,14 +83,14 @@ public:
 
 
 namespace mic {
-namespace data_io {
+namespace importers {
 
 
 /*!
  * \brief Importer responsible for importing/loading characters from IBM VGA font dataset.
  * \author tkornuta
  */
-class IBMFontMatrixImporter: public mic::data_io::Importer< mic::types::MatrixXf, char> {
+class IBMFontMatrixImporter: public mic::importers::Importer< mic::types::MatrixXf, char> {
 public:
 	/*!
 	 * Constructor. Sets MNIST image default properties. Registers properties.
@@ -121,7 +121,7 @@ private:
 	mic::configuration::Property<IBMfont_t> font_type;
 };
 
-} /* namespace data_io */
+} /* namespace importers */
 } /* namespace mic */
 
-#endif /* SRC_DATA_IO_IBMFONTMATRIXIMPORTER_HPP_ */
+#endif /* SRC_importers_IBMFONTMATRIXIMPORTER_HPP_ */

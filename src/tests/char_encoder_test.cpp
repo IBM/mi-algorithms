@@ -25,7 +25,7 @@
 
 
 #include <types/Color.hpp>
-#include <data_io/RawTextImporter.hpp>
+#include <importers/RawTextImporter.hpp>
 
 #include <encoders/CharMatrixXfEncoder.hpp>
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
 	mic::encoders::CharMatrixXfEncoder encoder(sdr_size);
 
 	// Load dataset.
-	mic::data_io::RawTextImporter importer;
+	mic::importers::RawTextImporter importer;
 	// Manually set paths. DEPRICATED! Used here only for simplification of the test.
 	importer.setDataFilename("/Users/tkornut/Documents/workspace/machine-intelligence-core/data/txt/pl/ep-06-01-16-003.txt");
 	importer.setBatchSize(batch_size);
