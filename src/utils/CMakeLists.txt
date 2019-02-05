@@ -19,8 +19,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Install includes related to DATA UTILS used by other libraries.
 # =======================================================================
 
-FILE(GLOB files *.hpp data_utils/*.h)
-install(FILES ${files} DESTINATION include/data_utils)
+FILE(GLOB files *.hpp *.h)
+install(FILES ${files} DESTINATION include/utils)
 
 # Create shared library containing DATA UTILS.
 file(GLOB data_utils_src *.cpp)
