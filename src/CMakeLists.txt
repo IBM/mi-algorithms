@@ -29,24 +29,11 @@ link_directories(${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_ADD_LIB_PATH})
 
 add_subdirectory(types)
 
-add_subdirectory(data_utils)
+add_subdirectory(utils)
 
-add_subdirectory(data_io)
-
-# Depricated - HTM.
-add_subdirectory(auto_encoders)
+add_subdirectory(importers)
 
 add_subdirectory(encoders)
  
-add_subdirectory(classifiers)
-
-#add_subdirectory(htm)
-
-add_subdirectory(rbm)
-
-# Not working.
-#add_subdirectory(gru)
-#add_subdirectory(lstm)
-
 add_subdirectory(tests)
 

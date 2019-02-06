@@ -11,11 +11,27 @@
 
 A subproject of Machine Intelligence Core framework.
 
-The project contains core types and several machine intelligence algorithms, such as HTM, RBM accompanied by some useful modules and functions.
+The project contains core types (sample, batch, matrix tensor) and tools (MNIST/CIFAR/STL/RawText importers, encoders etc.) useful when training different models and working with different problems.
 
-## MIC dependencies
+### Main modules
 
-   * [MIToolchain](https://github.com/IBM/mi-toolchain) - the core of MIC framework.
+   * types - core types and classes (sample, batch, matrix, tensor, position2D, action2D etc.)
+   * importers - data i/o classes, various data importers (MNIST, CIFAR, STL10, BMP, IBMFont, RawText etc.)
+   * encoders - tools for changing data format from one to another (mostly from/to Matrix)
+   * utils - few useful tools (random generator, timer, data collector)
+
+### Applications (tests)
+
+   * char_encoder_test - examplary 1-of-k Char Encoder test application.
+   * data_collector_test - program for testing data collector.
+   * tensor_test - program for testing tensor functionality.
+
+### Unit tests
+
+   *  types/unit_tests_matrix -- dense (Eigen-derived) matrix unit tests
+   *  types/unit_tests_matrix_array -- dense array of matrices matrix unit tests
+   *  types/unit_tests_tensor -- few unit tests of Tensor class
+
 
 ## External dependencies
 
@@ -44,49 +60,43 @@ To install GTest on Mac OS X:
 
     brew install --HEAD https://gist.githubusercontent.com/Kronuz/96ac10fbd8472eb1e7566d740c4034f8/raw/gtest.rb
 
-## Main modules
+## MIC dependencies
 
-   * types - core types and classes (image, tensor, matrix, vector etc.)
-   * data_io - data i/o classes and functions (e.g. data importers)
-   * data_utils - data utils (e.g. functions for interpolations, generation of series, random generator etc.)
-   * auto_encoders - auto (as well as some simple) encoders
-   * classifiers - different classifiers (naive bayes, softmax etc.)
-   * htm - Hierarchical Temporal Memory
-   * rbm - Restricted Boltzmann Machine
+   * [MI-Toolchain](https://github.com/IBM/mi-toolchain) - the core of MIC framework.
 
-## Applications
+### Installation of all MIC dependencies (optional)
 
-   * char_encoder_test - examplary 1-of-k Char Encoder test application.
-   * data_collector_test - program for testing data collector.
-   * tensor_test - program for testing tensor functionality.
+This step is required only when not downloaded/installed the listed MIC dependencies earlier.
 
-## Unit tests
+In directory scripts one can find script that will download and install all required MIC modules.
 
-   *  types/matrixTestsRunner -- dense (Eigen-derived) matrix unit tests
-   *  types/matrixArrayTestsRunner -- dense array of matrices matrix unit tests
- 
-## Installation
-
-In order to download, configure, make and install new "clean" version of mi-algorithms please execute the following:
-
-    cd ~/workspace
-    git clone git@github.com:ibm/mi-algorithms.git
+    git clone git@github.com:IBM/mi-algorithms.git
     cd mi-algorithms
-    mkdir build
-    cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=~/workspace/mic/
-    make -j4 install
+    ./srcipt/install_mic_deps.sh ../mic
 
+Then one can install the module by calling the following.
 
+    ./scripts/build_mic_module.sh ../mic
 
+Please note that it will create a directory 'deps' and download all sources into that directory.
+After compilation all dependencies will be installed in the directory '../mic'.
 
+### Installation of MI-algorithms
+The following assumes that all MIC dependencies are installed in the directory '../mic'.
 
+    git clone git@github.com:IBM/mi-algorithms.git
+    cd mi-algorithms
+    ./scripts/build_mic_module.sh ../mic
+
+### Make commands
+
+   * make install - install applications to ../mic/bin, headers to ../mic/include, libraries to ../mic/lib, cmake files to ../mic/share
 
 ## Documentation
 
 In order to generate a "living" documentation of the code please run Doxygen:
 
-    cd ~/workspace/mi-algorithms
+    cd mi-algorithms
     doxygen mi-algorithms.doxyfile
     firefox html/index.html
 

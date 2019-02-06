@@ -16,19 +16,19 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # =======================================================================
-# Install includes related to ENCODERS used by other libraries.
+# Install includes related to DATA UTILS used by other libraries.
 # =======================================================================
 
-FILE(GLOB files *.hpp )
-install(FILES ${files} DESTINATION include/encoders)
+FILE(GLOB files *.hpp *.h)
+install(FILES ${files} DESTINATION include/utils)
 
-# Create shared library containing AUTO ENCODERS.
-file(GLOB encoders_src *.cpp)
-add_library(encoders SHARED ${encoders_src})
-target_link_libraries(encoders logger ${Boost_LIBRARIES})
+# Create shared library containing DATA UTILS.
+file(GLOB data_utils_src *.cpp)
+add_library(data_utils SHARED ${data_utils_src})
+target_link_libraries(data_utils logger ${Boost_LIBRARIES} )
 
 # Add to variable storing all libraries/targets.
-set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "encoders" CACHE INTERNAL "" FORCE)
+set(MIAlgorithms_LIBRARIES ${MIAlgorithms_LIBRARIES} "data_utils" CACHE INTERNAL "" FORCE)
 
 # Install target library.
-install(TARGETS encoders LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+install(TARGETS data_utils LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
