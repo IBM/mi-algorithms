@@ -72,7 +72,7 @@ In directory scripts one can find script that will download and install all requ
 
     git clone git@github.com:IBM/mi-algorithms.git
     cd mi-algorithms
-    ./srcipt/install_mic_deps.sh ../mic
+    ./scripts/install_mic_deps.sh ../mic
 
 Then one can install the module by calling the following.
 
@@ -81,7 +81,8 @@ Then one can install the module by calling the following.
 Please note that it will create a directory 'deps' and download all sources into that directory.
 After compilation all dependencies will be installed in the directory '../mic'.
 
-### Installation of MI-algorithms
+## Installation of MI-Algorithms
+
 The following assumes that all MIC dependencies are installed in the directory '../mic'.
 
     git clone git@github.com:IBM/mi-algorithms.git
