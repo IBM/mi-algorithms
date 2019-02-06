@@ -1,0 +1,4 @@
+<map id="mic::types::NESWAction" name="mic::types::NESWAction">
+<area shape="rect" id="node2" href="$a00001.html" title="mic::types::Action2D\l\&lt; NESW \&gt;" alt="" coords="30,81,175,122"/>
+<area shape="rect" id="node3" href="$a00002.html" title="Interface class representing an action in 2&#45;D space. " alt="" coords="5,5,200,32"/>
+</map>

@@ -1,0 +1,25 @@
+<map id="src/types/MatrixXiSpecializations.hpp" name="src/types/MatrixXiSpecializations.hpp">
+<area shape="rect" id="node2" href="$a00064.html" title="Contains definition of basic matrix datatypes derived from Eigen. " alt="" coords="1581,80,1757,107"/>
+<area shape="rect" id="node3" href="$a00036.html" title="src/encoders/MatrixSDREncoder.hpp" alt="" coords="643,163,881,189"/>
+<area shape="rect" id="node12" href="$a00044.html" title="Contains declaration of an importer responsible for importing/loading characters from IBM VGA font da..." alt="" coords="1173,155,1360,197"/>
+<area shape="rect" id="node14" href="$a00053.html" title="src/importers/STL10Matrix\lImporter.hpp" alt="" coords="1385,155,1561,197"/>
+<area shape="rect" id="node16" href="$a00056.html" title="Contains program for testing of tensors/Eigen map. " alt="" coords="1586,163,1752,189"/>
+<area shape="rect" id="node17" href="$a00061.html" title="src/types/MatrixArray.hpp" alt="" coords="1777,163,1948,189"/>
+<area shape="rect" id="node19" href="$a00068.html" title="src/types/MNISTTypes.hpp" alt="" coords="1973,163,2155,189"/>
+<area shape="rect" id="node23" href="$a00074.html" title="src/utils/DataCollector.hpp" alt="" coords="2275,163,2452,189"/>
+<area shape="rect" id="node4" href="$a00033.html" title="src/encoders/CharMatrixXf\lEncoder.hpp" alt="" coords="179,246,357,287"/>
+<area shape="rect" id="node7" href="$a00034.html" title="src/encoders/ColMatrixEncoder.hpp" alt="" coords="382,253,612,280"/>
+<area shape="rect" id="node9" href="$a00038.html" title="src/encoders/MatrixXfSDREncoder.hpp" alt="" coords="637,253,888,280"/>
+<area shape="rect" id="node10" href="$a00039.html" title="src/encoders/UIntMatrixEncoder.hpp" alt="" coords="913,253,1147,280"/>
+<area shape="rect" id="node5" href="$a00032.html" title="src/encoders/CharMatrixXf\lEncoder.cpp" alt="" coords="5,337,184,378"/>
+<area shape="rect" id="node6" href="$a00054.html" title="src/tests/char_encoder\l_test.cpp" alt="" coords="208,337,361,378"/>
+<area shape="rect" id="node8" href="$a00037.html" title="src/encoders/MatrixXfMatrix\lXfEncoder.hpp" alt="" coords="404,337,591,378"/>
+<area shape="rect" id="node11" href="$a00040.html" title="src/encoders/UIntMatrixXf\lEncoder.hpp" alt="" coords="943,337,1117,378"/>
+<area shape="rect" id="node13" href="$a00043.html" title="Contains definition of methods of importer responsible for importing/loading characters from IBM VGA ..." alt="" coords="1173,246,1360,287"/>
+<area shape="rect" id="node15" href="$a00052.html" title="src/importers/STL10Matrix\lImporter.cpp" alt="" coords="1385,246,1561,287"/>
+<area shape="rect" id="node18" href="$a00062.html" title="src/types/MatrixArrayTests.cpp" alt="" coords="1696,253,1901,280"/>
+<area shape="rect" id="node20" href="$a00047.html" title="src/importers/MNISTMatrix\lImporter.hpp" alt="" coords="1926,246,2105,287"/>
+<area shape="rect" id="node21" href="$a00049.html" title="src/importers/MNISTPatch\lImporter.hpp" alt="" coords="2131,246,2309,287"/>
+<area shape="rect" id="node22" href="$a00048.html" title="src/importers/MNISTPatch\lImporter.cpp" alt="" coords="2131,337,2309,378"/>
+<area shape="rect" id="node24" href="$a00055.html" title="Program for testing data collector. " alt="" coords="2334,246,2492,287"/>
+</map>

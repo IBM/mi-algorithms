@@ -1,0 +1,6 @@
+<map id="mic::types::NESWAction" name="mic::types::NESWAction">
+<area shape="rect" id="node4" href="$a00012.html" title="Class representing an exit action. " alt="" coords="5,245,155,272"/>
+<area shape="rect" id="node5" href="$a00024.html" title="Class representing a random N/E/S/W action. " alt="" coords="180,245,399,272"/>
+<area shape="rect" id="node2" href="$a00001.html" title="mic::types::Action2D\l\&lt; NESW \&gt;" alt="" coords="111,81,256,122"/>
+<area shape="rect" id="node3" href="$a00002.html" title="Interface class representing an action in 2&#45;D space. " alt="" coords="86,5,281,32"/>
+</map>

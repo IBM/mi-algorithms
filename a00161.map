@@ -1,0 +1,4 @@
+<map id="mic::encoders::CharMatrixXfEncoder" name="mic::encoders::CharMatrixXfEncoder">
+<area shape="rect" id="node2" href="$a00018.html" title="mic::encoders::MatrixSDREncoder\l\&lt; char, float \&gt;" alt="" coords="5,110,229,151"/>
+<area shape="rect" id="node3" href="$a00011.html" title="mic::encoders::Encoder\l\&lt; char, mic::types::Matrix\l\&lt; float \&gt; \&gt;" alt="" coords="31,5,203,61"/>
+</map>

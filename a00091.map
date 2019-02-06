@@ -1,0 +1,9 @@
+<map id="src/encoders/CharMatrixXfEncoder.hpp" name="src/encoders/CharMatrixXfEncoder.hpp">
+<area shape="rect" id="node2" href="$a00036.html" title="encoders/MatrixSDREncoder.hpp" alt="" coords="266,96,483,123"/>
+<area shape="rect" id="node3" href="$a00035.html" title="Contains definition of an abstract, template parent class for all auto&#45;encoders. " alt="" coords="127,171,279,197"/>
+<area shape="rect" id="node8" href="$a00064.html" title="Contains definition of basic matrix datatypes derived from Eigen. " alt="" coords="469,171,623,197"/>
+<area shape="rect" id="node9" href="$a00065.html" title="types/MatrixXdSpecializations.hpp" alt="" coords="313,245,535,272"/>
+<area shape="rect" id="node17" href="$a00066.html" title="types/MatrixXfSpecializations.hpp" alt="" coords="559,245,779,272"/>
+<area shape="rect" id="node18" href="$a00067.html" title="types/MatrixXiSpecializations.hpp" alt="" coords="804,245,1023,272"/>
+<area shape="rect" id="node10" href="$a00060.html" title="types/Matrix.hpp" alt="" coords="602,320,720,347"/>
+</map>

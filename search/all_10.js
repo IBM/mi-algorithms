@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['tensor',['Tensor',['../a00028.html',1,'mic::types']]],
+  ['tensor',['Tensor',['../a00028.html#aafe4bf0c2d8dc8c65b12b8b43821c826',1,'mic::types::Tensor::Tensor()'],['../a00028.html#a322049523771a4adaa9bca7bd70a2228',1,'mic::types::Tensor::Tensor(std::initializer_list&lt; size_t &gt; dims_)'],['../a00028.html#abafa1d9cbc2d6145ee7bf4c0283a5323',1,'mic::types::Tensor::Tensor(std::vector&lt; size_t &gt; dims_)'],['../a00028.html#a0200baf092eeeac65b5bcba990a05655',1,'mic::types::Tensor::Tensor(const Tensor&lt; T &gt; &amp;t)'],['../a00028.html#a7744cc3d5b329ff256c8200e5d30a82b',1,'mic::types::Tensor::Tensor(const mic::types::Matrix&lt; T &gt; &amp;mat_)']]],
+  ['tensor_2ehpp',['Tensor.hpp',['../a00071.html',1,'']]],
+  ['tensor_5ftest_2ecpp',['tensor_test.cpp',['../a00056.html',1,'']]],
+  ['tensorbatch',['TensorBatch',['../a00086.html#ab52f1a122313ca495e2f0691fe87483a',1,'mic::types']]],
+  ['tensorbatchptr',['TensorBatchPtr',['../a00086.html#a8718a77c3443c443802766d6071d98c1',1,'mic::types']]],
+  ['tensorptr',['TensorPtr',['../a00086.html#a2420e29260d838c46032488dc7df8fd6',1,'mic::types']]],
+  ['tensorsample',['TensorSample',['../a00086.html#a0a639b4a01660691639426a1c23c288d',1,'mic::types']]],
+  ['tensorsampleptr',['TensorSamplePtr',['../a00086.html#ab88c804d194857093577cd962397d541',1,'mic::types']]],
+  ['tensortests_2ecpp',['TensorTests.cpp',['../a00072.html',1,'']]],
+  ['tensortypes_2ehpp',['TensorTypes.hpp',['../a00073.html',1,'']]],
+  ['tensorxd',['TensorXd',['../a00086.html#a6d35f128bef674d1bc8bc5bb45e3cdc7',1,'mic::types']]],
+  ['tensorxdptr',['TensorXdPtr',['../a00086.html#a2d08605f091a467e2f22c198fea2c5ab',1,'mic::types']]],
+  ['tensorxf',['TensorXf',['../a00086.html#a61564dffb7f023aa46248433b62265b9',1,'mic::types']]],
+  ['tensorxfptr',['TensorXfPtr',['../a00086.html#a97e4f875718f7b986b8689224584582c',1,'mic::types']]],
+  ['tensorxi',['TensorXi',['../a00086.html#a58c4fee9557c031ff3d8944ccfe2e344',1,'mic::types']]],
+  ['tensorxiptr',['TensorXiPtr',['../a00086.html#af68f240d92a438a80e930e897742fa4e',1,'mic::types']]],
+  ['test',['TEST',['../a00062.html#a99920bd9095a65984357daca7e5ee69c',1,'TEST(MatrixArray, Dimensions2x3x4):&#160;MatrixArrayTests.cpp'],['../a00062.html#a34b5b9ba78a966a77c7af1ccfe6b71c0',1,'TEST(MatrixArray, Serialization):&#160;MatrixArrayTests.cpp'],['../a00063.html#ac785c31a4472cecd2a7e3fb46f50e6cc',1,'TEST(Matrix, Dimensions2x5):&#160;MatrixTests.cpp'],['../a00063.html#a5bc6ac142dd983203143023b81f572c0',1,'TEST(Matrix, Serialization):&#160;MatrixTests.cpp'],['../a00063.html#a5eae976c0836250dfff81aad7c4347f3',1,'TEST(Matrix, OperatorAssignmentFloat):&#160;MatrixTests.cpp'],['../a00063.html#a5681575f2742c7220c57411de18e81a3',1,'TEST(Matrix, Enumeration2x3):&#160;MatrixTests.cpp'],['../a00063.html#a7625b5b1e56b142121bcb60b681e5104',1,'TEST(Matrix, ArmadilloCompatibilityTest):&#160;MatrixTests.cpp'],['../a00072.html#aecda76ab7094bbc979cd5009ec85ad1f',1,'TEST(Tensor, Dimensions2x5):&#160;TensorTests.cpp'],['../a00072.html#a842536afcc17a51310263c39ff375767',1,'TEST(Tensor, Enumeration2x3):&#160;TensorTests.cpp'],['../a00072.html#a44947cdf79c90dcdb1604c5298bd1957',1,'TEST(Tensor, Serialization):&#160;TensorTests.cpp'],['../a00072.html#a98bba0c3a081581a0722b66191d1dc5e',1,'TEST(Tensor, Im2Col2x3):&#160;TensorTests.cpp']]],
+  ['timer',['Timer',['../a00029.html',1,'mic::utils']]],
+  ['timer',['Timer',['../a00029.html#a2f6c4d37332707397efe33adb0c0a2af',1,'mic::utils::Timer']]],
+  ['timer_2ehpp',['Timer.hpp',['../a00077.html',1,'']]],
+  ['tostr',['toStr',['../a00015.html#a10f57fa35cf6b414c32386bbf8905b81',1,'mic::configuration::LexicalTranslator&lt; mic::importers::IBMfont_t &gt;']]],
+  ['type',['type',['../a00001.html#ab0bfc95c3981802e53cd5fc7444bc71a',1,'mic::types::Action2D']]]
+];

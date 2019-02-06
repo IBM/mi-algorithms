@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['getbatch',['getBatch',['../a00003.html#ac0c1855ee52f92f3126c1a33b97c867c',1,'mic::types::Batch']]],
+  ['getbatchdirect',['getBatchDirect',['../a00003.html#a2c778fd4fec7d6899c174174ec8312ec',1,'mic::types::Batch']]],
+  ['getbatchsize',['getBatchSize',['../a00003.html#a2afdd0a50ef604dd1b2f8f04aaff826a',1,'mic::types::Batch']]],
+  ['getcontainers',['getContainers',['../a00009.html#a04d8001ef196e818fe9ff1732a12664d',1,'mic::utils::DataCollector']]],
+  ['getdatafromcontainer',['getDataFromContainer',['../a00009.html#af5f5f11e3774764107e12a50f063e08d',1,'mic::utils::DataCollector']]],
+  ['getindex',['getIndex',['../a00028.html#a36f8f84daee0ed072f04700fb3daa6c0',1,'mic::types::Tensor']]],
+  ['getinstance',['getInstance',['../a00023.html#ae3470ffd305e375ef914897e6d24ac6a',1,'mic::utils::RandomGenerator']]],
+  ['getnextbatch',['getNextBatch',['../a00003.html#a4b54d9eb26bbaaf75b02d941e4f286f9',1,'mic::types::Batch']]],
+  ['getnextsample',['getNextSample',['../a00003.html#aaff26d173bda7949e30ec6fb4637c458',1,'mic::types::Batch']]],
+  ['getpatchsize',['getPatchSize',['../a00020.html#a8b4dd1f94a804080157306760f83d5d7',1,'mic::importers::MNISTPatchImporter']]],
+  ['getrandombatch',['getRandomBatch',['../a00003.html#afa8e92aeca7625a8c0b84b0050bebc80',1,'mic::types::Batch']]],
+  ['getrandomsample',['getRandomSample',['../a00003.html#a8d12f0abea211e114eafa627cc0c15a2',1,'mic::types::Batch']]],
+  ['getsample',['getSample',['../a00003.html#a3b98db74f2eabdb6df1e009b81de6719',1,'mic::types::Batch']]],
+  ['getsampledirect',['getSampleDirect',['../a00003.html#aa815c8e513ddd5b965f59b089af7550f',1,'mic::types::Batch']]],
+  ['getsdrlength',['getSDRLength',['../a00018.html#a0ac28f632a601948b1cc2fe429fffc18',1,'mic::encoders::MatrixSDREncoder']]],
+  ['gettype',['getType',['../a00001.html#a5da6862f74c1196ac42620eea572dfe5',1,'mic::types::Action2D']]]
+];

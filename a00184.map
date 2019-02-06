@@ -1,0 +1,3 @@
+<map id="mic::importers::Importer&lt; DataType, LabelType &gt;" name="mic::importers::Importer&lt; DataType, LabelType &gt;">
+<area shape="rect" id="node2" href="$a00003.html" title="Template class storing the sample batches. A batch is stored in fact as three vectors, containing data, labels and sample numbers respectively. " alt="" coords="5,6,168,47"/>
+</map>
