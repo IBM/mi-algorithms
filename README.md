@@ -78,12 +78,12 @@ Then one can install the module by calling the following.
 
     ./scripts/build_mic_module.sh ../mic
 
-Please note that it will create a directory 'deps' and download all sources into that directory.
-After compilation all dependencies will be installed in the directory '../mic'.
+Please note that it will create a directory `deps` and download all sources into that directory.
+After compilation all dependencies will be installed in the directory `../mic`.
 
 ## Installation of MI-Algorithms
 
-The following assumes that all MIC dependencies are installed in the directory '../mic'.
+The following assumes that all MIC dependencies are installed in the directory `../mic`.
 
     git clone git@github.com:IBM/mi-algorithms.git
     cd mi-algorithms
@@ -91,8 +91,8 @@ The following assumes that all MIC dependencies are installed in the directory '
 
 ### Make commands
 
-   * make install - install applications to ../mic/bin, headers to ../mic/include, libraries to ../mic/lib, cmake files to ../mic/share
-
+   * make install - install applications to `../mic/bin`, headers to `../mic/include`, libraries to `../mic/lib`, cmake files to `../mic/share`
+   
 ## Documentation
 
 In order to generate a "living" documentation of the code please run Doxygen:
