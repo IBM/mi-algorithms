@@ -132,7 +132,7 @@ public:
 	 * @param index_ Index of the sample from the batch.
 	 * @return Sample number.
 	 */
-	std::vector <size_t> indices(size_t index_) {
+	size_t indices(size_t index_) {
 		return sample_indices[index_];
 	}
 
